@@ -1,0 +1,127 @@
+{
+  "metadata": {
+    "description": "Richardson RNA backbone suite conformers (Richardson et al., RNA 2008)",
+    "reference": "RNA backbone: Consensus all-angle conformers and modular string nomenclature",
+    "doi": "10.1261/rna.657708",
+    "source": "https://github.com/rlabduke/suitename",
+    "angle_order": ["deltaMinus", "epsilon", "zeta", "alpha", "beta", "gamma", "delta"],
+    "angle_indices_note": "Indices 0-6 map to the 7 suite angles in order",
+    "suiteness_formula": "suiteness = (cos(pi * L3_distance) + 1) / 2 if L3_distance <= 1.0 else 0"
+  },
+  "widths": {
+    "normal": [28, 60, 55, 50, 70, 35, 28],
+    "satellite": [28, 50, 50, 45, 60, 35, 28]
+  },
+  "triage": {
+    "epsilon": [155, 310],
+    "alpha": [25, 335],
+    "beta": [50, 290],
+    "zeta": [25, 335]
+  },
+  "sieve": {
+    "deltaMinus": {
+      "C3_endo": [60, 105],
+      "C2_endo": [125, 165]
+    },
+    "delta": {
+      "C3_endo": [60, 105],
+      "C2_endo": [125, 165]
+    },
+    "gamma": {
+      "p": [20, 95],
+      "t": [140, 215],
+      "m": [260, 335]
+    }
+  },
+  "bins": {
+    "33p": {"puckerdm": 3, "puckerd": 3, "gamma": "p"},
+    "33t": {"puckerdm": 3, "puckerd": 3, "gamma": "t"},
+    "33m": {"puckerdm": 3, "puckerd": 3, "gamma": "m"},
+    "32p": {"puckerdm": 3, "puckerd": 2, "gamma": "p"},
+    "32t": {"puckerdm": 3, "puckerd": 2, "gamma": "t"},
+    "32m": {"puckerdm": 3, "puckerd": 2, "gamma": "m"},
+    "23p": {"puckerdm": 2, "puckerd": 3, "gamma": "p"},
+    "23t": {"puckerdm": 2, "puckerd": 3, "gamma": "t"},
+    "23m": {"puckerdm": 2, "puckerd": 3, "gamma": "m"},
+    "22p": {"puckerdm": 2, "puckerd": 2, "gamma": "p"},
+    "22t": {"puckerdm": 2, "puckerd": 2, "gamma": "t"},
+    "22m": {"puckerdm": 2, "puckerd": 2, "gamma": "m"}
+  },
+  "conformers": [
+    {"name": "1a", "bin": "33p", "angles": [81.495, 212.25, 288.831, 294.967, 173.99, 53.55, 81.035], "status": "certain", "dominance": "dom"},
+    {"name": "1m", "bin": "33p", "angles": [83.513, 218.12, 291.593, 292.247, 222.3, 58.067, 86.093], "status": "certain", "dominance": "sat"},
+    {"name": "1L", "bin": "33p", "angles": [85.664, 245.014, 268.257, 303.879, 138.164, 61.95, 79.457], "status": "certain", "dominance": "sat"},
+    {"name": "&a", "bin": "33p", "angles": [82.112, 190.682, 264.945, 295.967, 181.839, 51.455, 81.512], "status": "certain", "dominance": "sat"},
+    {"name": "7a", "bin": "33p", "angles": [83.414, 217.4, 222.006, 302.856, 160.719, 49.097, 82.444], "status": "certain", "dominance": "ord"},
+    {"name": "3a", "bin": "33p", "angles": [85.072, 216.324, 173.276, 289.32, 164.132, 45.876, 84.956], "status": "certain", "dominance": "ord"},
+    {"name": "9a", "bin": "33p", "angles": [83.179, 210.347, 121.474, 288.568, 157.268, 49.347, 81.047], "status": "certain", "dominance": "ord"},
+    {"name": "1g", "bin": "33p", "angles": [80.888, 218.636, 290.735, 167.447, 159.565, 51.326, 85.213], "status": "certain", "dominance": "ord"},
+    {"name": "7d", "bin": "33p", "angles": [83.856, 238.75, 256.875, 69.562, 170.2, 52.8, 85.287], "status": "certain", "dominance": "ord"},
+    {"name": "3d", "bin": "33p", "angles": [85.295, 244.085, 203.815, 65.88, 181.13, 54.68, 86.035], "status": "certain", "dominance": "ord"},
+    {"name": "5d", "bin": "33p", "angles": [79.671, 202.471, 63.064, 68.164, 143.45, 49.664, 82.757], "status": "certain", "dominance": "ord"},
+    {"name": "3g", "bin": "33p", "angles": [84.0, 195.0, 146.0, 170.0, 170.0, 52.0, 84.0], "status": "wannabe", "dominance": "ord"},
+
+    {"name": "1e", "bin": "33t", "angles": [80.514, 200.545, 280.51, 249.314, 82.662, 167.89, 85.507], "status": "certain", "dominance": "ord"},
+    {"name": "1c", "bin": "33t", "angles": [80.223, 196.591, 291.299, 153.06, 194.379, 179.061, 83.648], "status": "certain", "dominance": "dom"},
+    {"name": "1f", "bin": "33t", "angles": [81.395, 203.03, 294.445, 172.195, 138.54, 175.565, 84.47], "status": "certain", "dominance": "sat"},
+    {"name": "5j", "bin": "33t", "angles": [87.417, 223.558, 80.175, 66.667, 109.15, 176.475, 83.833], "status": "certain", "dominance": "ord"},
+    {"name": "5n", "bin": "33t", "angles": [86.055, 246.502, 100.392, 73.595, 213.752, 183.395, 85.483], "status": "wannabe", "dominance": "ord"},
+
+    {"name": "1b", "bin": "32p", "angles": [84.215, 215.014, 288.672, 300.42, 177.476, 58.307, 144.841], "status": "certain", "dominance": "dom"},
+    {"name": "1[", "bin": "32p", "angles": [82.731, 220.463, 288.665, 296.983, 221.654, 54.213, 143.771], "status": "certain", "dominance": "sat"},
+    {"name": "3b", "bin": "32p", "angles": [84.7, 226.4, 168.336, 292.771, 177.629, 48.629, 147.95], "status": "certain", "dominance": "ord"},
+    {"name": "1z", "bin": "32p", "angles": [83.358, 206.042, 277.567, 195.7, 161.6, 50.75, 145.258], "status": "certain", "dominance": "ord"},
+    {"name": "5z", "bin": "32p", "angles": [82.614, 206.44, 52.524, 163.669, 148.421, 50.176, 147.59], "status": "certain", "dominance": "ord"},
+    {"name": "7p", "bin": "32p", "angles": [84.285, 236.6, 220.4, 68.3, 200.122, 53.693, 145.73], "status": "certain", "dominance": "ord"},
+    {"name": "5p", "bin": "32p", "angles": [84.457, 213.286, 69.086, 75.5, 156.671, 57.486, 147.686], "status": "wannabe", "dominance": "ord"},
+
+    {"name": "1t", "bin": "32t", "angles": [81.2, 199.243, 288.986, 180.286, 194.743, 178.2, 147.386], "status": "certain", "dominance": "ord"},
+    {"name": "5q", "bin": "32t", "angles": [82.133, 204.933, 69.483, 63.417, 115.233, 176.283, 145.733], "status": "certain", "dominance": "ord"},
+
+    {"name": "1o", "bin": "32m", "angles": [83.977, 216.508, 287.192, 297.254, 225.154, 293.738, 150.677], "status": "certain", "dominance": "ord"},
+    {"name": "7r", "bin": "32m", "angles": [84.606, 232.856, 248.125, 63.269, 181.975, 295.744, 149.744], "status": "certain", "dominance": "ord"},
+    {"name": "5r", "bin": "32m", "angles": [83.0, 196.9, 65.35, 60.15, 138.425, 292.55, 154.275], "status": "wannabe", "dominance": "ord"},
+
+    {"name": "2a", "bin": "23p", "angles": [145.399, 260.339, 288.756, 288.444, 192.733, 53.097, 84.067], "status": "certain", "dominance": "ord"},
+    {"name": "4a", "bin": "23p", "angles": [146.275, 259.783, 169.958, 298.45, 169.583, 50.908, 83.967], "status": "certain", "dominance": "sat"},
+    {"name": "0a", "bin": "23p", "angles": [149.286, 223.159, 139.421, 284.559, 158.107, 47.9, 84.424], "status": "certain", "dominance": "dom"},
+    {"name": "#a", "bin": "23p", "angles": [148.006, 191.944, 146.231, 289.288, 150.781, 42.419, 84.956], "status": "certain", "dominance": "sat"},
+    {"name": "4g", "bin": "23p", "angles": [148.028, 256.922, 165.194, 204.961, 165.194, 49.383, 82.983], "status": "certain", "dominance": "ord"},
+    {"name": "6g", "bin": "23p", "angles": [145.337, 262.869, 79.588, 203.863, 189.688, 58.0, 84.9], "status": "certain", "dominance": "ord"},
+    {"name": "8d", "bin": "23p", "angles": [148.992, 270.596, 240.892, 62.225, 176.271, 53.6, 87.262], "status": "certain", "dominance": "ord"},
+    {"name": "4d", "bin": "23p", "angles": [149.822, 249.956, 187.678, 80.433, 198.133, 61.0, 89.378], "status": "certain", "dominance": "ord"},
+    {"name": "6d", "bin": "23p", "angles": [146.922, 241.222, 88.894, 59.344, 160.683, 52.333, 83.417], "status": "certain", "dominance": "ord"},
+    {"name": "2g", "bin": "23p", "angles": [141.9, 258.383, 286.517, 178.267, 165.217, 48.35, 84.783], "status": "wannabe", "dominance": "ord"},
+
+    {"name": "2h", "bin": "23t", "angles": [147.782, 260.712, 290.424, 296.2, 177.282, 175.594, 86.565], "status": "certain", "dominance": "ord"},
+    {"name": "4n", "bin": "23t", "angles": [143.722, 227.256, 203.789, 73.856, 216.733, 194.444, 80.911], "status": "certain", "dominance": "ord"},
+    {"name": "0i", "bin": "23t", "angles": [148.717, 274.683, 100.283, 80.6, 248.133, 181.817, 82.6], "status": "certain", "dominance": "sat"},
+    {"name": "6n", "bin": "23t", "angles": [150.311, 268.383, 84.972, 63.811, 191.483, 176.644, 85.6], "status": "certain", "dominance": "dom"},
+    {"name": "6j", "bin": "23t", "angles": [141.633, 244.1, 66.056, 71.667, 122.167, 182.2, 83.622], "status": "certain", "dominance": "sat"},
+
+    {"name": "0k", "bin": "23m", "angles": [149.07, 249.78, 111.52, 278.37, 207.78, 287.82, 86.65], "status": "wannabe", "dominance": "ord"},
+
+    {"name": "2[", "bin": "22p", "angles": [146.383, 259.402, 291.275, 291.982, 210.048, 54.412, 147.76], "status": "certain", "dominance": "ord"},
+    {"name": "4b", "bin": "22p", "angles": [145.256, 244.622, 162.822, 294.159, 171.63, 45.9, 145.804], "status": "certain", "dominance": "ord"},
+    {"name": "0b", "bin": "22p", "angles": [147.593, 248.421, 112.086, 274.943, 164.764, 56.843, 146.264], "status": "certain", "dominance": "ord"},
+    {"name": "4p", "bin": "22p", "angles": [150.077, 260.246, 213.785, 71.9, 207.638, 56.715, 148.131], "status": "certain", "dominance": "ord"},
+    {"name": "6p", "bin": "22p", "angles": [146.415, 257.831, 89.597, 67.923, 173.051, 55.513, 147.623], "status": "certain", "dominance": "ord"},
+    {"name": "2z", "bin": "22p", "angles": [142.9, 236.55, 268.8, 180.783, 185.133, 54.467, 143.35], "status": "wannabe", "dominance": "ord"},
+
+    {"name": "4s", "bin": "22t", "angles": [149.863, 247.562, 170.488, 277.938, 84.425, 176.413, 148.087], "status": "certain", "dominance": "ord"},
+    {"name": "2u", "bin": "22t", "angles": [143.94, 258.2, 298.24, 279.64, 183.68, 183.08, 145.12], "status": "wannabe", "dominance": "ord"},
+
+    {"name": "2o", "bin": "22m", "angles": [147.342, 256.475, 295.508, 287.408, 194.525, 293.725, 150.458], "status": "certain", "dominance": "ord"}
+  ],
+  "satellite_overrides": {
+    "1m": {"sat_widths": [0, 0, 0, 0, 32, 0, 0], "dom_widths": [0, 0, 0, 0, 64, 0, 0]},
+    "1L": {"sat_widths": [0, 18, 0, 0, 18, 0, 0], "dom_widths": [0, 70, 0, 0, 70, 0, 0]},
+    "&a": {"sat_widths": [0, 20, 20, 0, 0, 0, 0], "dom_widths": [0, 60, 60, 0, 0, 0, 0]},
+    "1f": {"sat_widths": [0, 0, 0, 0, 47, 0, 0], "dom_widths": [0, 0, 0, 0, 65, 0, 0]},
+    "1[": {"sat_widths": [0, 0, 0, 0, 34, 0, 0], "dom_widths": [0, 0, 0, 0, 56, 0, 0]},
+    "4a": {"sat_widths": [0, 40, 40, 0, 0, 0, 0], "dom_widths": [0, 50, 50, 0, 0, 0, 0]},
+    "#a": {"sat_widths": [0, 26, 26, 0, 0, 0, 0], "dom_widths": [0, 36, 36, 0, 0, 0, 0]},
+    "0i": {"sat_widths": [0, 0, 0, 0, 60, 0, 0], "dom_widths": [0, 0, 0, 0, 60, 0, 0]},
+    "6j": {"sat_widths": [0, 0, 0, 0, 60, 0, 0], "dom_widths": [0, 0, 0, 0, 60, 0, 0]}
+  }
+}

@@ -1,0 +1,2572 @@
+{
+  "description": "Registry of nucleotide properties for X3DNA",
+  "version": "3.1",
+  "date": "2025-12-21",
+  "notes": [
+    "This file replaces the legacy baselist.dat file from X3DNA v2.4.",
+    "The baselist.dat file is no longer used by modern code.",
+    "All nucleotide type mappings (3-letter code to 1-letter code) are now in this file."
+  ],
+  "modified_nucleotides": {
+    "standard_nucleotides": {
+      "A": {
+        "code": "A",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "Adenosine (RNA)"
+      },
+      "ADE": {
+        "code": "A",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "Adenosine (alternate name)"
+      },
+      "C": {
+        "code": "C",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "Cytidine (RNA)"
+      },
+      "CYT": {
+        "code": "C",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "Cytidine (alternate name)"
+      },
+      "G": {
+        "code": "G",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Guanosine (RNA)"
+      },
+      "GUA": {
+        "code": "G",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Guanosine (alternate name)"
+      },
+      "U": {
+        "code": "U",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "Uridine (RNA)"
+      },
+      "URA": {
+        "code": "U",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "Uridine (alternate name)"
+      },
+      "DA": {
+        "code": "A",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "Deoxyadenosine (DNA)"
+      },
+      "DC": {
+        "code": "C",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "Deoxycytidine (DNA)"
+      },
+      "DG": {
+        "code": "G",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Deoxyguanosine (DNA)"
+      },
+      "DT": {
+        "code": "T",
+        "type": "THYMINE",
+        "is_purine": false,
+        "description": "Deoxythymidine (DNA)"
+      },
+      "T": {
+        "code": "T",
+        "type": "THYMINE",
+        "is_purine": false,
+        "description": "Thymidine"
+      },
+      "THY": {
+        "code": "T",
+        "type": "THYMINE",
+        "is_purine": false,
+        "description": "Thymidine (alternate name)"
+      },
+      "DU": {
+        "code": "U",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "Deoxyuridine (DNA)"
+      },
+      "I": {
+        "code": "I",
+        "type": "INOSINE",
+        "is_purine": true,
+        "description": "Inosine"
+      },
+      "INO": {
+        "code": "I",
+        "type": "INOSINE",
+        "is_purine": true,
+        "description": "Inosine (alternate name)"
+      },
+      "P": {
+        "code": "P",
+        "type": "PSEUDOURIDINE",
+        "is_purine": false,
+        "description": "Pseudouridine"
+      },
+      "PSU": {
+        "code": "P",
+        "type": "PSEUDOURIDINE",
+        "is_purine": false,
+        "description": "Pseudouridine (alternate name)"
+      }
+    },
+    "modified_adenines": {
+      "A2M": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "2-methyladenosine"
+      },
+      "M7A": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "7-methyladenosine (legacy uses lowercase a)"
+      },
+      "1MA": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "1-methyladenosine"
+      },
+      "2MA": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "2-methyladenosine"
+      },
+      "OMA": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "O-methyladenosine"
+      },
+      "6MA": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "N6-methyladenosine"
+      },
+      "MIA": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "2-methylthio-N6-isopentenyladenosine"
+      },
+      "I6A": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "N6-isopentenyladenosine"
+      },
+      "T6A": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "N6-threonylcarbamoyladenosine"
+      },
+      "M6A": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "N6-methyladenosine"
+      },
+      "LCA": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "Locked adenosine (LNA)"
+      },
+      "A23": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "2'-deoxy-2'-fluoroadenosine"
+      },
+      "ATP": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "Adenosine triphosphate"
+      },
+      "ADP": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "Adenosine diphosphate"
+      },
+      "AMP": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "Adenosine monophosphate"
+      },
+      "SAM": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "S-adenosylmethionine"
+      },
+      "SAH": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "S-adenosylhomocysteine"
+      },
+      "APC": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "Adenosine phosphate carrier"
+      },
+      "AF2": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "Modified adenosine"
+      },
+      "0A": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "Numbered adenine variant"
+      },
+      "2BA": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "2'-O-boranophosphate adenosine"
+      },
+      "ANP": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "Phosphoaminophosphonic acid-adenylate ester"
+      },
+      "P5P": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "Pyridoxal-5'-phosphate"
+      },
+      "DTP": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "2'-deoxyadenosine-5'-triphosphate"
+      },
+      "A44": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "Modified adenine 44"
+      },
+      "5AD": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "5'-adenosine"
+      },
+      "SFG": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "Sinefungin"
+      },
+      "TSB": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "Toyocamycin"
+      },
+      "LSS": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "L-selenomethionine substituted"
+      },
+      "MTA": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "5'-methylthioadenosine"
+      },
+      "ZAN": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "Azaadenosine"
+      },
+      "ADN": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "Adenosine"
+      },
+      "6HA": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "6-hydrazinyl adenine"
+      },
+      "GSU": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "Guanosine analog"
+      },
+      "F7O": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "Fluoro adenine derivative"
+      },
+      "3AT": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "3-aminotriazole adenine"
+      },
+      "QSI": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "Adenine analog"
+      },
+      "VAA": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "Vidarabine"
+      },
+      "6AP": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "6-aminopurine"
+      },
+      "2AD": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "2'-deoxyadenosine"
+      },
+      "N6G": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "N6-modified adenine"
+      },
+      "1DP": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "1-deazapurine adenine"
+      },
+      "A5A": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "Adenine 5'-phosphate analog"
+      },
+      "ILA": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "Isoadenosine"
+      },
+      "VRT": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "Viramidine adenine"
+      },
+      "F6U": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "Fluoro adenine"
+      },
+      "ZAD": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "Aza-adenosine derivative"
+      },
+      "DZ4": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "Deaza adenine"
+      },
+      "AMO": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "Adenine amino analog"
+      },
+      "AVC": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "Adenosine-vanadyl complex"
+      },
+      "A7E": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "7-deaza-adenosine"
+      },
+      "7AT": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "7-aminotriazole adenine"
+      },
+      "A7C": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "7-deaza-adenine cytosine"
+      },
+      "W5Y": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "Modified adenine"
+      },
+      "QSQ": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "Adenine analog"
+      },
+      "PU": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "Purine"
+      },
+      "12A": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "1,2-diaminopurine"
+      },
+      "AET": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "Adenine ethyl"
+      },
+      "RIA": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "Riboadenosine"
+      },
+      "YMP": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "Yeast adenine"
+      },
+      "FYA": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "Formycin A"
+      },
+      "EEM": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "Etheno-adenine"
+      },
+      "A2F": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "2'-fluoro-adenosine"
+      },
+      "XAR": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "Xanthine-adenine hybrid"
+      },
+      "2IA": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "2-iodo-adenosine"
+      },
+      "AT7": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "7-deaza-ATP"
+      },
+      "SSA": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "Sinefungin analog"
+      },
+      "574": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "Adenine derivative 574"
+      },
+      "DJF": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "Deazaformycin"
+      },
+      "365": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "Adenine derivative 365"
+      },
+      "F2A": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "2-fluoro-adenosine"
+      },
+      "2RW": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "2-ribo-adenine"
+      },
+      "45A": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "4,5-substituted adenine"
+      },
+      "ADS": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "Adenosine sulfate"
+      },
+      "8B4": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "8-bromo-adenosine"
+      },
+      "PPS": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "Phosphoryl-adenine"
+      },
+      "XNY": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "Xanthine-adenine"
+      },
+      "9SY": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "9-substituted adenine"
+      },
+      "7RZ": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "7-ribo-adenine"
+      },
+      "AR6": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "Arabinosyl adenine"
+      },
+      "6MZ": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "N6-methyl-zeatin"
+      },
+      "A6A": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "N6-acetyl-adenine"
+      },
+      "GAP": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "Glyceraldehyde-3-phosphate adenine"
+      },
+      "CVC": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "Cyclopentyl adenine"
+      },
+      "APN": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "Adenosine-5'-phosphoramidate"
+      },
+      "9YN": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "9-yne adenine"
+      },
+      "4DU": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "4-deoxy adenine"
+      },
+      "E7X": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "Etheno-7-deaza adenine"
+      },
+      "6NW": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "N6-modified adenine"
+      },
+      "DSH": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "Deoxyadenosine-SH"
+      },
+      "08T": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "8-thio adenine"
+      },
+      "GAO": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "Guanosine-adenine overlap"
+      },
+      "9SI": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "9-substituted-isoadenosine"
+      },
+      "LMS": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "L-methionine-S-adenosyl"
+      },
+      "84T": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "8,4-dithio adenine"
+      },
+      "N79": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "N7,9-adenine"
+      },
+      "V5A": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "5'-vanado adenine"
+      },
+      "P5A": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "5'-phospho adenine"
+      },
+      "GOM": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "Guanosine-O-methyl adenine"
+      },
+      "MSP": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "Methylthio-adenine"
+      },
+      "6IA": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "N6-isopentenyl-adenine"
+      },
+      "ANZ": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "Aza-adenosine"
+      },
+      "3AD": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "3-deaza-adenosine"
+      },
+      "N6M": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "N6-methyl adenine"
+      },
+      "ZJS": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "Z-junction adenosine"
+      },
+      "3DA": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "3-deazaadenosine"
+      },
+      "6MD": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "N6-methyl-deoxyadenosine"
+      },
+      "4BW": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "4-substituted adenosine"
+      },
+      "AS": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "Arsenical adenosine"
+      },
+      "2DA": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "2'-deoxyadenosine"
+      },
+      "5AA": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "5-aminoallyl-2'-deoxyuridine converted to adenine"
+      },
+      "8AN": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "8-aminoadenosine"
+      },
+      "MA6": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "N6-dimethyladenosine"
+      },
+      "PPU": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "Puromycin"
+      },
+      "PUY": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "Puromycin aminonucleoside"
+      },
+      "31M": {
+        "code": "a",
+        "type": "ADENINE",
+        "is_purine": true,
+        "description": "3-(3-amino-3-carboxypropyl)-1-methyladenosine"
+      }
+    },
+    "modified_guanines": {
+      "OMG": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "O-methylguanosine"
+      },
+      "GCP": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "5'-cytidyl-guanosine monophosphate"
+      },
+      "1MG": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "1-methylguanosine"
+      },
+      "2MG": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "2-methylguanosine"
+      },
+      "7MG": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "7-methylguanosine"
+      },
+      "M2G": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "N2-methylguanosine"
+      },
+      "YYG": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Modified guanosine"
+      },
+      "YG": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Modified guanosine"
+      },
+      "QUO": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Queuosine"
+      },
+      "LCG": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Locked guanosine (LNA)"
+      },
+      "GTP": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Guanosine triphosphate"
+      },
+      "GDP": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Guanosine diphosphate"
+      },
+      "5GP": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "5'-guanosine monophosphate"
+      },
+      "PRF": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Prefluorinated guanine"
+      },
+      "BGM": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Beta-D-glucosyl-guanine"
+      },
+      "G48": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Modified guanine"
+      },
+      "0G": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Numbered guanine variant"
+      },
+      "IGU": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Isoguanosine"
+      },
+      "DGP": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Deoxyguanosine phosphate"
+      },
+      "9DG": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "9-deazaguanine (legacy incorrectly maps to U)"
+      },
+      "G7M": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "N7-methyl-guanosine-5'-monophosphate"
+      },
+      "2PR": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "2-pyridyl ribose guanine"
+      },
+      "23G": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "2,3-dihydro-guanine"
+      },
+      "GNP": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "5'-guanylyl imidodiphosphate"
+      },
+      "GF2": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "2'-fluoro-guanosine"
+      },
+      "G46": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Modified guanine 46"
+      },
+      "GNG": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Guanine-N-glycoside"
+      },
+      "8AZ": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "8-azaguanine"
+      },
+      "DGT": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "2'-deoxyguanosine-5'-triphosphate"
+      },
+      "G2P": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Guanosine-2'-phosphate"
+      },
+      "C2E": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "C2-etheno guanine"
+      },
+      "GMP": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Guanosine monophosphate"
+      },
+      "HPA": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Hypoxanthine-guanine analog"
+      },
+      "A6G": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "N6-acetyl guanine"
+      },
+      "XAN": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Xanthosine"
+      },
+      "GRB": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Guanine-ribose"
+      },
+      "TG": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Thioguanine"
+      },
+      "GPN": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Guanosine-5'-phosphoramidate"
+      },
+      "GH3": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "3-hydrazino guanine"
+      },
+      "MTU": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Methylthio-guanine"
+      },
+      "XG4": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Xanthine-guanine 4"
+      },
+      "SDG": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "7-deaza-8-aza guanine"
+      },
+      "XGR": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Xanthine-guanine ribose"
+      },
+      "DX4": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "4-deoxy guanine"
+      },
+      "GDO": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Guanosine-diol"
+      },
+      "Q61": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Queosine-61"
+      },
+      "F73": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "7,3-fluoro guanine"
+      },
+      "F7U": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "7-fluoro guanine"
+      },
+      "7SN": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "7-thio-N guanine"
+      },
+      "7S3": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "7-thio-3 guanine"
+      },
+      "6GU": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "6-modified guanine"
+      },
+      "7DG": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "7-deaza-guanine"
+      },
+      "G5J": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Guanine 5'-J modified"
+      },
+      "AT9": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "9-amino guanine"
+      },
+      "G47": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Modified guanine 47"
+      },
+      "VSN": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Vanadyl-guanine"
+      },
+      "PGP": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Phosphoguanosine-phosphate"
+      },
+      "5CG": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "5-cyano-guanine"
+      },
+      "XUG": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Xanthine-uracil-guanine"
+      },
+      "6GO": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "6-oxo guanine"
+      },
+      "0DG": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "8-oxo-deoxyguanosine"
+      },
+      "8OG": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "8-oxo-guanosine"
+      },
+      "Q1V": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Queosine variant"
+      },
+      "ANG": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Angustmycin guanine"
+      },
+      "GMX": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Guanosine-mixed"
+      },
+      "RFJ": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Ribofuranosyl guanine"
+      },
+      "GT3": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Guanine-3'-phosphate"
+      },
+      "AZA": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Azaguanine"
+      },
+      "GFL": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Guanine-fluoro"
+      },
+      "HYJ": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Hydroxy guanine"
+      },
+      "TEP": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Tetrahydropyran guanine"
+      },
+      "MGT": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Methyl-guanine-thio"
+      },
+      "PQ1": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Phosphoqueuosine"
+      },
+      "2BP": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "2-bromo-purine"
+      },
+      "PQ0": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Pre-queosine"
+      },
+      "PGN": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Phospho-guanine"
+      },
+      "56B": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "5,6-dihydro guanine"
+      },
+      "HNG": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Hydroxy-N guanine"
+      },
+      "MGP": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Methyl-guanosine-phosphate"
+      },
+      "MG7": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "7-methyl-guanine"
+      },
+      "CMG": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Carboxy-methyl guanine"
+      },
+      "RVP": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Ribavirin-phosphate guanine"
+      },
+      "2SG": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "2-thio-guanine"
+      },
+      "VC7": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Vanadyl-C7 guanine"
+      },
+      "EQ0": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Epoxyqueosine"
+      },
+      "XMP": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Xanthosine monophosphate"
+      },
+      "141": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Guanine derivative 141"
+      },
+      "DDG": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Di-deoxy-guanine"
+      },
+      "AZG": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "8-aza-guanine"
+      },
+      "G2L": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Guanine-2'-locked"
+      },
+      "GUN": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Guanine-urea-N"
+      },
+      "F7X": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "7-fluoro-xanthine guanine"
+      },
+      "M7G": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "7-methylguanosine"
+      },
+      "G4P": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Guanine-4-phosphate"
+      },
+      "GTA": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Guanine-triacetate"
+      },
+      "6HG": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "6-hydrazino-guanosine"
+      },
+      "DG3": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "2'-deoxyguanosine-3'-phosphate"
+      },
+      "GAO": {
+        "code": "g",
+        "type": "GUANINE",
+        "is_purine": true,
+        "description": "Guanylate-O-adenosine (legacy uses g)"
+      }
+    },
+    "inosines": {
+      "IMP": {
+        "code": "I",
+        "type": "INOSINE",
+        "is_purine": true,
+        "description": "Inosine monophosphate (fixed: should be purine)"
+      },
+      "DI": {
+        "code": "I",
+        "type": "INOSINE",
+        "is_purine": true,
+        "description": "2'-deoxyinosine (uses Atomic_I.pdb template)"
+      },
+      "I": {
+        "code": "I",
+        "type": "INOSINE",
+        "is_purine": true,
+        "description": "Inosine"
+      }
+    },
+    "modified_cytosines": {
+      "5MC": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "5-methylcytidine"
+      },
+      "BLS": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "Beta-L-arabinofuranosylcytosine (blasticidin S cytosine)"
+      },
+      "OMC": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "O-methylcytidine"
+      },
+      "S4C": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "4-thiocytidine"
+      },
+      "5IC": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "5-iodocytidine"
+      },
+      "5FC": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "5-fluorocytidine"
+      },
+      "CBR": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "5-bromocytidine"
+      },
+      "LCC": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "Locked cytosine (LNA)"
+      },
+      "EPE": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "Modified cytosine analog"
+      },
+      "2YR": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "2'-O-ribosylcytidine"
+      },
+      "CTP": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "Cytidine triphosphate"
+      },
+      "CSL": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "Modified cytosine"
+      },
+      "CBV": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "Carbovir"
+      },
+      "CCC": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "Modified cytosine"
+      },
+      "CFZ": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "Modified cytosine"
+      },
+      "C43": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "Modified cytosine"
+      },
+      "A6C": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "N6-acetyl-cytosine"
+      },
+      "CFL": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "Modified cytosine"
+      },
+      "RSQ": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "R-squared cytosine"
+      },
+      "0C": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "Numbered cytosine variant"
+      },
+      "LKC": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "Locked cytosine"
+      },
+      "6HC": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "6-hydrazino cytosine"
+      },
+      "4AC": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "4-acetyl cytosine"
+      },
+      "SC": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "Thio-cytosine"
+      },
+      "F7R": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "7-fluoro-ribose cytosine"
+      },
+      "A5M": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "5-amino-methyl cytosine"
+      },
+      "CH1": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "Cytosine-H1"
+      },
+      "DOC": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "Deoxy-cytosine"
+      },
+      "2TM": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "2-thio-methyl cytosine"
+      },
+      "5CF": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "5-carboxy-fluoro cytosine"
+      },
+      "DCP": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "2'-deoxycytidine-5'-phosphate"
+      },
+      "C5P": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "Cytidine-5'-phosphate"
+      },
+      "O2C": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "O2-methyl cytosine"
+      },
+      "CPN": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "Cytosine-phosphoramidate"
+      },
+      "LV2": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "LNA-v2 cytosine"
+      },
+      "F6X": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "6-fluoro cytosine"
+      },
+      "B8T": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "8-bromo cytosine analog"
+      },
+      "NCU": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "N-cyano cytosine"
+      },
+      "CDP": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "Cytidine diphosphate"
+      },
+      "73W": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "7,3-modified cytosine"
+      },
+      "C5L": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "C5-locked cytosine"
+      },
+      "IKS": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "Inosine-ketone cytosine"
+      },
+      "6OO": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "6-oxo cytosine"
+      },
+      "UZL": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "Urazole cytosine"
+      },
+      "OKQ": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "Oxo-queosine cytosine"
+      },
+      "CAR": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "Carbocyclic cytosine"
+      },
+      "M5M": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "5-methyl-2'-O-methyl cytosine"
+      },
+      "1SC": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "1-thio cytosine"
+      },
+      "N5M": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "N5-methyl cytosine"
+      },
+      "N5C": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "N5-cyano cytosine"
+      },
+      "CSG": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "Cytosine-sugar"
+      },
+      "XCR": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "Xanthine-cytosine-ribose"
+      },
+      "0DC": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "8-oxo-deoxycytosine"
+      },
+      "1CC": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "1-carboxyl cytosine"
+      },
+      "5HM": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "5-hydroxymethyl cytosine"
+      },
+      "N7X": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "N7-xanthine cytosine"
+      },
+      "QSK": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "Queosine-ketone cytosine"
+      },
+      "1W5": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "1-W5 cytosine"
+      },
+      "7OK": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "7-oxo-ketone cytosine"
+      },
+      "16B": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "16-bromo cytosine"
+      },
+      "4OC": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "4-oxo cytosine"
+      },
+      "JMH": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "J-methyl cytosine"
+      },
+      "C7R": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "C7-ribose cytosine"
+      },
+      "DZ": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "Deaza-cytosine"
+      },
+      "RY": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "Ribo-cytosine"
+      },
+      "5CM": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "5-carboxymethyl-cytidine"
+      },
+      "DCT": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "2'-deoxycytidine-5'-triphosphate"
+      },
+      "6FC": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "6-fluoro-cytidine"
+      },
+      "DCZ": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "2'-deoxy-5-methylisocytidine"
+      },
+      "RSP": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "Ribavirin-5'-phosphate"
+      },
+      "LHH": {
+        "code": "c",
+        "type": "CYTOSINE",
+        "is_purine": false,
+        "description": "1-[(2R,3R,4R,5R)-3,4-dihydroxy-5-(hydroxymethyl)oxolan-2-yl]pyrimidin-2-one"
+      }
+    },
+    "modified_thymines": {
+      "5MU": {
+        "code": "t",
+        "type": "THYMINE",
+        "is_purine": false,
+        "description": "5-methyluridine (ribothymidine)"
+      },
+      "RT": {
+        "code": "t",
+        "type": "THYMINE",
+        "is_purine": false,
+        "description": "Ribothymidine"
+      },
+      "PLR": {
+        "code": "t",
+        "type": "THYMINE",
+        "is_purine": false,
+        "description": "Propyl-ribose thymine"
+      },
+      "TTP": {
+        "code": "t",
+        "type": "THYMINE",
+        "is_purine": false,
+        "description": "Thymidine-5'-triphosphate"
+      },
+      "US3": {
+        "code": "t",
+        "type": "THYMINE",
+        "is_purine": false,
+        "description": "5-methyl-2'-deoxyuridine"
+      },
+      "ZTH": {
+        "code": "t",
+        "type": "THYMINE",
+        "is_purine": false,
+        "description": "Azido-thymidine"
+      },
+      "NTT": {
+        "code": "t",
+        "type": "THYMINE",
+        "is_purine": false,
+        "description": "N-thio thymidine"
+      },
+      "U5R": {
+        "code": "t",
+        "type": "THYMINE",
+        "is_purine": false,
+        "description": "5-ribosyl uridine-thymine"
+      },
+      "TTD": {
+        "code": "t",
+        "type": "THYMINE",
+        "is_purine": false,
+        "description": "Thymidine-5'-diphosphate"
+      },
+      "PST": {
+        "code": "t",
+        "type": "THYMINE",
+        "is_purine": false,
+        "description": "Phosphorothioate thymidine"
+      },
+      "6HT": {
+        "code": "t",
+        "type": "THYMINE",
+        "is_purine": false,
+        "description": "6-hydrazino thymine"
+      },
+      "FMU": {
+        "code": "t",
+        "type": "THYMINE",
+        "is_purine": false,
+        "description": "5-formyl-2'-O-methyl uridine"
+      },
+      "U5M": {
+        "code": "t",
+        "type": "THYMINE",
+        "is_purine": false,
+        "description": "5-methyl uridine"
+      },
+      "TPN": {
+        "code": "t",
+        "type": "THYMINE",
+        "is_purine": false,
+        "description": "Thymidine-phosphoramidate"
+      },
+      "8RJ": {
+        "code": "t",
+        "type": "THYMINE",
+        "is_purine": false,
+        "description": "8-ribosyl thymine"
+      },
+      "MUM": {
+        "code": "t",
+        "type": "THYMINE",
+        "is_purine": false,
+        "description": "5-methyl-uridine-modified"
+      },
+      "ATD": {
+        "code": "t",
+        "type": "THYMINE",
+        "is_purine": false,
+        "description": "Arabino-thymidine"
+      },
+      "T2T": {
+        "code": "t",
+        "type": "THYMINE",
+        "is_purine": false,
+        "description": "2'-thio-thymidine"
+      },
+      "XTR": {
+        "code": "t",
+        "type": "THYMINE",
+        "is_purine": false,
+        "description": "Xanthine-thymine-ribose"
+      },
+      "TT": {
+        "code": "t",
+        "type": "THYMINE",
+        "is_purine": false,
+        "description": "Thymidine"
+      },
+      "6F7": {
+        "code": "t",
+        "type": "THYMINE",
+        "is_purine": false,
+        "description": "6-fluoro-7 thymine"
+      },
+      "05K": {
+        "code": "t",
+        "type": "THYMINE",
+        "is_purine": false,
+        "description": "5-ketone thymine"
+      },
+      "05H": {
+        "code": "t",
+        "type": "THYMINE",
+        "is_purine": false,
+        "description": "5-hydroxy thymine"
+      },
+      "D3T": {
+        "code": "t",
+        "type": "THYMINE",
+        "is_purine": false,
+        "description": "3'-deoxy-thymidine"
+      },
+      "T39": {
+        "code": "t",
+        "type": "THYMINE",
+        "is_purine": false,
+        "description": "3,9-dihydro thymine"
+      },
+      "TM2": {
+        "code": "t",
+        "type": "THYMINE",
+        "is_purine": false,
+        "description": "2'-O-methyl-5-methyluridine"
+      }
+    },
+    "modified_uracils": {
+      "CM0": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "5-(carboxymethoxy) uridine-5'-monophosphate"
+      },
+      "MNU": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "2'-O-methyluridine (5'-monophosphate)"
+      },
+      "JSP": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "Complex pyrimidine derivative, treated as modified uracil"
+      },
+      "70U": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "7-methyluridine"
+      },
+      "H2U": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "Dihydrouridine"
+      },
+      "DHU": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "Dihydrouridine"
+      },
+      "OMU": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "O-methyluridine"
+      },
+      "4SU": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "4-thiouridine"
+      },
+      "S4U": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "4-thiouridine"
+      },
+      "5BU": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "5-bromouridine"
+      },
+      "2MU": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "2-methyluridine"
+      },
+      "UR3": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "Modified uridine"
+      },
+      "TLN": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "Thymidine LNA"
+      },
+      "J48": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "Hypermodified nucleotide (wybutosine precursor)"
+      },
+      "NMN": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "Nicotinamide mononucleotide"
+      },
+      "NNR": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "Nicotinamide riboside"
+      },
+      "WVQ": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "Modified uracil"
+      },
+      "US5": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "5-hydroxymethyluridine"
+      },
+      "UTP": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "Uridine triphosphate"
+      },
+      "UFT": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "Modified uracil"
+      },
+      "0U": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "Numbered uracil variant"
+      },
+      "KIR": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "Kinetin riboside"
+      },
+      "1RN": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "Thiouridine (S2 instead of O2)"
+      },
+      "SSU": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "4-thio-uridine"
+      },
+      "BRU": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "5-bromo-uridine"
+      },
+      "IU": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "5-iodo-uridine"
+      },
+      "UMS": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "2'-O-methyl-5-selenouridine"
+      },
+      "Y5P": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "5'-phospho-uridine"
+      },
+      "RUS": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "5-methoxy-uridine"
+      },
+      "A6U": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "N6-acetyl uridine"
+      },
+      "U36": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "Modified uridine 36"
+      },
+      "2KH": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "2-keto-hydroxyl uridine"
+      },
+      "SUR": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "Seleno-uridine"
+      },
+      "4PC": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "4-pyridyl-carboxy uridine"
+      },
+      "UFB": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "5-fluoro-uridine B"
+      },
+      "UOB": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "2'-O-benzyl uridine"
+      },
+      "NF2": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "N2-fluoro uridine"
+      },
+      "3KA": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "3-keto-arabino uridine"
+      },
+      "LLP": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "Locked uridine phosphate"
+      },
+      "U33": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "Modified uridine 33"
+      },
+      "URU": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "Pseudouridine variant"
+      },
+      "XEC": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "Xanthine-ethyl uridine"
+      },
+      "UFP": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "Uridine-5'-phosphate"
+      },
+      "U5P": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "Uridine-5'-phosphate alt"
+      },
+      "6GS": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "6-thio-guanine uridine"
+      },
+      "T5S": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "5-thio uridine"
+      },
+      "UMO": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "2'-O-methyl uridine"
+      },
+      "U31": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "Modified uridine 31"
+      },
+      "UCL": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "5-chloro-uridine"
+      },
+      "PYO": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "Pyrazolo-uridine"
+      },
+      "5FU": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "5-fluoro-uracil"
+      },
+      "ONE": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "1-methyl uridine"
+      },
+      "5IU": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "5-iodo-uridine"
+      },
+      "2QB": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "2-quinoline uridine"
+      },
+      "6FU": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "6-fluoro-uridine"
+      },
+      "75B": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "7,5-bromo uridine"
+      },
+      "U4M": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "4-methyl-uridine"
+      },
+      "UOA": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "Uridine-O-acetyl"
+      },
+      "U23": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "2,3-dihydro uridine"
+      },
+      "L2B": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "L2-bromo uridine"
+      },
+      "ILK": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "Inosine-locked uridine"
+      },
+      "WSB": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "5-taurinomethyl-2-thiouridine"
+      },
+      "HHU": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "Hydroxy-hydroxymethyl uridine"
+      },
+      "HHX": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "Hydroxymethyl-hydroxyl uridine"
+      },
+      "U3H": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "3-hydrazino uridine"
+      },
+      "UBB": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "5-bromo-2'-deoxyuridine"
+      },
+      "UD5": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "5'-deoxy uridine"
+      },
+      "3AY": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "3-aminopropyl uridine"
+      },
+      "2AU": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "2-amino uridine"
+      },
+      "DUT": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "2'-deoxyuridine-5'-phosphate"
+      },
+      "UZR": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "Urazole uridine"
+      },
+      "29G": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "2,9-dihydro uridine"
+      },
+      "29H": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "2,9-dihydroxy uridine"
+      },
+      "0U1": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "8-oxo-uridine"
+      },
+      "5GS": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "5-thio uridine"
+      },
+      "UBD": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "Uridine-bromo-deoxy"
+      },
+      "URI": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "Uridine"
+      },
+      "NCA": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "N-cyano uridine"
+      },
+      "9QV": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "9-queosine variant uridine"
+      },
+      "3AU": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "3-amino uridine"
+      },
+      "UDP": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "Uridine-5'-diphosphate"
+      },
+      "9DG": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "9-deazaguanine (legacy maps to u)"
+      },
+      "N": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "Unknown nucleotide (poly-N, often used for unresolved RNA)"
+      }
+    },
+    "pseudouridines": {
+      "B8H": {
+        "code": "p",
+        "type": "PSEUDOURIDINE",
+        "is_purine": false,
+        "description": "Pseudouridine derivative (legacy uses lowercase p)"
+      },
+      "UY1": {
+        "code": "p",
+        "type": "PSEUDOURIDINE",
+        "is_purine": false,
+        "description": "Pseudouridine derivative (legacy uses lowercase p)"
+      },
+      "FHU": {
+        "code": "p",
+        "type": "PSEUDOURIDINE",
+        "is_purine": false,
+        "description": "5-formyl-pseudouridine (legacy uses lowercase p)"
+      },
+      "I2T": {
+        "code": "p",
+        "type": "PSEUDOURIDINE",
+        "is_purine": false,
+        "description": "5-iodo-2-thiouridine (pseudouridine analog, legacy uses lowercase p)"
+      },
+      "M1Y": {
+        "code": "p",
+        "type": "PSEUDOURIDINE",
+        "is_purine": false,
+        "description": "1-methylpseudouridine (legacy uses lowercase p)"
+      },
+      "C4J": {
+        "code": "p",
+        "type": "PSEUDOURIDINE",
+        "is_purine": false,
+        "description": "5-carboxymethyl-pseudouridine (legacy uses lowercase p)"
+      },
+      "B8N": {
+        "code": "p",
+        "type": "PSEUDOURIDINE",
+        "is_purine": false,
+        "description": "Pseudouridine derivative (legacy uses lowercase p)"
+      },
+      "3TD": {
+        "code": "u",
+        "type": "URACIL",
+        "is_purine": false,
+        "description": "3-methylpseudouridine (legacy maps to u)"
+      }
+    }
+  }
+}

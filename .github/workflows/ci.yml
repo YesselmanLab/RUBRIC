@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install CMake >= 3.28
+        run: pip install cmake --upgrade
+
+      - name: Cache GEMMI (FetchContent)
+        uses: actions/cache@v4
+        with:
+          path: build/_deps
+          # GEMMI's subbuild bakes the absolute build path into its CMakeCache,
+          # so the cache is tied to the repo's checkout path. Bump the version
+          # token below (v2, v3, ...) whenever the repo is renamed/moved to drop
+          # the stale cache; otherwise CMake aborts with a path-mismatch error.
+          key: gemmi-v2-${{ matrix.os }}-${{ hashFiles('CMakeLists.txt') }}
+
+      - name: Configure
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build build -j
+
+      - name: Fetch and run on real RNA (1GID)
+        run: |
+          ./build/parse 1GID > 1GID.json
+          python3 -c "
+          import json, sys
+          d = json.load(open('1GID.json'))
+          n = d['n_pairs']
+          print(f'1GID: {n} pairs selected, pairs_score={d[\"pairs_score\"]}, backbone_suiteness={d[\"backbone_suiteness\"]}')
+          assert n > 0, 'expected pairs but got 0'
+          print('OK')
+          "
