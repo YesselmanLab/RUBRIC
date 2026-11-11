@@ -1,26 +1,25 @@
-REMARK   1 Idealized base pair: U-C-tWW
-REMARK   2 LW classification: tWW
-REMARK   3 Sequence: UC
-REMARK   4 Based on exemplar: 1S72
-REMARK   5 All atoms in z=0 plane (perfectly planar)
-REMARK   6 H-bonds optimized:
-REMARK   7   N4-O2: 2.90 A (ideal: 2.90)
-ATOM      1  C1'   U A   1      -2.481   5.354   0.000  1.00  0.00            C
-ATOM      2  C2    U A   1      -1.462   3.131   0.000  1.00  0.00            C
-ATOM      3  C4    U A   1       0.989   2.884   0.000  1.00  0.00            C
-ATOM      4  C5    U A   1       1.089   4.311   0.000  1.00  0.00            C
-ATOM      5  C6    U A   1      -0.024   5.053   0.000  1.00  0.00            C
-ATOM      6  N1    U A   1      -1.284   4.500   0.000  1.00  0.00            N
-ATOM      7  N3    U A   1      -0.302   2.397   0.000  1.00  0.00            N
-ATOM      8  O2    U A   1      -2.563   2.608   0.000  1.00  0.00            O
-ATOM      9  O4    U A   1       1.935   2.094  -0.001  1.00  0.00            O
-ATOM     10  C1'   C B   2      -2.836  -5.407   0.000  1.00  0.00            C
-ATOM     11  C2    C B   2      -4.371  -3.487   0.000  1.00  0.00            C
-ATOM     12  C4    C B   2      -3.572  -1.301   0.000  1.00  0.00            C
-ATOM     13  C5    C B   2      -2.221  -1.750   0.000  1.00  0.00            C
-ATOM     14  C6    C B   2      -2.010  -3.073   0.000  1.00  0.00            C
-ATOM     15  N1    C B   2      -3.055  -3.954   0.000  1.00  0.00            N
-ATOM     16  N3    C B   2      -4.600  -2.153   0.000  1.00  0.00            N
-ATOM     17  N4    C B   2      -3.845   0.007   0.000  1.00  0.00            N
-ATOM     18  O2    C B   2      -5.300  -4.309   0.000  1.00  0.00            O
+REMARK   1 Template: U-C-tWW
+REMARK   2 Tier 1: six of six
+REMARK   3 Pairs: 38; median RMSD to mean shape 0.11 A
+REMARK   7   N3-N3: 3.01 A (present in most consensus pairs)
+REMARK   7   N3-O2: 3.37 A (present in most consensus pairs)
+REMARK   7   N4-O2: 2.93 A (present in most consensus pairs)
+ATOM      1  C1'   U A   1     168.770 222.649 215.248  1.00  0.00           C
+ATOM      2  N1    U A   1     168.152 221.603 214.432  1.00  0.00           N
+ATOM      3  C2    U A   1     168.288 221.606 213.057  1.00  0.00           C
+ATOM      4  O2    U A   1     168.890 222.441 212.430  1.00  0.00           O
+ATOM      5  N3    U A   1     167.659 220.574 212.421  1.00  0.00           N
+ATOM      6  C4    U A   1     166.934 219.563 213.006  1.00  0.00           C
+ATOM      7  O4    U A   1     166.431 218.705 212.309  1.00  0.00           O
+ATOM      8  C5    U A   1     166.839 219.630 214.420  1.00  0.00           C
+ATOM      9  C6    U A   1     167.444 220.621 215.066  1.00  0.00           C
+ATOM     10  C1'   C B   2     166.951 219.153 206.656  1.00  0.00           C
+ATOM     11  N1    C B   2     167.492 220.337 207.365  1.00  0.00           N
+ATOM     12  C2    C B   2     167.576 220.257 208.758  1.00  0.00           C
+ATOM     13  O2    C B   2     167.203 219.228 209.310  1.00  0.00           O
+ATOM     14  N3    C B   2     168.042 221.295 209.473  1.00  0.00           N
+ATOM     15  C4    C B   2     168.440 222.393 208.847  1.00  0.00           C
+ATOM     16  N4    C B   2     168.906 223.385 209.592  1.00  0.00           N
+ATOM     17  C5    C B   2     168.377 222.509 207.431  1.00  0.00           C
+ATOM     18  C6    C B   2     167.892 221.480 206.731  1.00  0.00           C
 END

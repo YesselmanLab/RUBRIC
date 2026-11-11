@@ -1,33 +1,30 @@
-REMARK   1 Idealized base pair: G-G-tWW
-REMARK   2 LW classification: tWW
-REMARK   3 Sequence: GG
-REMARK   4 Based on exemplar: 1NUV
-REMARK   5 All atoms in z=0 plane (perfectly planar)
-REMARK   6 H-bonds optimized:
-REMARK   7   N2-O6: 2.90 A (ideal: 2.90)
-REMARK   7   N2-O6: 2.90 A (ideal: 2.90)
-ATOM      1  C1'   G A   1      -2.477   5.399   0.000  1.00  0.00            C
-ATOM      2  C2    G A   1      -1.999   1.087   0.000  1.00  0.00            C
-ATOM      3  C4    G A   1      -1.265   3.177   0.000  1.00  0.00            C
-ATOM      4  C5    G A   1       0.071   2.833   0.000  1.00  0.00            C
-ATOM      5  C6    G A   1       0.424   1.460   0.000  1.00  0.00            C
-ATOM      6  C8    G A   1       0.023   4.962   0.000  1.00  0.00            C
-ATOM      7  N1    G A   1      -0.700   0.641   0.000  1.00  0.00            N
-ATOM      8  N2    G A   1      -2.949   0.139  -0.001  1.00  0.00            N
-ATOM      9  N3    G A   1      -2.342   2.364   0.001  1.00  0.00            N
-ATOM     10  N7    G A   1       0.870   3.969   0.000  1.00  0.00            N
-ATOM     11  N9    G A   1      -1.289   4.551   0.000  1.00  0.00            N
-ATOM     12  O6    G A   1       1.554   0.955   0.000  1.00  0.00            O
-ATOM     13  C1'   G B   2       0.151  -7.052   0.000  1.00  0.00            C
-ATOM     14  C2    G B   2      -0.327  -2.740   0.000  1.00  0.00            C
-ATOM     15  C4    G B   2      -1.061  -4.830   0.000  1.00  0.00            C
-ATOM     16  C5    G B   2      -2.397  -4.486   0.000  1.00  0.00            C
-ATOM     17  C6    G B   2      -2.750  -3.113   0.000  1.00  0.00            C
-ATOM     18  C8    G B   2      -2.349  -6.615   0.000  1.00  0.00            C
-ATOM     19  N1    G B   2      -1.626  -2.294   0.000  1.00  0.00            N
-ATOM     20  N2    G B   2       0.623  -1.792   0.000  1.00  0.00            N
-ATOM     21  N3    G B   2       0.016  -4.017   0.000  1.00  0.00            N
-ATOM     22  N7    G B   2      -3.196  -5.622   0.000  1.00  0.00            N
-ATOM     23  N9    G B   2      -1.037  -6.204   0.000  1.00  0.00            N
-ATOM     24  O6    G B   2      -3.880  -2.608   0.000  1.00  0.00            O
+REMARK   1 Template: G-G-tWW
+REMARK   2 Tier 1: six of six
+REMARK   3 Pairs: 238; median RMSD to mean shape 0.25 A
+REMARK   7   N1-O6: 2.76 A (present in most consensus pairs)
+REMARK   7   N1-O6: 2.86 A (present in most consensus pairs)
+ATOM      1  C1'   G A   1    -112.092 -83.114 -14.832  1.00  0.00           C
+ATOM      2  N9    G A   1    -112.224 -84.557 -15.059  1.00  0.00           N
+ATOM      3  C8    G A   1    -113.122 -85.403 -14.448  1.00  0.00           C
+ATOM      4  N7    G A   1    -112.983 -86.656 -14.795  1.00  0.00           N
+ATOM      5  C5    G A   1    -111.914 -86.646 -15.665  1.00  0.00           C
+ATOM      6  C6    G A   1    -111.305 -87.707 -16.362  1.00  0.00           C
+ATOM      7  O6    G A   1    -111.585 -88.905 -16.355  1.00  0.00           O
+ATOM      8  N1    G A   1    -110.258 -87.265 -17.140  1.00  0.00           N
+ATOM      9  C2    G A   1    -109.842 -85.971 -17.234  1.00  0.00           C
+ATOM     10  N2    G A   1    -108.799 -85.771 -18.039  1.00  0.00           N
+ATOM     11  N3    G A   1    -110.395 -84.957 -16.600  1.00  0.00           N
+ATOM     12  C4    G A   1    -111.424 -85.368 -15.833  1.00  0.00           C
+ATOM     13  C1'   G B   2    -106.927 -94.751 -19.121  1.00  0.00           C
+ATOM     14  N9    G B   2    -107.049 -93.299 -19.030  1.00  0.00           N
+ATOM     15  C8    G B   2    -106.241 -92.401 -19.657  1.00  0.00           C
+ATOM     16  N7    G B   2    -106.604 -91.170 -19.439  1.00  0.00           N
+ATOM     17  C5    G B   2    -107.729 -91.277 -18.641  1.00  0.00           C
+ATOM     18  C6    G B   2    -108.543 -90.263 -18.096  1.00  0.00           C
+ATOM     19  O6    G B   2    -108.423 -89.040 -18.226  1.00  0.00           O
+ATOM     20  N1    G B   2    -109.581 -90.802 -17.351  1.00  0.00           N
+ATOM     21  C2    G B   2    -109.791 -92.147 -17.166  1.00  0.00           C
+ATOM     22  N2    G B   2    -110.848 -92.470 -16.418  1.00  0.00           N
+ATOM     23  N3    G B   2    -109.036 -93.105 -17.665  1.00  0.00           N
+ATOM     24  C4    G B   2    -108.028 -92.593 -18.390  1.00  0.00           C
 END

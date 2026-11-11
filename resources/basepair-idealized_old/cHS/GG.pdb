@@ -1,0 +1,33 @@
+REMARK   1 Idealized base pair: G-G-cHS
+REMARK   2 LW classification: cHS
+REMARK   3 Sequence: GG
+REMARK   4 Based on exemplar: 1I9V
+REMARK   5 All atoms in z=0 plane (perfectly planar)
+REMARK   6 H-bonds optimized:
+REMARK   7   N2-N7: 2.85 A (ideal: 2.90)
+REMARK   7   N3-O6: 3.20 A (ideal: 3.00)
+ATOM      1  C1'   G A   1      -2.477   5.399   0.000  1.00  0.00            C
+ATOM      2  C2    G A   1      -1.999   1.087   0.000  1.00  0.00            C
+ATOM      3  C4    G A   1      -1.265   3.177   0.000  1.00  0.00            C
+ATOM      4  C5    G A   1       0.071   2.833   0.000  1.00  0.00            C
+ATOM      5  C6    G A   1       0.424   1.460   0.000  1.00  0.00            C
+ATOM      6  C8    G A   1       0.023   4.962   0.000  1.00  0.00            C
+ATOM      7  N1    G A   1      -0.700   0.641   0.000  1.00  0.00            N
+ATOM      8  N2    G A   1      -2.949   0.139  -0.001  1.00  0.00            N
+ATOM      9  N3    G A   1      -2.342   2.364   0.001  1.00  0.00            N
+ATOM     10  N7    G A   1       0.870   3.969   0.000  1.00  0.00            N
+ATOM     11  N9    G A   1      -1.289   4.551   0.000  1.00  0.00            N
+ATOM     12  O6    G A   1       1.554   0.955   0.000  1.00  0.00            O
+ATOM     13  C1'   G B   2       6.586  -1.818   0.000  1.00  0.00            C
+ATOM     14  C2    G B   2       4.172   1.787   0.000  1.00  0.00            C
+ATOM     15  C4    G B   2       6.081   0.662   0.000  1.00  0.00            C
+ATOM     16  C5    G B   2       6.880   1.786   0.000  1.00  0.00            C
+ATOM     17  C6    G B   2       6.265   3.063   0.000  1.00  0.00            C
+ATOM     18  C8    G B   2       8.216   0.128   0.000  1.00  0.00            C
+ATOM     19  N1    G B   2       4.878   2.965   0.000  1.00  0.00            N
+ATOM     20  N2    G B   2       2.835   1.899   0.000  1.00  0.00            N
+ATOM     21  N3    G B   2       4.733   0.590   0.000  1.00  0.00            N
+ATOM     22  N7    G B   2       8.223   1.433   0.000  1.00  0.00            N
+ATOM     23  N9    G B   2       6.948  -0.404   0.000  1.00  0.00            N
+ATOM     24  O6    G B   2       6.804   4.178   0.000  1.00  0.00            O
+END

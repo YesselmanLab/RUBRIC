@@ -1,0 +1,1577 @@
+[
+ {
+  "class": "cHH",
+  "sequence": "AA",
+  "tier": 5,
+  "source": "four or more of six, 4 pair(s)",
+  "pairs": 4,
+  "spread": 0.45,
+  "hbonds": [
+   "N6-N7"
+  ]
+ },
+ {
+  "class": "cHH",
+  "sequence": "AC",
+  "tier": 5,
+  "source": "four or more of six, 2 pair(s)",
+  "pairs": 2,
+  "spread": 0.25,
+  "hbonds": [
+   "N4-N7"
+  ]
+ },
+ {
+  "class": "cHH",
+  "sequence": "AG",
+  "tier": 2,
+  "source": "five of six",
+  "pairs": 8,
+  "spread": 0.32,
+  "hbonds": [
+   "N6-N7"
+  ]
+ },
+ {
+  "class": "cHH",
+  "sequence": "AU",
+  "tier": 2,
+  "source": "five of six",
+  "pairs": 46,
+  "spread": 0.37,
+  "hbonds": [
+   "N6-O4"
+  ]
+ },
+ {
+  "class": "cHH",
+  "sequence": "CG",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 35,
+  "spread": 0.29,
+  "hbonds": [
+   "N4-O6"
+  ]
+ },
+ {
+  "class": "cHH",
+  "sequence": "GG",
+  "tier": 4,
+  "source": "catalog exemplar 1VW3 1VW3|1|A|G|2848,1VW3|1|A|G|2849",
+  "pairs": 1,
+  "spread": 0.0,
+  "hbonds": []
+ },
+ {
+  "class": "cHS",
+  "sequence": "AA",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 61,
+  "spread": 0.14,
+  "hbonds": [
+   "N6-N3"
+  ]
+ },
+ {
+  "class": "cHS",
+  "sequence": "AC",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 104,
+  "spread": 0.16,
+  "hbonds": [
+   "N6-O2"
+  ]
+ },
+ {
+  "class": "cHS",
+  "sequence": "AG",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 42,
+  "spread": 0.13,
+  "hbonds": [
+   "N2-N7"
+  ]
+ },
+ {
+  "class": "cHS",
+  "sequence": "AU",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 134,
+  "spread": 0.19,
+  "hbonds": [
+   "N6-O2"
+  ]
+ },
+ {
+  "class": "cHS",
+  "sequence": "CA",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 63,
+  "spread": 0.14,
+  "hbonds": [
+   "N4-N3"
+  ]
+ },
+ {
+  "class": "cHS",
+  "sequence": "CC",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 46,
+  "spread": 0.11,
+  "hbonds": [
+   "N4-O2"
+  ]
+ },
+ {
+  "class": "cHS",
+  "sequence": "CG",
+  "tier": 3,
+  "source": "four of six",
+  "pairs": 27,
+  "spread": 0.1,
+  "hbonds": []
+ },
+ {
+  "class": "cHS",
+  "sequence": "CU",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 143,
+  "spread": 0.14,
+  "hbonds": [
+   "N4-O2"
+  ]
+ },
+ {
+  "class": "cHS",
+  "sequence": "GA",
+  "tier": 4,
+  "source": "catalog exemplar 2CV1 2CV1|1|C|G|510,2CV1|1|C|A|545",
+  "pairs": 1,
+  "spread": 0.0,
+  "hbonds": []
+ },
+ {
+  "class": "cHS",
+  "sequence": "GG",
+  "tier": 2,
+  "source": "five of six",
+  "pairs": 11,
+  "spread": 0.43,
+  "hbonds": [
+   "N2-O6"
+  ]
+ },
+ {
+  "class": "cHS",
+  "sequence": "UA",
+  "tier": 4,
+  "source": "catalog exemplar 1GRZ 1GRZ|1|A|U|412,1GRZ|1|A|A|410",
+  "pairs": 1,
+  "spread": 0.0,
+  "hbonds": []
+ },
+ {
+  "class": "cHS",
+  "sequence": "UC",
+  "tier": 5,
+  "source": "four or more of six, 1 pair(s)",
+  "pairs": 1,
+  "spread": 0.0,
+  "hbonds": []
+ },
+ {
+  "class": "cHS",
+  "sequence": "UG",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 6,
+  "spread": 0.36,
+  "hbonds": [
+   "N2-O4"
+  ]
+ },
+ {
+  "class": "cHS",
+  "sequence": "UU",
+  "tier": 4,
+  "source": "catalog exemplar 1FXL 1FXL|1|B|U|9,1FXL|1|B|U|8",
+  "pairs": 1,
+  "spread": 0.0,
+  "hbonds": []
+ },
+ {
+  "class": "cSS",
+  "sequence": "AA",
+  "tier": 2,
+  "source": "five of six",
+  "pairs": 14,
+  "spread": 0.21,
+  "hbonds": []
+ },
+ {
+  "class": "cSS",
+  "sequence": "AC",
+  "tier": 2,
+  "source": "five of six",
+  "pairs": 99,
+  "spread": 0.22,
+  "hbonds": []
+ },
+ {
+  "class": "cSS",
+  "sequence": "AG",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 5,
+  "spread": 0.29,
+  "hbonds": [
+   "N2-N3"
+  ]
+ },
+ {
+  "class": "cSS",
+  "sequence": "AU",
+  "tier": 2,
+  "source": "five of six",
+  "pairs": 84,
+  "spread": 0.31,
+  "hbonds": []
+ },
+ {
+  "class": "cSS",
+  "sequence": "CC",
+  "tier": 4,
+  "source": "catalog exemplar 1Q86 1Q86|1|A|C|2542,1Q86|1|5|C|75",
+  "pairs": 1,
+  "spread": 0.0,
+  "hbonds": []
+ },
+ {
+  "class": "cSS",
+  "sequence": "CG",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 7,
+  "spread": 0.13,
+  "hbonds": [
+   "N2-O2"
+  ]
+ },
+ {
+  "class": "cSS",
+  "sequence": "CU",
+  "tier": 4,
+  "source": "catalog exemplar 1S72 1S72|1|0|C|879,1S72|1|0|U|779",
+  "pairs": 1,
+  "spread": 0.0,
+  "hbonds": []
+ },
+ {
+  "class": "cSS",
+  "sequence": "GG",
+  "tier": 2,
+  "source": "five of six",
+  "pairs": 140,
+  "spread": 0.2,
+  "hbonds": [
+   "N2-N3"
+  ]
+ },
+ {
+  "class": "cSS",
+  "sequence": "GU",
+  "tier": 2,
+  "source": "five of six",
+  "pairs": 13,
+  "spread": 0.16,
+  "hbonds": [
+   "N2-O2"
+  ]
+ },
+ {
+  "class": "cSS",
+  "sequence": "UU",
+  "tier": 4,
+  "source": "catalog exemplar 3U5H 3U5H|1|5|U|188,3U5H|1|5|U|207",
+  "pairs": 1,
+  "spread": 0.0,
+  "hbonds": []
+ },
+ {
+  "class": "cWH",
+  "sequence": "AA",
+  "tier": 3,
+  "source": "four of six",
+  "pairs": 58,
+  "spread": 0.27,
+  "hbonds": [
+   "N6-N1"
+  ]
+ },
+ {
+  "class": "cWH",
+  "sequence": "AC",
+  "tier": 3,
+  "source": "four of six",
+  "pairs": 9,
+  "spread": 0.54,
+  "hbonds": [
+   "N4-N1"
+  ]
+ },
+ {
+  "class": "cWH",
+  "sequence": "AG",
+  "tier": 2,
+  "source": "five of six",
+  "pairs": 113,
+  "spread": 0.22,
+  "hbonds": [
+   "N6-O6"
+  ]
+ },
+ {
+  "class": "cWH",
+  "sequence": "AU",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 135,
+  "spread": 0.21,
+  "hbonds": [
+   "N6-O4"
+  ]
+ },
+ {
+  "class": "cWH",
+  "sequence": "CA",
+  "tier": 2,
+  "source": "five of six",
+  "pairs": 34,
+  "spread": 0.11,
+  "hbonds": [
+   "N4-N7"
+  ]
+ },
+ {
+  "class": "cWH",
+  "sequence": "CC",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 17,
+  "spread": 0.2,
+  "hbonds": [
+   "N4-N3",
+   "N4-O2"
+  ]
+ },
+ {
+  "class": "cWH",
+  "sequence": "CG",
+  "tier": 2,
+  "source": "five of six",
+  "pairs": 14,
+  "spread": 0.2,
+  "hbonds": [
+   "N4-O6"
+  ]
+ },
+ {
+  "class": "cWH",
+  "sequence": "CU",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 11,
+  "spread": 0.22,
+  "hbonds": [
+   "N4-O4"
+  ]
+ },
+ {
+  "class": "cWH",
+  "sequence": "GA",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 226,
+  "spread": 0.23,
+  "hbonds": [
+   "N1-N7",
+   "N6-O6"
+  ]
+ },
+ {
+  "class": "cWH",
+  "sequence": "GC",
+  "tier": 3,
+  "source": "four of six",
+  "pairs": 137,
+  "spread": 0.25,
+  "hbonds": [
+   "N4-O6"
+  ]
+ },
+ {
+  "class": "cWH",
+  "sequence": "GG",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 300,
+  "spread": 0.25,
+  "hbonds": [
+   "N1-O6",
+   "N2-N7"
+  ]
+ },
+ {
+  "class": "cWH",
+  "sequence": "GU",
+  "tier": 5,
+  "source": "four or more of six, 3 pair(s)",
+  "pairs": 3,
+  "spread": 0.2,
+  "hbonds": [
+   "N1-O4",
+   "N2-O4"
+  ]
+ },
+ {
+  "class": "cWH",
+  "sequence": "UA",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 300,
+  "spread": 0.23,
+  "hbonds": [
+   "N3-N7",
+   "N6-O4"
+  ]
+ },
+ {
+  "class": "cWH",
+  "sequence": "UC",
+  "tier": 3,
+  "source": "four of six",
+  "pairs": 135,
+  "spread": 0.72,
+  "hbonds": [
+   "N4-O2"
+  ]
+ },
+ {
+  "class": "cWH",
+  "sequence": "UG",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 80,
+  "spread": 0.15,
+  "hbonds": [
+   "N3-N7"
+  ]
+ },
+ {
+  "class": "cWH",
+  "sequence": "UU",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 52,
+  "spread": 0.28,
+  "hbonds": [
+   "N3-O4"
+  ]
+ },
+ {
+  "class": "cWS",
+  "sequence": "AA",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 300,
+  "spread": 0.24,
+  "hbonds": [
+   "N6-N3"
+  ]
+ },
+ {
+  "class": "cWS",
+  "sequence": "AC",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 299,
+  "spread": 0.28,
+  "hbonds": [
+   "N6-O2"
+  ]
+ },
+ {
+  "class": "cWS",
+  "sequence": "AG",
+  "tier": 2,
+  "source": "five of six",
+  "pairs": 300,
+  "spread": 0.48,
+  "hbonds": [
+   "N6-N3"
+  ]
+ },
+ {
+  "class": "cWS",
+  "sequence": "AU",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 297,
+  "spread": 0.3,
+  "hbonds": [
+   "N6-O2"
+  ]
+ },
+ {
+  "class": "cWS",
+  "sequence": "CA",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 121,
+  "spread": 0.28,
+  "hbonds": [
+   "N4-N3"
+  ]
+ },
+ {
+  "class": "cWS",
+  "sequence": "CC",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 135,
+  "spread": 0.24,
+  "hbonds": [
+   "N4-O2"
+  ]
+ },
+ {
+  "class": "cWS",
+  "sequence": "CG",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 37,
+  "spread": 0.14,
+  "hbonds": [
+   "N4-N3"
+  ]
+ },
+ {
+  "class": "cWS",
+  "sequence": "CU",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 49,
+  "spread": 0.2,
+  "hbonds": [
+   "N4-O2"
+  ]
+ },
+ {
+  "class": "cWS",
+  "sequence": "GA",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 87,
+  "spread": 0.14,
+  "hbonds": [
+   "N1-N3"
+  ]
+ },
+ {
+  "class": "cWS",
+  "sequence": "GC",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 14,
+  "spread": 0.14,
+  "hbonds": [
+   "N1-O2",
+   "N2-O2"
+  ]
+ },
+ {
+  "class": "cWS",
+  "sequence": "GG",
+  "tier": 2,
+  "source": "five of six",
+  "pairs": 60,
+  "spread": 0.47,
+  "hbonds": [
+   "N2-O6"
+  ]
+ },
+ {
+  "class": "cWS",
+  "sequence": "GU",
+  "tier": 2,
+  "source": "five of six",
+  "pairs": 102,
+  "spread": 0.16,
+  "hbonds": [
+   "N1-O2",
+   "N2-O2"
+  ]
+ },
+ {
+  "class": "cWS",
+  "sequence": "UA",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 253,
+  "spread": 0.22,
+  "hbonds": [
+   "N3-N3"
+  ]
+ },
+ {
+  "class": "cWS",
+  "sequence": "UC",
+  "tier": 2,
+  "source": "five of six",
+  "pairs": 5,
+  "spread": 0.44,
+  "hbonds": [
+   "N3-O2"
+  ]
+ },
+ {
+  "class": "cWS",
+  "sequence": "UG",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 164,
+  "spread": 0.13,
+  "hbonds": [
+   "N3-N3",
+   "N2-O4"
+  ]
+ },
+ {
+  "class": "cWS",
+  "sequence": "UU",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 12,
+  "spread": 0.08,
+  "hbonds": [
+   "N3-O2"
+  ]
+ },
+ {
+  "class": "cWW",
+  "sequence": "AA",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 289,
+  "spread": 0.3,
+  "hbonds": [
+   "N6-N1"
+  ]
+ },
+ {
+  "class": "cWW",
+  "sequence": "AC",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 139,
+  "spread": 0.24,
+  "hbonds": [
+   "N4-N1"
+  ]
+ },
+ {
+  "class": "cWW",
+  "sequence": "AG",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 300,
+  "spread": 0.23,
+  "hbonds": [
+   "N6-O6",
+   "N1-N1"
+  ]
+ },
+ {
+  "class": "cWW",
+  "sequence": "AU",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 300,
+  "spread": 0.14,
+  "hbonds": [
+   "N6-O4",
+   "N3-N1"
+  ]
+ },
+ {
+  "class": "cWW",
+  "sequence": "CC",
+  "tier": 2,
+  "source": "five of six",
+  "pairs": 105,
+  "spread": 0.17,
+  "hbonds": [
+   "N4-N3"
+  ]
+ },
+ {
+  "class": "cWW",
+  "sequence": "CG",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 300,
+  "spread": 0.14,
+  "hbonds": [
+   "N4-O6",
+   "N1-N3",
+   "N2-O2"
+  ]
+ },
+ {
+  "class": "cWW",
+  "sequence": "CU",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 300,
+  "spread": 0.27,
+  "hbonds": [
+   "N4-O4",
+   "N3-N3"
+  ]
+ },
+ {
+  "class": "cWW",
+  "sequence": "GG",
+  "tier": 2,
+  "source": "five of six",
+  "pairs": 57,
+  "spread": 0.2,
+  "hbonds": [
+   "N1-O6"
+  ]
+ },
+ {
+  "class": "cWW",
+  "sequence": "GU",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 300,
+  "spread": 0.19,
+  "hbonds": [
+   "N1-O2",
+   "N3-O6"
+  ]
+ },
+ {
+  "class": "cWW",
+  "sequence": "UU",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 300,
+  "spread": 0.23,
+  "hbonds": [
+   "N3-O4",
+   "N3-O2"
+  ]
+ },
+ {
+  "class": "tHH",
+  "sequence": "AA",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 300,
+  "spread": 0.17,
+  "hbonds": [
+   "N6-N7",
+   "N6-N7"
+  ]
+ },
+ {
+  "class": "tHH",
+  "sequence": "AC",
+  "tier": 2,
+  "source": "five of six",
+  "pairs": 50,
+  "spread": 0.34,
+  "hbonds": [
+   "N4-N7"
+  ]
+ },
+ {
+  "class": "tHH",
+  "sequence": "AG",
+  "tier": 3,
+  "source": "four of six",
+  "pairs": 9,
+  "spread": 0.16,
+  "hbonds": [
+   "N6-N7"
+  ]
+ },
+ {
+  "class": "tHH",
+  "sequence": "AU",
+  "tier": 2,
+  "source": "five of six",
+  "pairs": 30,
+  "spread": 0.11,
+  "hbonds": []
+ },
+ {
+  "class": "tHH",
+  "sequence": "CG",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 28,
+  "spread": 0.31,
+  "hbonds": [
+   "N4-N7"
+  ]
+ },
+ {
+  "class": "tHH",
+  "sequence": "CU",
+  "tier": 3,
+  "source": "four of six",
+  "pairs": 17,
+  "spread": 0.04,
+  "hbonds": [
+   "N4-O4"
+  ]
+ },
+ {
+  "class": "tHH",
+  "sequence": "GG",
+  "tier": 4,
+  "source": "catalog exemplar 1S72 1S72|1|0|G|2611,1S72|1|0|G|2616",
+  "pairs": 1,
+  "spread": 0.0,
+  "hbonds": []
+ },
+ {
+  "class": "tHH",
+  "sequence": "GU",
+  "tier": 5,
+  "source": "four or more of six, 2 pair(s)",
+  "pairs": 2,
+  "spread": 0.42,
+  "hbonds": []
+ },
+ {
+  "class": "tHH",
+  "sequence": "UU",
+  "tier": 3,
+  "source": "four of six",
+  "pairs": 19,
+  "spread": 0.2,
+  "hbonds": []
+ },
+ {
+  "class": "tHS",
+  "sequence": "AA",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 171,
+  "spread": 0.18,
+  "hbonds": [
+   "N6-N3"
+  ]
+ },
+ {
+  "class": "tHS",
+  "sequence": "AC",
+  "tier": 3,
+  "source": "four of six",
+  "pairs": 36,
+  "spread": 0.65,
+  "hbonds": [
+   "N6-O2"
+  ]
+ },
+ {
+  "class": "tHS",
+  "sequence": "AG",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 256,
+  "spread": 0.22,
+  "hbonds": [
+   "N2-N7"
+  ]
+ },
+ {
+  "class": "tHS",
+  "sequence": "AU",
+  "tier": 2,
+  "source": "five of six",
+  "pairs": 17,
+  "spread": 0.22,
+  "hbonds": []
+ },
+ {
+  "class": "tHS",
+  "sequence": "CA",
+  "tier": 2,
+  "source": "five of six",
+  "pairs": 10,
+  "spread": 0.14,
+  "hbonds": [
+   "N4-N3"
+  ]
+ },
+ {
+  "class": "tHS",
+  "sequence": "CC",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 73,
+  "spread": 0.19,
+  "hbonds": [
+   "N4-O2"
+  ]
+ },
+ {
+  "class": "tHS",
+  "sequence": "CG",
+  "tier": 3,
+  "source": "four of six",
+  "pairs": 6,
+  "spread": 0.18,
+  "hbonds": []
+ },
+ {
+  "class": "tHS",
+  "sequence": "CU",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 34,
+  "spread": 0.23,
+  "hbonds": [
+   "N4-O2"
+  ]
+ },
+ {
+  "class": "tHS",
+  "sequence": "GA",
+  "tier": 3,
+  "source": "four of six",
+  "pairs": 18,
+  "spread": 0.14,
+  "hbonds": []
+ },
+ {
+  "class": "tHS",
+  "sequence": "GC",
+  "tier": 5,
+  "source": "four or more of six, 4 pair(s)",
+  "pairs": 4,
+  "spread": 0.17,
+  "hbonds": []
+ },
+ {
+  "class": "tHS",
+  "sequence": "GG",
+  "tier": 3,
+  "source": "four of six",
+  "pairs": 71,
+  "spread": 0.3,
+  "hbonds": [
+   "N2-N7"
+  ]
+ },
+ {
+  "class": "tHS",
+  "sequence": "UA",
+  "tier": 2,
+  "source": "five of six",
+  "pairs": 12,
+  "spread": 0.18,
+  "hbonds": []
+ },
+ {
+  "class": "tHS",
+  "sequence": "UC",
+  "tier": 5,
+  "source": "four or more of six, 2 pair(s)",
+  "pairs": 2,
+  "spread": 0.03,
+  "hbonds": []
+ },
+ {
+  "class": "tHS",
+  "sequence": "UG",
+  "tier": 3,
+  "source": "four of six",
+  "pairs": 20,
+  "spread": 0.18,
+  "hbonds": [
+   "N2-O4"
+  ]
+ },
+ {
+  "class": "tHS",
+  "sequence": "UU",
+  "tier": 2,
+  "source": "five of six",
+  "pairs": 6,
+  "spread": 0.26,
+  "hbonds": []
+ },
+ {
+  "class": "tSS",
+  "sequence": "AA",
+  "tier": 4,
+  "source": "catalog exemplar 3U5F 3U5F|1|6|A|1300,3U5F|1|6|A|1143",
+  "pairs": 1,
+  "spread": 0.0,
+  "hbonds": []
+ },
+ {
+  "class": "tSS",
+  "sequence": "AC",
+  "tier": 4,
+  "source": "catalog exemplar 2GDI 2GDI|1|X|A|84,2GDI|1|X|C|50",
+  "pairs": 1,
+  "spread": 0.0,
+  "hbonds": []
+ },
+ {
+  "class": "tSS",
+  "sequence": "AG",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 300,
+  "spread": 0.31,
+  "hbonds": [
+   "N2-N3"
+  ]
+ },
+ {
+  "class": "tSS",
+  "sequence": "AU",
+  "tier": 4,
+  "source": "catalog exemplar 1J1U 1J1U|1|B|A|522,1J1U|1|B|U|508",
+  "pairs": 1,
+  "spread": 0.0,
+  "hbonds": []
+ },
+ {
+  "class": "tSS",
+  "sequence": "CG",
+  "tier": 3,
+  "source": "four of six",
+  "pairs": 21,
+  "spread": 0.15,
+  "hbonds": [
+   "N2-O2"
+  ]
+ },
+ {
+  "class": "tSS",
+  "sequence": "GG",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 300,
+  "spread": 0.38,
+  "hbonds": [
+   "N2-N3",
+   "N2-N3"
+  ]
+ },
+ {
+  "class": "tSS",
+  "sequence": "GU",
+  "tier": 4,
+  "source": "catalog exemplar 1S72 1S72|1|0|G|1855,1S72|1|0|U|1874",
+  "pairs": 1,
+  "spread": 0.0,
+  "hbonds": [
+   "N2-O2"
+  ]
+ },
+ {
+  "class": "tSS",
+  "sequence": "UU",
+  "tier": 3,
+  "source": "four of six",
+  "pairs": 29,
+  "spread": 0.09,
+  "hbonds": []
+ },
+ {
+  "class": "tWH",
+  "sequence": "AA",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 300,
+  "spread": 0.25,
+  "hbonds": [
+   "N6-N7",
+   "N6-N1"
+  ]
+ },
+ {
+  "class": "tWH",
+  "sequence": "AC",
+  "tier": 3,
+  "source": "four of six",
+  "pairs": 19,
+  "spread": 0.17,
+  "hbonds": [
+   "N4-N1"
+  ]
+ },
+ {
+  "class": "tWH",
+  "sequence": "AG",
+  "tier": 2,
+  "source": "five of six",
+  "pairs": 20,
+  "spread": 0.26,
+  "hbonds": [
+   "N6-N7"
+  ]
+ },
+ {
+  "class": "tWH",
+  "sequence": "AU",
+  "tier": 3,
+  "source": "four of six",
+  "pairs": 12,
+  "spread": 0.36,
+  "hbonds": []
+ },
+ {
+  "class": "tWH",
+  "sequence": "CA",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 300,
+  "spread": 0.21,
+  "hbonds": [
+   "N4-N7",
+   "N6-N3",
+   "N6-O2"
+  ]
+ },
+ {
+  "class": "tWH",
+  "sequence": "CC",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 21,
+  "spread": 0.19,
+  "hbonds": [
+   "N4-O2"
+  ]
+ },
+ {
+  "class": "tWH",
+  "sequence": "CG",
+  "tier": 2,
+  "source": "five of six",
+  "pairs": 36,
+  "spread": 0.16,
+  "hbonds": [
+   "N4-N7"
+  ]
+ },
+ {
+  "class": "tWH",
+  "sequence": "GA",
+  "tier": 2,
+  "source": "five of six",
+  "pairs": 5,
+  "spread": 0.5,
+  "hbonds": [
+   "N1-N7"
+  ]
+ },
+ {
+  "class": "tWH",
+  "sequence": "GC",
+  "tier": 3,
+  "source": "four of six",
+  "pairs": 10,
+  "spread": 0.18,
+  "hbonds": [
+   "N4-O6"
+  ]
+ },
+ {
+  "class": "tWH",
+  "sequence": "GG",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 300,
+  "spread": 0.29,
+  "hbonds": [
+   "N1-N7",
+   "N2-O6"
+  ]
+ },
+ {
+  "class": "tWH",
+  "sequence": "GU",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 41,
+  "spread": 0.15,
+  "hbonds": [
+   "N1-O4",
+   "N2-O4"
+  ]
+ },
+ {
+  "class": "tWH",
+  "sequence": "UA",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 297,
+  "spread": 0.22,
+  "hbonds": [
+   "N3-N7",
+   "N6-O2"
+  ]
+ },
+ {
+  "class": "tWH",
+  "sequence": "UC",
+  "tier": 3,
+  "source": "four of six",
+  "pairs": 12,
+  "spread": 0.53,
+  "hbonds": [
+   "N4-O2"
+  ]
+ },
+ {
+  "class": "tWH",
+  "sequence": "UG",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 40,
+  "spread": 0.22,
+  "hbonds": [
+   "N3-N7"
+  ]
+ },
+ {
+  "class": "tWH",
+  "sequence": "UU",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 124,
+  "spread": 0.25,
+  "hbonds": [
+   "N3-O4"
+  ]
+ },
+ {
+  "class": "tWS",
+  "sequence": "AA",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 56,
+  "spread": 0.26,
+  "hbonds": [
+   "N6-N3"
+  ]
+ },
+ {
+  "class": "tWS",
+  "sequence": "AC",
+  "tier": 2,
+  "source": "five of six",
+  "pairs": 7,
+  "spread": 0.2,
+  "hbonds": []
+ },
+ {
+  "class": "tWS",
+  "sequence": "AG",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 300,
+  "spread": 0.25,
+  "hbonds": [
+   "N6-N3",
+   "N2-N1"
+  ]
+ },
+ {
+  "class": "tWS",
+  "sequence": "AU",
+  "tier": 2,
+  "source": "five of six",
+  "pairs": 284,
+  "spread": 0.32,
+  "hbonds": []
+ },
+ {
+  "class": "tWS",
+  "sequence": "CA",
+  "tier": 3,
+  "source": "four of six",
+  "pairs": 8,
+  "spread": 0.51,
+  "hbonds": [
+   "N4-N3"
+  ]
+ },
+ {
+  "class": "tWS",
+  "sequence": "CC",
+  "tier": 3,
+  "source": "four of six",
+  "pairs": 9,
+  "spread": 0.25,
+  "hbonds": [
+   "N4-O2"
+  ]
+ },
+ {
+  "class": "tWS",
+  "sequence": "CG",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 183,
+  "spread": 0.17,
+  "hbonds": [
+   "N4-N3",
+   "N2-N3"
+  ]
+ },
+ {
+  "class": "tWS",
+  "sequence": "CU",
+  "tier": 3,
+  "source": "four of six",
+  "pairs": 7,
+  "spread": 0.21,
+  "hbonds": [
+   "N4-O2"
+  ]
+ },
+ {
+  "class": "tWS",
+  "sequence": "GA",
+  "tier": 3,
+  "source": "four of six",
+  "pairs": 19,
+  "spread": 0.12,
+  "hbonds": [
+   "N2-N3"
+  ]
+ },
+ {
+  "class": "tWS",
+  "sequence": "GC",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 68,
+  "spread": 0.43,
+  "hbonds": [
+   "N1-O2",
+   "N2-O2"
+  ]
+ },
+ {
+  "class": "tWS",
+  "sequence": "GG",
+  "tier": 3,
+  "source": "four of six",
+  "pairs": 9,
+  "spread": 0.42,
+  "hbonds": [
+   "N2-N3"
+  ]
+ },
+ {
+  "class": "tWS",
+  "sequence": "GU",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 8,
+  "spread": 0.31,
+  "hbonds": [
+   "N1-O2",
+   "N2-O2"
+  ]
+ },
+ {
+  "class": "tWS",
+  "sequence": "UA",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 241,
+  "spread": 0.18,
+  "hbonds": [
+   "N3-N3"
+  ]
+ },
+ {
+  "class": "tWS",
+  "sequence": "UC",
+  "tier": 2,
+  "source": "five of six",
+  "pairs": 13,
+  "spread": 0.27,
+  "hbonds": [
+   "N3-O2"
+  ]
+ },
+ {
+  "class": "tWS",
+  "sequence": "UG",
+  "tier": 2,
+  "source": "five of six",
+  "pairs": 28,
+  "spread": 0.54,
+  "hbonds": [
+   "N3-N3",
+   "N2-O2"
+  ]
+ },
+ {
+  "class": "tWS",
+  "sequence": "UU",
+  "tier": 2,
+  "source": "five of six",
+  "pairs": 19,
+  "spread": 0.17,
+  "hbonds": [
+   "N3-O2"
+  ]
+ },
+ {
+  "class": "tWW",
+  "sequence": "AA",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 300,
+  "spread": 0.32,
+  "hbonds": [
+   "N6-N1",
+   "N6-N1"
+  ]
+ },
+ {
+  "class": "tWW",
+  "sequence": "AC",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 231,
+  "spread": 0.21,
+  "hbonds": [
+   "N6-N3",
+   "N4-N1"
+  ]
+ },
+ {
+  "class": "tWW",
+  "sequence": "AG",
+  "tier": 2,
+  "source": "five of six",
+  "pairs": 49,
+  "spread": 0.42,
+  "hbonds": [
+   "N1-N1"
+  ]
+ },
+ {
+  "class": "tWW",
+  "sequence": "AU",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 300,
+  "spread": 0.22,
+  "hbonds": [
+   "N6-O2",
+   "N3-N1"
+  ]
+ },
+ {
+  "class": "tWW",
+  "sequence": "CC",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 30,
+  "spread": 0.16,
+  "hbonds": [
+   "N4-N3",
+   "N4-N3",
+   "N4-O2"
+  ]
+ },
+ {
+  "class": "tWW",
+  "sequence": "CG",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 300,
+  "spread": 0.3,
+  "hbonds": [
+   "N1-O2",
+   "N2-N3"
+  ]
+ },
+ {
+  "class": "tWW",
+  "sequence": "CU",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 38,
+  "spread": 0.11,
+  "hbonds": [
+   "N4-O2",
+   "N3-N3",
+   "N3-O2"
+  ]
+ },
+ {
+  "class": "tWW",
+  "sequence": "GG",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 238,
+  "spread": 0.25,
+  "hbonds": [
+   "N1-O6",
+   "N1-O6"
+  ]
+ },
+ {
+  "class": "tWW",
+  "sequence": "GU",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 103,
+  "spread": 0.24,
+  "hbonds": [
+   "N1-O4",
+   "N2-O4",
+   "N3-O6"
+  ]
+ },
+ {
+  "class": "tWW",
+  "sequence": "UU",
+  "tier": 1,
+  "source": "six of six",
+  "pairs": 300,
+  "spread": 0.51,
+  "hbonds": [
+   "N3-O2",
+   "N3-O2"
+  ]
+ }
+]

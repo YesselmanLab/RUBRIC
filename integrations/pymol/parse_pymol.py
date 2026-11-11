@@ -1,8 +1,8 @@
 """PARSE -> PyMOL: highlight problematic base pairs during refinement.
 
 Load in PyMOL:    run /path/to/parse_pymol.py
-Then:             parse_score               # score current object; worklist = Review tier
-                  parse_score 6DN1, acceptable  # the minor-issue middle (polish pass)
+Then:             parse_score               # score current object; worklist = priority review
+                  parse_score 6DN1, secondary  # the minor-issue middle (polish pass)
                   parse_score 6DN1, all     # every non-Preferred pair
                   parse_clear               # remove the highlights
 
@@ -14,8 +14,8 @@ What it does each run:
   2. runs the `parse` binary on it (sub-second, even on a ribosome),
   3. colors the whole structure gray (so unflagged pairs recede), then builds
      an overlay object `parse_overlay` of just the flagged base pairs, shown as
-     sticks colored by the PAIR SCORE: Review tier (score < 80, priority review)
-     -> red; Acceptable (80 <= score < 100, secondary review) -> yellow (near 100)
+     sticks colored by the PAIR SCORE: priority review (score < 80)
+     -> red; secondary review (80 <= score < 100) -> yellow (near 100)
      to orange (near 80),
   4. draws every sugar-pucker mismatch (the binary's `pucker_outliers`: delta and
      P-perp imply different puckers) as a gray nucleotide with a cyan ribose ring,
@@ -29,11 +29,11 @@ secondary review, red = priority review, cyan ribose = pucker mismatch, green =
 ideal template (parse_ideal).
 
 Which pairs are flagged is gated by the whole-pair SCORE tier (`tier` arg to
-parse_score): 'review' (score<80, default), 'acceptable' (80<=score<100), or
+parse_score): 'priority' (score<80, default), 'secondary' (80<=score<100), or
 'all'. The pair score decides both *membership* and *color*; the per-parameter
 Cerny |Z'| severity decides the order *within* a tier and the 'worst: ...'
 readout. (Until 2026-10 the color came from the single worst parameter, so a
-pair with one big low-weight outlier could show red while scoring Acceptable.)
+pair with one big low-weight outlier could show red while in secondary review.)
 
 Re-run after an edit/refinement round and the overlay rebuilds from scratch, so a
 pair that's been fixed simply disappears. Only colors change — coordinates are
@@ -146,17 +146,17 @@ def severity_to_rgb(sev):
 # the per-parameter Cerny tiers (Preferred/Allowed/Of Concern): the pair score
 # decides *which pairs a refiner reviews* and *how they are colored*; the |Z'|
 # severity ranks pairs within a tier and names the worst parameter. Preferred =
-# score 100, Acceptable = [80,100), Review = <80 (the threshold derived from the
+# score 100, Secondary review = [80,100), Priority review = <80 (the threshold derived from the
 # good/poor likelihood ratio; mirrors the binary's emitted `tier`).
 # ---------------------------------------------------------------------------
 
-REVIEW_MAX = 80.0          # Review tier: score < 80 (priority review)
-_ACCEPTABLE_G = (0.867, 0.45)   # Acceptable: green channel near 100 -> near 80
+REVIEW_MAX = 80.0          # priority review: score < 80
+_ACCEPTABLE_G = (0.867, 0.45)   # secondary review: green channel near 100 -> near 80
 
 
 def score_to_rgb(score):
-    """Display color from the pair score: red for Review (priority review), yellow
-    (score near 100) to orange (score near 80) for Acceptable (secondary review),
+    """Display color from the pair score: red for priority review, yellow
+    (score near 100) to orange (score near 80) for secondary review,
     green for Preferred / unscored (nothing to review)."""
     if score is None or score >= 100.0:
         return [0.35, 0.78, 0.35]
@@ -220,42 +220,57 @@ def pair_tier(score):
     if score >= 100.0:
         return "Preferred"
     if score >= REVIEW_MAX:
-        return "Acceptable"
-    return "Review"
+        return "Secondary review"
+    return "Priority review"
 
 
 #: worklist tier filter word -> the pair-score tiers that populate the worklist.
 _TIER_SETS = {
-    "review": {"Review"},                       # default: the genuinely-bad pairs
-    "acceptable": {"Acceptable"},               # the minor-issue middle (polish pass)
-    "all": {"Acceptable", "Review"},            # everything non-Preferred
+    "priority": {"Priority review"},          # default: the genuinely-bad pairs
+    "secondary": {"Secondary review"},        # the minor-issue middle (polish pass)
+    "all": {"Secondary review", "Priority review"},  # everything non-Preferred
 }
+
+#: older filter words, kept working as aliases.
+_TIER_ALIASES = {"review": "priority", "acceptable": "secondary"}
+
+#: tier labels emitted before 2026-10-30, mapped to the current ones so older
+#: parse outputs and parse_dump files still load.
+_LEGACY_TIERS = {"Acceptable": "Secondary review", "Review": "Priority review"}
+
+
+def tier_word(name):
+    """Canonical tier-filter word ('priority' / 'secondary' / 'all')."""
+    w = str(name).strip().lower()
+    w = _TIER_ALIASES.get(w, w)
+    return w if w in _TIER_SETS else "priority"
 
 
 def tiers_for(name):
     """Resolve a tier-filter word to its tier set.
 
-    Unknown/typo values fall back to the default 'review' set, so a mistyped
+    Unknown/typo values fall back to the default 'priority' set, so a mistyped
     filter never silently empties the worklist.
     """
-    return _TIER_SETS.get(str(name).strip().lower(), _TIER_SETS["review"])
+    return _TIER_SETS[tier_word(name)]
 
 
 def pair_tier_of(p):
     """Pair-score tier of a scored pair dict (emitted `tier`, else derived)."""
-    return p.get("tier") or pair_tier(p.get("score"))
+    t = p.get("tier") or pair_tier(p.get("score"))
+    return _LEGACY_TIERS.get(t, t)
 
 
 def tier_counts(data):
-    """Structure-level {Preferred, Acceptable, Review} counts.
+    """Structure-level {Preferred, Secondary review, Priority review} counts.
 
     Prefers the binary's emitted `tier_summary`; falls back to deriving from
     per-pair scores for older `parse` outputs that predate the field.
     """
     ts = data.get("tier_summary")
     if ts:
-        return ts
-    counts = {"Preferred": 0, "Acceptable": 0, "Review": 0}
+        return {_LEGACY_TIERS.get(k, k): v for k, v in ts.items()}
+    counts = {"Preferred": 0, "Secondary review": 0, "Priority review": 0}
     for p in data.get("pairs", []):
         t = pair_tier_of(p)
         if t in counts:
@@ -360,14 +375,14 @@ def flagged_pairs(data, min_severity=0.0, tiers=None):
     """Pairs in the requested score-tier(s) with a colorable issue, worst-first.
 
     `tiers` is the set of pair-score tiers allowed into the worklist (default
-    {"Review"}). A pair enters only if its pair-score tier is in `tiers` AND it
+    {"Priority review"}). A pair enters only if its pair-score tier is in `tiers` AND it
     has a colorable issue — either a ProSco/Z'-scored geometry parameter (warm
     ramp) OR a missing/extra canonical H-bond (blue). Geometry pairs are ranked
     worst-first by |Z'|; H-bond-count pairs (no |Z'|) are appended AFTER them,
     ordered by their graded severity. Returns _pair_flag dicts (see that fn).
     """
     if tiers is None:
-        tiers = {"Review"}
+        tiers = {"Priority review"}
     geom, hbond = [], []
     for p in data.get("pairs", []):
         if pair_tier_of(p) not in tiers:        # aggregate score-tier gate
@@ -380,9 +395,9 @@ def flagged_pairs(data, min_severity=0.0, tiers=None):
         elif f["kind"] == "hbond":
             hbond.append(f)
         # clean -> not flagged
-    # Review-tier pairs first (priority review), then worst-|Z'| within a tier.
-    geom.sort(key=lambda r: (r.get("pair_tier") != "Review", -r["rank"]))
-    hbond.sort(key=lambda r: (r.get("pair_tier") != "Review", -r["sev"]))
+    # Priority-review pairs first, then worst-|Z'| within a tier.
+    geom.sort(key=lambda r: (r.get("pair_tier") != "Priority review", -r["rank"]))
+    hbond.sort(key=lambda r: (r.get("pair_tier") != "Priority review", -r["sev"]))
     return geom + hbond
 
 
@@ -399,7 +414,7 @@ def hbond_count_pairs(data):
     return out
 
 
-def format_summary(data, flagged, hbcount, obj, tier_label="review"):
+def format_summary(data, flagged, hbcount, obj, tier_label="priority"):
     """Human-readable ranked summary string (ranked by ProSco/|Z'|, no score).
 
     Header shows the whole-structure pair-score tier counts, then the worklist
@@ -411,7 +426,7 @@ def format_summary(data, flagged, hbcount, obj, tier_label="review"):
     tc = tier_counts(data)
     lines = [f"PARSE: {obj}  {len(data.get('pairs', []))} pairs  "
              f"(structure: {tc.get('Preferred', 0)} Preferred · "
-             f"{tc.get('Acceptable', 0)} Acceptable · {tc.get('Review', 0)} Review)",
+             f"{tc.get('Secondary review', 0)} secondary review · {tc.get('Priority review', 0)} priority review)",
              f"worklist [{tier_label} tier]: {len(flagged)} flagged "
              f"({n_oc} Of Concern, {n_al} Allowed, {n_hb} H-bond count)"]
     if flagged:
@@ -604,14 +619,15 @@ def parse_clear(_self=None):
     print("PARSE: cleared")
 
 
-def parse_score(obj=None, tier="review", min_severity=0.0, zoom=0,
+def parse_score(obj=None, tier="priority", min_severity=0.0, zoom=0,
                 gray_background=1, _self=None):
     """Score the current (or named) object and highlight problematic base pairs.
 
     obj             object to score (default: first enabled object)
     tier            which pair-score tier(s) populate the worklist:
-                      'review'     (default) score < 80  — the genuinely-bad pairs
-                      'acceptable' 80 <= score < 100     — the minor-issue middle
+                      'priority'   (default) score < 80  — the genuinely-bad pairs
+                      'secondary'  80 <= score < 100     — the minor-issue middle
+                    ('review' and 'acceptable' still work as aliases)
                       'all'        both (everything non-Preferred)
                     Preferred (score 100) pairs are never flagged. The tier gates
                     *membership*; |Z'| severity still colors/ranks within it.
@@ -623,13 +639,13 @@ def parse_score(obj=None, tier="review", min_severity=0.0, zoom=0,
                     object's existing colors. Coordinates are never modified.
 
     Examples:
-        parse_score                 # current object, worklist = Review tier
-        parse_score 6DN1, acceptable
+        parse_score                 # current object, worklist = priority review
+        parse_score 6DN1, secondary
         parse_score 6DN1, all, 0.3  # non-Preferred, min color severity 0.3
     """
     from pymol import cmd
     min_severity = float(min_severity)
-    tier_label = str(tier).strip().lower()
+    tier_label = tier_word(tier)
     tiers = tiers_for(tier_label)
 
     if obj is None:
@@ -684,7 +700,7 @@ def parse_score(obj=None, tier="review", min_severity=0.0, zoom=0,
         tc = tier_counts(data)
         _set_hud(cmd, f"PARSE [{tier_label} tier]  0 flagged   "
                       f"(structure: {tc.get('Preferred', 0)} Preferred · "
-                      f"{tc.get('Acceptable', 0)} Acceptable · {tc.get('Review', 0)} Review)")
+                      f"{tc.get('Secondary review', 0)} secondary review · {tc.get('Priority review', 0)} priority review)")
         return
     _build_overlay(cmd, obj, flagged)
 
@@ -713,7 +729,7 @@ def _build_overlay(cmd, obj, flagged):
     never touched.
 
     Color follows the PAIR SCORE (see score_to_rgb): a residue in several flagged
-    pairs takes its lowest score. Review (< 80) -> red; Acceptable -> yellow (near
+    pairs takes its lowest score. Priority review (< 80) -> red; secondary review -> yellow (near
     100) to orange (near 80), on the same yellow->red ramp. Non-flagged residues
     (b = -1) are removed.
     """
@@ -1109,11 +1125,11 @@ def parse_overview(_self=None):
         return f"{x:.3f}" if isinstance(x, (int, float)) else "?"
     ss = _STRUCT_SCORE or {}
     tc = ss.get("tiers") or {}
-    tlabel = ss.get("tier_label", "review")
+    tlabel = ss.get("tier_label", "priority")
     score_line = (f"{_SCORED_OBJ}: PARSE pairs {_f(ss.get('pairs'))}/100, "
                   f"backbone suiteness {_f3(ss.get('residues'))}  "
                   f"(structure: {tc.get('Preferred', 0)} Preferred · "
-                  f"{tc.get('Acceptable', 0)} Acceptable · {tc.get('Review', 0)} Review)"
+                  f"{tc.get('Secondary review', 0)} secondary review · {tc.get('Priority review', 0)} priority review)"
                   f"  — {len(_QUEUE)} flagged [{tlabel} tier]")
     print(f"PARSE: overview — {score_line}")
     _set_hud(cmd, f"PARSE overview   {score_line}   (→ parse_next to step through)")
@@ -1260,7 +1276,7 @@ def parse_dump(path=None, _self=None):
     print(f"PARSE: wrote {n} scored pair(s) to {path}")
 
 
-def parse_load(path, tier="review", _self=None):
+def parse_load(path, tier="priority", _self=None):
     """Rebuild the worklist from a parse_dump JSON -- WITHOUT re-scoring.
 
     Lets anyone (e.g. a colleague you sent the .pse + JSON to) step through a
@@ -1268,7 +1284,7 @@ def parse_load(path, tier="review", _self=None):
     parse_overview / parse_dump -- with no parse binary. The object named
     in the JSON (its 'pdb_id') should already be loaded, e.g. from the .pse.
     `tier` selects which pair-score tier(s) populate the worklist (default
-    'review'; see parse_score).
+    'priority'; see parse_score).
     """
     from pymol import cmd
     import json
@@ -1286,7 +1302,7 @@ def parse_load(path, tier="review", _self=None):
         print(f"PARSE: note - object '{obj}' is not loaded; navigation needs it "
               f"(open its .pse/structure first).")
 
-    tier_label = str(tier).strip().lower()
+    tier_label = tier_word(tier)
     global _QUEUE, _POS, _SCORED_OBJ, _STRUCT_SCORE, _SCORED_DATA
     _SCORED_DATA = data
     _SCORED_OBJ = obj

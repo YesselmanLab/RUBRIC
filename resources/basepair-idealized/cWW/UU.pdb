@@ -1,0 +1,24 @@
+REMARK   1 Template: U-U-cWW
+REMARK   2 Tier 1: six of six
+REMARK   3 Pairs: 300; median RMSD to mean shape 0.23 A
+REMARK   7   N3-O4: 2.94 A (present in most consensus pairs)
+REMARK   7   N3-O2: 2.99 A (present in most consensus pairs)
+ATOM      1  C1'   U A   1     244.837 203.239 301.399  1.00  0.00           C
+ATOM      2  N1    U A   1     245.339 203.471 300.033  1.00  0.00           N
+ATOM      3  C2    U A   1     245.602 204.740 299.622  1.00  0.00           C
+ATOM      4  O2    U A   1     245.425 205.712 300.303  1.00  0.00           O
+ATOM      5  N3    U A   1     246.046 204.860 298.365  1.00  0.00           N
+ATOM      6  C4    U A   1     246.282 203.853 297.503  1.00  0.00           C
+ATOM      7  O4    U A   1     246.724 204.119 296.406  1.00  0.00           O
+ATOM      8  C5    U A   1     246.014 202.567 297.995  1.00  0.00           C
+ATOM      9  C6    U A   1     245.571 202.423 299.220  1.00  0.00           C
+ATOM     10  C1'   U B   2     244.166 211.973 300.192  1.00  0.00           C
+ATOM     11  N1    U B   2     244.827 210.839 299.510  1.00  0.00           N
+ATOM     12  C2    U B   2     244.715 209.579 300.014  1.00  0.00           C
+ATOM     13  O2    U B   2     244.141 209.310 301.031  1.00  0.00           O
+ATOM     14  N3    U B   2     245.318 208.596 299.312  1.00  0.00           N
+ATOM     15  C4    U B   2     246.000 208.731 298.147  1.00  0.00           C
+ATOM     16  O4    U B   2     246.482 207.750 297.612  1.00  0.00           O
+ATOM     17  C5    U B   2     246.072 210.048 297.654  1.00  0.00           C
+ATOM     18  C6    U B   2     245.489 211.021 298.335  1.00  0.00           C
+END

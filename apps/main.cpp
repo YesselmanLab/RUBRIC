@@ -7,6 +7,7 @@
  * JSON report. The hidden `dump-*` subcommands used by the differential tests
  * live in differential_commands.cpp; resource-path resolution lives in cli_support.cpp.
  */
+#include <algorithm>
 #include <array>
 #include <chrono>
 #include <cmath>
@@ -16,6 +17,7 @@
 #include <fstream>
 #include <iostream>
 #include <optional>
+#include <sstream>
 #include <string>
 #include <unordered_map>
 #include <utility>
@@ -106,9 +108,239 @@ json frame_json(const pairfinder::core::ReferenceFrame& f) {
                 {"z_axis", vec3_json(f.z_axis())}};
 }
 
+// ---- --pml: a standalone PyMOL script reproducing the plug-in's display ------
+// Mirrors integrations/pymol/parse_pymol.py (score_to_rgb, _build_overlay,
+// _build_pucker) so the script and the plug-in draw the same picture without
+// needing the plug-in or the binary at view time.
+
+constexpr double kReviewMax = 80.0;          // priority review: score < 80
+constexpr double kSecondaryG0 = 0.867;       // secondary review green channel near 100
+constexpr double kSecondaryG1 = 0.45;        //                          ... near 80
+constexpr std::size_t kResiPerLine = 60;     // residues per selection line
+
+// PyMOL object/selection name: letters, digits and '_' only.
+std::string pymol_name(const std::string& s) {
+    std::string n;
+    for (char c : s) n += std::isalnum(static_cast<unsigned char>(c)) ? c : '_';
+    return n.empty() ? "fastrna_model" : n;
+}
+
+// res_id "<chain>-<resname>-<seq+icode>" -> (chain, resi); seq may be negative.
+std::pair<std::string, std::string> chain_resi(const std::string& res_id) {
+    const auto a = res_id.find('-');
+    const auto b = a == std::string::npos ? a : res_id.find('-', a + 1);
+    if (b == std::string::npos) return {"", res_id};
+    std::string seq = res_id.substr(b + 1);
+    if (!seq.empty() && seq[0] == '-') seq = "\\" + seq;  // PyMOL escapes a leading '-'
+    return {res_id.substr(0, a), seq};
+}
+
+// "(chain A and resi 1+2+3)" clauses, at most kResiPerLine residues each, so a
+// ribosome-sized selection is built over several short lines.
+std::vector<std::string> resi_clauses(const std::vector<std::string>& res_ids) {
+    std::vector<std::string> order;
+    std::unordered_map<std::string, std::vector<std::string>> by_chain;
+    for (const auto& id : res_ids) {
+        auto [ch, resi] = chain_resi(id);
+        if (!by_chain.count(ch)) order.push_back(ch);
+        auto& v = by_chain[ch];
+        if (std::find(v.begin(), v.end(), resi) == v.end()) v.push_back(resi);
+    }
+    std::vector<std::string> out;
+    for (const auto& ch : order) {
+        const auto& v = by_chain[ch];
+        for (std::size_t i = 0; i < v.size(); i += kResiPerLine) {
+            std::string c = "(" + (ch.empty() ? std::string() : "chain " + ch + " and ") + "resi ";
+            for (std::size_t j = i; j < std::min(v.size(), i + kResiPerLine); ++j)
+                c += (j > i ? "+" : "") + v[j];
+            out.push_back(c + ")");
+        }
+    }
+    return out;
+}
+
+// Write `select name, ...`: one line for a single clause, else extended over
+// as many lines as needed (empty -> "none").
+void write_selection(std::ostream& o, const std::string& name, const std::string& scope,
+                     const std::vector<std::string>& res_ids) {
+    const auto clauses = resi_clauses(res_ids);
+    if (clauses.empty()) { o << "select " << name << ", none\n"; return; }
+    o << "select " << name << ", " << scope << " and " << clauses[0] << "\n";
+    for (std::size_t i = 1; i < clauses.size(); ++i)
+        o << "select " << name << ", " << name << " or (" << scope << " and " << clauses[i] << ")\n";
+}
+
+// Python string literal for the embedded block (chain/resi are plain tokens,
+// but escape defensively).
+std::string py_str(const std::string& s) {
+    std::string q = "\"";
+    for (char c : s) q += (c == '"' || c == '\\') ? std::string("\\") + c : std::string(1, c);
+    return q + "\"";
+}
+
+std::string fmt3(double v) {
+    char buf[32];
+    std::snprintf(buf, sizeof buf, "%.3f", v);
+    return buf;
+}
+
+// Emit the PyMOL script for a scored report. `structure_path` is the file the
+// engine read; the script loads that same file, so selections match its chains.
+void write_pml(const json& out, const std::string& structure_path, const std::string& pml_path) {
+    const std::string obj = pymol_name(out.value("pdb_id", std::string()));
+    const std::string abs_path = std::filesystem::absolute(structure_path).string();
+
+    // Flagged pairs (score < 100), worst first; each residue takes the lowest
+    // score of the flagged pairs it belongs to (as in the plug-in overlay).
+    std::vector<const json*> flagged;
+    for (const auto& p : out["pairs"])
+        if (p.contains("score") && p["score"].is_number() && p["score"].get<double>() < 100.0)
+            flagged.push_back(&p);
+    std::stable_sort(flagged.begin(), flagged.end(), [](const json* a, const json* b) {
+        return (*a)["score"].get<double>() < (*b)["score"].get<double>();
+    });
+    std::vector<std::string> res_order;
+    std::unordered_map<std::string, double> lo_score;
+    for (const json* p : flagged) {
+        const double s = (*p)["score"].get<double>();
+        for (const char* k : {"res_id1", "res_id2"}) {
+            const std::string id = (*p)[k].get<std::string>();
+            auto it = lo_score.find(id);
+            if (it == lo_score.end()) { lo_score[id] = s; res_order.push_back(id); }
+            else it->second = std::min(it->second, s);
+        }
+    }
+    // Position on the plug-in's yellow(0) -> red(1) spectrum, whose green
+    // channel is 1 - b: priority review -> 1 (red); secondary review -> the
+    // yellow (near 100) to orange (near 80) stretch of the same ramp.
+    auto ramp_b = [](double s) {
+        if (s < kReviewMax) return 1.0;
+        const double t = (100.0 - s) / (100.0 - kReviewMax);
+        return 1.0 - (kSecondaryG0 + t * (kSecondaryG1 - kSecondaryG0));
+    };
+
+    std::vector<std::string> pucker_res;
+    if (out.contains("pucker_outliers"))
+        for (const auto& u : out["pucker_outliers"]) pucker_res.push_back(u["res_id"].get<std::string>());
+
+    std::ostringstream o;
+    auto num_or = [](const json& v, const char* fmt) -> std::string {
+        if (!v.is_number()) return "n/a";
+        char buf[32];
+        std::snprintf(buf, sizeof buf, fmt, v.get<double>());
+        return buf;
+    };
+    const json ts = out.value("tier_summary", json::object());
+    o << "# FastRNA " << kVersion << " - PyMOL view of " << out.value("pdb_id", std::string()) << "\n"
+      << "# structure: " << abs_path << "\n"
+      << "# base-pair score " << num_or(out.value("pairs_score", json()), "%.2f")
+      << "  |  backbone suiteness " << num_or(out.value("backbone_suiteness", json()), "%.3f")
+      << "  |  pairs: " << ts.value("Preferred", 0) << " preferred, "
+      << ts.value("Secondary review", 0) << " secondary review, "
+      << ts.value("Priority review", 0) << " priority review\n"
+      << "# colors: gray = preferred | yellow -> orange = secondary review |"
+         " red = priority review | cyan ribose = pucker outlier (delta vs Pperp)\n"
+      << "# Open with: pymol " << std::filesystem::path(pml_path).filename().string()
+      << "   (or @file.pml inside PyMOL). Coordinates are never modified;\n"
+      << "# re-run FastRNA with --pml after editing the model to refresh this view.\n\n"
+      << "set ignore_case_chain, 0\n"
+      << "/cmd.load(r\"\"\"" << abs_path << "\"\"\", \"" << obj << "\")\n"
+      << "hide everything, " << obj << "\n"
+      << "show cartoon, " << obj << "\n"
+      << "color gray70, " << obj << "\n\n";
+
+    o << "# ---- flagged base pairs (score < 100), worst first ----\n";
+    if (flagged.empty()) o << "# none\n";
+    for (std::size_t i = 0; i < flagged.size(); ++i) {
+        const json& p = *flagged[i];
+        std::string lw = "-", issues;
+        if (p.contains("classification") && p["classification"].is_object())
+            lw = p["classification"].value("lw_class", std::string("-"));
+        for (const auto& is : p.value("issues", json::array()))
+            issues += (issues.empty() ? "" : ", ") + is.get<std::string>();
+        char buf[64];
+        std::snprintf(buf, sizeof buf, "# %4zu  %6.2f  ", i + 1, p["score"].get<double>());
+        o << buf << p.value("tier", std::string()) << "  " << p.value("pair", std::string())
+          << "  " << lw << (issues.empty() ? "" : "  [" + issues + "]") << "\n";
+    }
+    if (!pucker_res.empty()) {
+        o << "# ---- ribose pucker outliers (delta and Pperp disagree) ----\n";
+        for (const auto& u : out["pucker_outliers"])
+            o << "#   " << u.value("res_id", std::string()) << "  delta "
+              << num_or(u.value("delta", json()), "%.1f") << " ("
+              << u.value("pucker_by_delta", std::string("?")) << ") vs Pperp "
+              << num_or(u.value("pperp", json()), "%.2f") << " A ("
+              << u.value("pucker_by_pperp", std::string("?")) << ")\n";
+    }
+    o << "\n";
+
+    const std::string nuc = "(" + obj + ") and (polymer.nucleic or byres ((" + obj + ") and name C1'))";
+    if (!res_order.empty()) {
+        // As in the plug-in's _build_overlay: stamp each flagged residue's ramp
+        // position into the B-factor of a COPY, drop the rest, and color with one
+        // spectrum call. One pass over the atoms, so a ribosome opens quickly; the
+        // model itself is untouched.
+        o << "# ---- flagged pairs as sticks on a copy, colored by pair score ----\n"
+          << "python\n"
+          << "_fastrna_b = {\n";
+        for (std::size_t i = 0; i < res_order.size(); ++i) {  // 8 per line: PyMOL echoes each line
+            const std::string& id = res_order[i];
+            const auto a = id.find('-');
+            const auto b = a == std::string::npos ? a : id.find('-', a + 1);
+            const std::string ch = b == std::string::npos ? "" : id.substr(0, a);
+            const std::string seq = b == std::string::npos ? id : id.substr(b + 1);
+            o << (i % 8 == 0 ? "    " : " ") << "(" << py_str(ch) << ", " << py_str(seq)
+              << "): " << fmt3(ramp_b(lo_score[id])) << ","
+              << (i % 8 == 7 || i + 1 == res_order.size() ? "\n" : "");
+        }
+        o << "}\n"
+          << "cmd.create(\"fastrna_pairs\", " << py_str(nuc) << ")\n"
+          << "cmd.alter(\"fastrna_pairs\", \"b = _fastrna_b.get((chain, resi), -1.0)\",\n"
+          << "          space={\"_fastrna_b\": _fastrna_b})\n"
+          << "cmd.remove(\"fastrna_pairs and b < -0.5\")\n"
+          << "del _fastrna_b\n"
+          << "python end\n"
+          << "hide everything, fastrna_pairs\n"
+          << "show sticks, fastrna_pairs\n"
+          << "set stick_radius, 0.18, fastrna_pairs\n"
+          << "spectrum b, yellow red, fastrna_pairs, minimum=0, maximum=1\n"
+          << "select fastrna_priority, fastrna_pairs and b > 0.999\n"
+          << "select fastrna_secondary, fastrna_pairs and b < 0.999\n\n";
+
+        // One named selection per priority-review pair (on the model), in worklist order.
+        int k = 0;
+        for (const json* p : flagged) {
+            if ((*p)["score"].get<double>() >= kReviewMax) continue;
+            char nm[32];
+            std::snprintf(nm, sizeof nm, "fastrna_pr_%03d", ++k);
+            write_selection(o, nm, obj, {(*p)["res_id1"].get<std::string>(),
+                                         (*p)["res_id2"].get<std::string>()});
+        }
+        if (k > 0) o << "group fastrna_worklist, fastrna_pr_*\n\n";
+    }
+    if (!pucker_res.empty()) {
+        o << "# ---- pucker outliers: gray sticks with a cyan ribose ring ----\n";
+        write_selection(o, "fastrna_pucker_outliers", obj, pucker_res);
+        o << "create fastrna_pucker, (" << obj << ") and fastrna_pucker_outliers\n"
+          << "hide everything, fastrna_pucker\n"
+          << "show sticks, fastrna_pucker\n"
+          << "set stick_radius, 0.30, fastrna_pucker\n"
+          << "color gray60, fastrna_pucker\n"
+          << "set_color fastrna_pucker_col, [0.000, 0.750, 0.850]\n"
+          << "color fastrna_pucker_col, fastrna_pucker and name C1'+C2'+C3'+C4'+O4'\n\n";
+    }
+    o << "deselect\nzoom " << obj << "\n";
+
+    std::filesystem::path pp(pml_path);
+    std::error_code ec;
+    if (pp.has_parent_path()) std::filesystem::create_directories(pp.parent_path(), ec);
+    std::ofstream(pp) << o.str();
+    std::fprintf(stderr, "Wrote %s\n", pp.string().c_str());
+}
+
 // Run the full pipeline and emit the report JSON (default + --details).
 int find_json(const std::string& path, bool score, bool details, bool emit_classified,
-              const std::string& out_path) {
+              const std::string& out_path, const std::string& pml_path) {
     using namespace pairfinder;
     // Per-stage wall-clock when PAIRFINDER_PROFILE is set (-> stderr).
     const bool prof = std::getenv("PARSE_PROFILE") != nullptr;
@@ -337,13 +569,13 @@ int find_json(const std::string& path, bool score, bool details, bool emit_class
             out["backbone_suiteness"] = nullptr;
         else
             out["backbone_suiteness"] = round_to(ss.residues_score / 100.0, 3);
-        // Pair triage tier counts (Preferred/Acceptable/Review).
+        // Pair triage tier counts (Preferred/Secondary review/Priority review).
         // Always all three keys, so consumers never have to test for absence.
         const auto ts = ss.tier_summary();
         const json tier_summary = json{
             {"Preferred", ts.preferred},
-            {"Acceptable", ts.acceptable},
-            {"Review", ts.review}};
+            {"Secondary review", ts.acceptable},
+            {"Priority review", ts.review}};
         out["tier_summary"] = tier_summary;
         // Whole-structure RNA-RNA steric clashes (report-only; includes
         // residues that are not a base pair). Protein contacts are excluded by
@@ -467,6 +699,7 @@ int find_json(const std::string& path, bool score, bool details, bool emit_class
         std::ofstream(outp) << text << '\n';
         std::fprintf(stderr, "Wrote %s\n", outp.string().c_str());
     }
+    if (!pml_path.empty()) write_pml(out, path, pml_path);
     lap("json build + output");
     // find_json is main's last act, so end the process here: the output is flushed,
     // and tearing down every residue, cache and table one by one only to have the
@@ -584,6 +817,9 @@ int main(int argc, char** argv) {
                   << "  --out [FILE]  write JSON to a file (default: stdout). A bare --out\n"
                   << "                writes <id>.json in the current directory; any name or\n"
                   << "                path you give is used exactly as-is\n"
+                  << "  --pml [FILE]  also write a PyMOL script showing the flagged pairs and\n"
+                  << "                pucker outliers (bare --pml -> <id>.pml in the current\n"
+                  << "                directory); open it with `pymol FILE`\n"
                   << "  options: --details  --no-score  --no-download  --cache-dir DIR\n"
                   << "  cache:   $PARSE_CACHE_DIR or ~/.cache/parse\n"
                   << "  parse dump-parse <input.pdb>   # parsed atoms (TSV)\n";
@@ -653,8 +889,8 @@ int main(int argc, char** argv) {
     // from RCSB (cached) unless an existing file path is given.
     const std::string input = args[0];
     bool score = true, details = false, allow_download = true, emit_classified = false;
-    bool out_requested = false;
-    std::string out_path, cache_override;
+    bool out_requested = false, pml_requested = false;
+    std::string out_path, pml_path, cache_override;
     for (std::size_t i = 1; i < args.size(); ++i) {
         if (args[i] == "--no-score") score = false;
         else if (args[i] == "--score") score = true;
@@ -668,8 +904,18 @@ int main(int argc, char** argv) {
             if (i + 1 < args.size() && !args[i + 1].empty() && args[i + 1][0] != '-')
                 out_path = args[++i];
         }
+        else if (args[i] == "--pml") {
+            // Same optional-value rule as --out; a bare --pml -> <pdb_id>.pml.
+            pml_requested = true;
+            if (i + 1 < args.size() && !args[i + 1].empty() && args[i + 1][0] != '-')
+                pml_path = args[++i];
+        }
         else if (args[i] == "--cache-dir" && i + 1 < args.size()) cache_override = args[++i];
         else { std::cerr << "unknown option: " << args[i] << "\n"; return 1; }
+    }
+    if (pml_requested && !score) {
+        std::cerr << "--pml needs scoring (it colors pairs by score); drop --no-score\n";
+        return 1;
     }
     try {
         const std::filesystem::path file =
@@ -677,7 +923,9 @@ int main(int argc, char** argv) {
         // `--out` with no name defaults to <pdb_id>.json in the current directory.
         if (out_requested && out_path.empty())
             out_path = clean_pdb_id(file.string()) + ".json";
-        return find_json(file.string(), score, details, emit_classified, out_path);
+        if (pml_requested && pml_path.empty())
+            pml_path = clean_pdb_id(file.string()) + ".pml";
+        return find_json(file.string(), score, details, emit_classified, out_path, pml_path);
     } catch (const std::exception& e) {
         std::cerr << "error: " << e.what() << "\n";
         return 1;

@@ -112,6 +112,7 @@ written into your working directory unless you ask for it.
 | Option | Effect |
 |---|---|
 | `--out [FILE]` | write JSON to a file (default: stdout). Bare `--out` → `<PDB_id>.json` in the current directory; any name or path you give is used exactly as-is |
+| `--pml [FILE]` | also write a PyMOL script that shows the flagged pairs and pucker outliers (open with `pymol FILE`; no plugin needed). Bare `--pml` → `<PDB_id>.pml` in the current directory; any name or path you give is used exactly as-is. Needs scoring (not with `--no-score`) |
 | `--details` | include extra per-pair fields (template RMSD, score breakdown) |
 | `--no-score` | find + classify only, skip quality scoring |
 | `--no-download` | never fetch from RCSB; only use a local file |
@@ -200,13 +201,13 @@ highlight the pairs that need attention in one command:
 ```bash
 parse-view 1GID              # a PDB id
 parse-view file.cif          # or a local file
-parse-view 1GID acceptable   # optional tier: review (default) | acceptable | all
+parse-view 1GID secondary    # optional tier: priority (default) | secondary | all
 ```
 
 The optional **tier** selects which pairs populate the worklist, by whole-pair
-score: `review` (score < 80 — the genuinely-poor pairs, the default),
-`acceptable` (80 ≤ score < 100 — the minor-issue middle, a polishing pass), or
-`all` (both). The structure opens as a whole-view health map — gray, with the
+score: `priority` (priority review, score < 80 — the genuinely-poor pairs, the default),
+`secondary` (secondary review, 80 ≤ score < 100 — the minor-issue middle, a polishing pass), or
+`all` (both); the older words `review` and `acceptable` still work. The structure opens as a whole-view health map — gray, with the
 flagged pairs lit up — and the scored JSON is also written to
 `1GID_pairs.json` in the current directory.
 
@@ -224,7 +225,7 @@ command line). Arguments in `[...]` are optional.
 
 | command | what it does |
 |---|---|
-| `parse_score [obj], [tier]` | score the structure + highlight the flagged pairs (colored by pair score) and the pucker-mismatch sugars (cyan); `tier` = `review` (default) / `acceptable` / `all` |
+| `parse_score [obj], [tier]` | score the structure + highlight the flagged pairs (colored by pair score) and the pucker-mismatch sugars (cyan); `tier` = `priority` (default) / `secondary` / `all` |
 | `parse_list [n]` | print the ranked worklist of the worst pairs (default 25) |
 | `parse_next` / `parse_prev` | step through the worklist one pair at a time |
 | `parse_goto <rank \| residue>` | jump to worklist entry `12`, **or** inspect any residue by `A-169` / `A169` / `A-G-169` (even a clean pair not in the worklist) — prints its score and what's out of range |
@@ -239,11 +240,20 @@ command line). Arguments in `[...]` are optional.
 | `parse_set_binary <path>` | point the plugin at a specific `parse` binary |
 | `parse_set_ideals <path>` | set the idealized-template dir |
 
-A typical loop: `parse_score` (Review tier) → `parse_next` through the flagged
+A typical loop: `parse_score` (priority review) → `parse_next` through the flagged
 pairs → `parse_ideal` to see the target → fix geometry / re-refine → re-run
-`parse_score`; when the Review worklist is clear, `parse_score obj, acceptable`
+`parse_score`; when the priority-review worklist is clear, `parse_score obj, secondary`
 to polish the middle. Keyboard navigation and the full color scheme are covered in
 [`integrations/pymol/README.md`](integrations/pymol/README.md).
+
+### No plugin? Write a standalone script
+
+`parse 1GID --pml` writes `1GID.pml`, a plain PyMOL script that loads the
+structure and shows the same picture (flagged pairs colored by score, cyan
+pucker-mismatch riboses) with named selections for each tier and one per
+priority-review pair. Open it with `pymol 1GID.pml` on any machine with PyMOL;
+neither the plugin nor the binary is needed to view it. Details in
+[`integrations/pymol/README.md`](integrations/pymol/README.md#without-the-plugin-a-standalone-script-parse---pml).
 
 PyMOL is only needed for this viewer — the core `parse` tool does not require it.
 

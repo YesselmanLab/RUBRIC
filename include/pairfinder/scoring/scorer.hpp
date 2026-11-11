@@ -43,19 +43,19 @@ struct IssuePenalty {
 };
 
 /// Pair-score triage tiers - global, data-derived cutoffs.
-/// Acceptable spans [80, 100); below is Review.
+/// Secondary review spans [80, 100); below is Priority review.
 constexpr double kTierAcceptableMin = 80.0;
 
 /// Triage tier for a pair score:
 ///   "Preferred"  = 100     (every scored parameter in its Preferred/ProSco>=5 region)
-///   "Acceptable" = [80,100) (minor strain, no review needed)
-///   "Review"     = <80      (worth a manual look)
+///   "Secondary review" = [80,100) (minor strain)
+///   "Priority review"  = <80      (worth a manual look)
 /// Global rather than per-LW-class: all 12 LW medians are 100 and per-(class,bp)
 /// ProSco/Z' normalization already removes the "non-canonical is harder" effect.
 inline std::string pair_tier(double score) {
     if (score >= 100.0) return "Preferred";
-    if (score >= kTierAcceptableMin) return "Acceptable";
-    return "Review";
+    if (score >= kTierAcceptableMin) return "Secondary review";
+    return "Priority review";
 }
 
 /// Report-only "unusual sugar pucker": a C2'-endo (by delta) sugar in a helical cWW
@@ -100,7 +100,7 @@ struct PairScore {
     /// fitting can recompute it. nullopt if a residue has no heavy atoms.
     std::optional<double> clash_overlap;
 
-    /// Triage tier derived from `score` (Preferred/Acceptable/Review).
+    /// Triage tier derived from `score` (Preferred/Secondary review/Priority review).
     std::string tier() const { return pair_tier(score); }
 };
 
@@ -175,7 +175,7 @@ struct StructureScore {
         for (const auto& ps : pair_scores) {
             const std::string tier = ps.tier();
             if (tier == "Preferred") ++t.preferred;
-            else if (tier == "Acceptable") ++t.acceptable;
+            else if (tier == "Secondary review") ++t.acceptable;
             else ++t.review;
         }
         return t;

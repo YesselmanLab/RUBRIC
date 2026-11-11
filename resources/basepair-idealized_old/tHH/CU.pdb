@@ -1,0 +1,26 @@
+REMARK   1 Idealized base pair: C-U-tHH
+REMARK   2 LW classification: tHH
+REMARK   3 Sequence: CU
+REMARK   4 Based on exemplar: 1FJG
+REMARK   5 All atoms in z=0 plane (perfectly planar)
+REMARK   6 H-bonds optimized:
+REMARK   7   N4-O4: 2.90 A (ideal: 2.90)
+ATOM      1  C1'   C A   1      -2.477   5.402   0.000  1.00  0.00            C
+ATOM      2  C2    C A   1      -1.472   3.158   0.000  1.00  0.00            C
+ATOM      3  C4    C A   1       0.837   2.868   0.000  1.00  0.00            C
+ATOM      4  C5    C A   1       1.056   4.275   0.000  1.00  0.00            C
+ATOM      5  C6    C A   1      -0.023   5.068   0.000  1.00  0.00            C
+ATOM      6  N1    C A   1      -1.285   4.542   0.000  1.00  0.00            N
+ATOM      7  N3    C A   1      -0.391   2.344   0.000  1.00  0.00            N
+ATOM      8  N4    C A   1       1.875   2.027   0.001  1.00  0.00            N
+ATOM      9  O2    C A   1      -2.628   2.709   0.001  1.00  0.00            O
+ATOM     10  C1'   U B   2       6.050  -2.488   0.000  1.00  0.00            C
+ATOM     11  C2    U B   2       4.415  -0.669   0.000  1.00  0.00            C
+ATOM     12  C4    U B   2       2.002  -1.163   0.000  1.00  0.00            C
+ATOM     13  C5    U B   2       2.331  -2.555   0.000  1.00  0.00            C
+ATOM     14  C6    U B   2       3.615  -2.932   0.000  1.00  0.00            C
+ATOM     15  N1    U B   2       4.653  -2.029   0.000  1.00  0.00            N
+ATOM     16  N3    U B   2       3.089  -0.314   0.000  1.00  0.00            N
+ATOM     17  O2    U B   2       5.310   0.158   0.000  1.00  0.00            O
+ATOM     18  O4    U B   2       0.863  -0.691   0.000  1.00  0.00            O
+END

@@ -2,8 +2,7 @@
 
 Highlight problematic base pairs in PyMOL during refinement, using the
 `parse` binary. Flagged pairs are shown as sticks colored by their **pair
-score**: red = Review tier (priority review), yellow → orange = Acceptable
-(secondary review). Sugars whose pucker is inconsistent are drawn with a **cyan
+score**: red = priority review, yellow → orange = secondary review. Sugars whose pucker is inconsistent are drawn with a **cyan
 ribose**. Re-run after an edit and a fixed pair (or sugar) disappears. The
 original object is never modified.
 
@@ -14,7 +13,7 @@ From the repo, after building `parse`:
 ```bash
 ./integrations/pymol/parse-view 1GID                 # a PDB id (fetched from RCSB)
 ./integrations/pymol/parse-view /path/to/mymodel.pdb # or a local file
-./integrations/pymol/parse-view 1GID acceptable      # optional tier: review|acceptable|all
+./integrations/pymol/parse-view 1GID secondary       # optional tier: priority|secondary|all
 ```
 
 This opens PyMOL, loads the plugin, loads the structure, scores it, and
@@ -36,9 +35,9 @@ commands below.
 ## Use
 
 ```
-parse_score                 # score current object; worklist = Review tier (score<80)
-parse_score 6DN1            # score object named 6DN1 (Review tier)
-parse_score 6DN1, acceptable  # the minor-issue middle (80<=score<100), a polish pass
+parse_score                 # score current object; worklist = priority review (score<80)
+parse_score 6DN1            # score object named 6DN1 (priority review)
+parse_score 6DN1, secondary # the minor-issue middle (80<=score<100), a polish pass
 parse_score 6DN1, all       # every non-Preferred pair
 parse_score 6DN1, all, 0.5  # ...and only issues with color severity >= 0.5 (less noise)
 parse_clear                 # remove the overlay
@@ -56,17 +55,17 @@ Each `parse_score` run:
    |Z′| (ProSco-gated), followed by the pucker mismatches and a one-line color key.
 
 **Which pairs are flagged** is gated by the whole-pair **score tier** (`tier`
-arg): `review` (score < 80, the default), `acceptable` (80 ≤ score < 100), or
-`all` (both). The pair score decides *membership and color* — who a refiner
+arg): `priority` (score < 80, the default), `secondary` (80 ≤ score < 100), or
+`all` (both); the older words `review` and `acceptable` still work. The pair score decides *membership and color* — who a refiner
 reviews, and how urgently — while the ProSco/Z′ severity decides the *order within
 a tier* and names each pair's worst parameter. So the
 default `parse_score` shows only the genuinely-poor pairs, and `parse_score obj,
-acceptable` (or `all`) widens the net for a thorough polishing pass. The printed
-header shows the structure's tier counts (e.g. `104 Preferred · 32 Acceptable ·
-10 Review`) so you know how big each pass is before you run it.
+secondary` (or `all`) widens the net for a thorough polishing pass. The printed
+header shows the structure's tier counts (e.g. `104 Preferred · 32 secondary review ·
+10 priority review`) so you know how big each pass is before you run it.
 
-A typical loop: `parse_score` (Review) → fix the flagged pairs → re-run; when the
-Review worklist is empty, `parse_score obj, acceptable` to polish the middle.
+A typical loop: `parse_score` (priority review) → fix the flagged pairs → re-run; when the
+priority-review worklist is empty, `parse_score obj, secondary` to polish the middle.
 
 ## What gets colored
 
@@ -78,8 +77,8 @@ validated whole-pair quantity; a residue in several flagged pairs takes its lowe
 | color | meaning | drawn as |
 |---|---|---|
 | **gray** | *preferred* — pair score 100 | not highlighted |
-| **yellow → orange** | *secondary review* — Acceptable tier, 80 ≤ score < 100 (yellow near 100, orange near 80) | pair sticks |
-| **red** | *priority review* — Review tier, score < 80 | pair sticks |
+| **yellow → orange** | *secondary review* — 80 ≤ score < 100 (yellow near 100, orange near 80) | pair sticks |
+| **red** | *priority review* — score < 80 | pair sticks |
 | **cyan** | *pucker mismatch (δ vs P-perp)* — a flag on one sugar, not a tier | the ribose ring of a gray nucleotide |
 | **green** | *ideal template* — the target geometry for the current pair | thin ghost sticks + H-bonds (`parse_ideal`) |
 
@@ -89,12 +88,12 @@ pucker mismatch can sit on a pair of any tier, or on an unpaired nucleotide.
 The worst parameter (e.g. `buckle 4.3σ`), its Z′ and its Černý tier still appear in
 the printed summary and in the per-pair readout. Until 2026-10 the color came from
 the single worst parameter's severity instead, so a pair with one large outlier in a
-low-weight parameter could show red while its score was Acceptable (e.g. 1GID
+low-weight parameter could show red while it was in secondary review (e.g. 1GID
 A226–U249: propeller 6.3σ, score 85). H-bond-count pairs are no longer drawn blue;
 they are colored by their score like any other pair, and still sort to the bottom
 of the worklist.
 
-Pass `parse_score target, review, 0, 0, 0` (last arg `gray_background=0`) to keep
+Pass `parse_score target, priority, 0, 0, 0` (last arg `gray_background=0`) to keep
 the object's existing colors instead of graying. Only colors change — coordinates
 are never modified.
 
@@ -102,7 +101,7 @@ are never modified.
 
 | command | effect |
 |---|---|
-| `parse_score [obj], [tier], [min_severity], [zoom]` | score + highlight the flagged pairs; `tier` = `review` (default) / `acceptable` / `all` |
+| `parse_score [obj], [tier], [min_severity], [zoom]` | score + highlight the flagged pairs; `tier` = `priority` (default) / `secondary` / `all` |
 | `parse_list [n]` | print the ranked worklist (default 25) |
 | `parse_dump [path]` | write the current scored pairs (incl. edits) to JSON — default `<obj>_pairs.json` |
 | `parse_load <path>` | rebuild the worklist from a `parse_dump` JSON — **no binary, no re-scoring** (for sharing a session) |
@@ -253,3 +252,42 @@ parse_next              # ... and they can step through exactly as you did
 / `parse_list` / `parse_overview` / `parse_dump` all work. Only `parse_score` itself
 (scoring a *new* model) needs the binary. Tip: put those three lines in a `view.pml`
 so they only have to type `@view.pml`.
+
+## Without the plugin: a standalone script (`parse --pml`)
+
+The `parse` binary can also write the same view as a plain PyMOL script, so
+anyone with PyMOL can open it, with no plugin and no binary at view time:
+
+```bash
+parse 1GID --pml                                  # writes ./1GID.pml (JSON still goes to stdout)
+parse model.cif --pml views/model.pml --out model.json
+pymol 1GID.pml                                    # or, inside PyMOL: @1GID.pml
+```
+
+A bare `--pml` writes `<PDB_id>.pml` in the current directory; any name or path
+you give is used exactly as-is (missing directories are created), as for `--out`.
+
+The script loads the structure file that was scored (its absolute path is in the
+header) and builds:
+
+| object / selection | what it is |
+|---|---|
+| `fastrna_pairs` | a copy of the flagged pairs as sticks, colored by pair score: yellow → orange = secondary review, red = priority review (the same colors as `parse_score`) |
+| `fastrna_priority`, `fastrna_secondary` | the flagged residues of each tier |
+| `fastrna_worklist` → `fastrna_pr_001`, `fastrna_pr_002`, … | one selection per priority-review pair on the model, worst first (e.g. `zoom fastrna_pr_001`) |
+| `fastrna_pucker`, `fastrna_pucker_outliers` | pucker-mismatch nucleotides (δ vs P-perp), gray sticks with a cyan ribose ring |
+
+The header also lists, as comments, the base-pair score, backbone suiteness and
+tier counts, then every flagged pair (score, tier, LW class, penalized
+parameters) worst first and every pucker outlier, so the file doubles as a
+readable worklist.
+
+Notes:
+
+- Like the plugin, the script never modifies coordinates. After editing or
+  re-refining the model, re-run `parse ... --pml` to regenerate it.
+- The structure path in the script is absolute. If you send the `.pml` to a
+  colleague, send the structure file too and edit the path in the `cmd.load` line.
+- Interactive features (`parse_next`, `parse_ideal`, the `parse_pucker` close-up)
+  need the plugin; the script gives the static overview and named selections.
+- `--pml` needs scoring, so it cannot be combined with `--no-score`.

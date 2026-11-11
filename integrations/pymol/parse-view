@@ -7,11 +7,12 @@
 # the problematic base pairs. The PyMOL window stays open for inspection.
 #
 # The optional [tier] selects which pair-score tier populates the worklist:
-#   review (default) score<80, acceptable 80<=score<100, all (non-Preferred).
+#   priority (default) score<80, secondary 80<=score<100, all (non-Preferred).
+#   ('review' and 'acceptable' still work as aliases.)
 # Sugar-pucker mismatches (cyan ribose) are drawn whatever the tier.
 #
 #   ./parse-view 1GID
-#   ./parse-view 1GID acceptable
+#   ./parse-view 1GID secondary
 #   ./parse-view /path/to/mymodel.pdb all
 #
 # Env overrides:
@@ -41,9 +42,9 @@ else
 fi
 
 INPUT="${1:-}"
-TIER="${2:-review}"   # worklist score-tier: review (default) | acceptable | all
+TIER="${2:-priority}"   # worklist score-tier: priority (default) | secondary | all
 if [ -z "$INPUT" ]; then
-    echo "usage: parse-view <pdb-id | structure-file> [review|acceptable|all]" >&2
+    echo "usage: parse-view <pdb-id | structure-file> [priority|secondary|all]" >&2
     exit 2
 fi
 if [ ! -x "$BIN" ]; then

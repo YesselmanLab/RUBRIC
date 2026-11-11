@@ -1,0 +1,28 @@
+REMARK   1 Idealized base pair: A-C-cWH
+REMARK   2 LW classification: cWH
+REMARK   3 Sequence: AC
+REMARK   4 Based on exemplar: 6FF4
+REMARK   5 All atoms in z=0 plane (perfectly planar)
+REMARK   6 H-bonds optimized:
+REMARK   7   N4-N1: 2.90 A (ideal: 2.90)
+ATOM      1  C1'   A A   1      -2.479   5.346   0.000  1.00  0.00            C
+ATOM      2  C2    A A   1      -1.912   1.023   0.000  1.00  0.00            C
+ATOM      3  C4    A A   1      -1.267   3.124   0.000  1.00  0.00            C
+ATOM      4  C5    A A   1       0.071   2.771   0.000  1.00  0.00            C
+ATOM      5  C6    A A   1       0.369   1.398   0.000  1.00  0.00            C
+ATOM      6  C8    A A   1       0.024   4.897   0.000  1.00  0.00            C
+ATOM      7  N1    A A   1      -0.668   0.532   0.000  1.00  0.00            N
+ATOM      8  N3    A A   1      -2.320   2.290   0.000  1.00  0.00            N
+ATOM      9  N6    A A   1       1.611   0.909   0.000  1.00  0.00            N
+ATOM     10  N7    A A   1       0.877   3.902   0.000  1.00  0.00            N
+ATOM     11  N9    A A   1      -1.291   4.498   0.000  1.00  0.00            N
+ATOM     12  C1'   C B   2      -4.390  -6.571   0.000  1.00  0.00            C
+ATOM     13  C2    C B   2      -4.941  -4.175   0.000  1.00  0.00            C
+ATOM     14  C4    C B   2      -3.273  -2.551   0.000  1.00  0.00            C
+ATOM     15  C5    C B   2      -2.250  -3.542   0.000  1.00  0.00            C
+ATOM     16  C6    C B   2      -2.633  -4.825   0.000  1.00  0.00            C
+ATOM     17  N1    C B   2      -3.957  -5.166   0.000  1.00  0.00            N
+ATOM     18  N3    C B   2      -4.569  -2.874   0.000  1.00  0.00            N
+ATOM     19  N4    C B   2      -2.952  -1.255   0.000  1.00  0.00            N
+ATOM     20  O2    C B   2      -6.134  -4.514   0.000  1.00  0.00            O
+END
