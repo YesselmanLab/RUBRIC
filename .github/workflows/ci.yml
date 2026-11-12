@@ -29,7 +29,7 @@ jobs:
           # so the cache is tied to the repo's checkout path. Bump the version
           # token below (v2, v3, ...) whenever the repo is renamed/moved to drop
           # the stale cache; otherwise CMake aborts with a path-mismatch error.
-          key: gemmi-v2-${{ matrix.os }}-${{ hashFiles('CMakeLists.txt') }}
+          key: gemmi-v3-${{ matrix.os }}-${{ hashFiles('CMakeLists.txt') }}
 
       - name: Configure
         run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
@@ -39,7 +39,7 @@ jobs:
 
       - name: Fetch and run on real RNA (1GID)
         run: |
-          ./build/parse 1GID > 1GID.json
+          ./build/rubric 1GID > 1GID.json
           python3 -c "
           import json, sys
           d = json.load(open('1GID.json'))

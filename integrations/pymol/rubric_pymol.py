@@ -1,35 +1,35 @@
-"""PARSE -> PyMOL: highlight problematic base pairs during refinement.
+"""RUBRIC -> PyMOL: highlight problematic base pairs during refinement.
 
-Load in PyMOL:    run /path/to/parse_pymol.py
-Then:             parse_score               # score current object; worklist = priority review
-                  parse_score 6DN1, secondary  # the minor-issue middle (polish pass)
-                  parse_score 6DN1, all     # every non-Preferred pair
-                  parse_clear               # remove the highlights
+Load in PyMOL:    run /path/to/rubric_pymol.py
+Then:             rubric_score               # score current object; worklist = priority review
+                  rubric_score 6DN1, secondary  # the minor-issue middle (polish pass)
+                  rubric_score 6DN1, all     # every non-Preferred pair
+                  rubric_clear               # remove the highlights
 
 What it does each run:
   1. saves the object's nucleotides to a temp PDB (chains renamed to unique
      single characters so big multi-chain structures -- e.g. a ribosome with
      chain "1A" -- survive the legacy-PDB round-trip; res_ids are mapped back
      to the real chain names afterwards),
-  2. runs the `parse` binary on it (sub-second, even on a ribosome),
+  2. runs the `rubric` binary on it (sub-second, even on a ribosome),
   3. colors the whole structure gray (so unflagged pairs recede), then builds
-     an overlay object `parse_overlay` of just the flagged base pairs, shown as
+     an overlay object `rubric_overlay` of just the flagged base pairs, shown as
      sticks colored by the PAIR SCORE: priority review (score < 80)
      -> red; secondary review (80 <= score < 100) -> yellow (near 100)
      to orange (near 80),
   4. draws every sugar-pucker mismatch (the binary's `pucker_outliers`: delta and
      P-perp imply different puckers) as a gray nucleotide with a cyan ribose ring,
-     object `parse_pucker`, whatever the pair tier (`parse_pucker` lists them and
+     object `rubric_pucker`, whatever the pair tier (`rubric_pucker` lists them and
      shows one close up with its P-perp measurement),
   5. prints a ranked summary (incl. H-bond-count issues, which are summary-only),
      the pucker mismatches, and a one-line color key.
 
 Colors: gray = preferred, yellow -> orange =
 secondary review, red = priority review, cyan ribose = pucker mismatch, green =
-ideal template (parse_ideal).
+ideal template (rubric_ideal).
 
 Which pairs are flagged is gated by the whole-pair SCORE tier (`tier` arg to
-parse_score): 'priority' (score<80, default), 'secondary' (80<=score<100), or
+rubric_score): 'priority' (score<80, default), 'secondary' (80<=score<100), or
 'all'. The pair score decides both *membership* and *color*; the per-parameter
 Cerny |Z'| severity decides the order *within* a tier and the 'worst: ...'
 readout. (Until 2026-10 the color came from the single worst parameter, so a
@@ -39,7 +39,7 @@ Re-run after an edit/refinement round and the overlay rebuilds from scratch, so 
 pair that's been fixed simply disappears. Only colors change — coordinates are
 never modified (pass gray_background=0 to keep the object's existing colors).
 
-Binary: set $PARSE_BINARY, or `parse_set_binary /path/to/parse`.
+Binary: set $RUBRIC_BINARY, or `rubric_set_binary /path/to/rubric`.
 Severity coloring follows Cerny et al. (NAR 2026): Of Concern |Z'|>5, Allowed
 |Z'|<=5. H-bond-count issues carry no ProSco/Z' tier and are reported in the
 summary only, not colored.
@@ -75,7 +75,7 @@ def parse_res_id(res_id):
 
 
 def residue_selection(res_id):
-    """PyMOL selection string for one PARSE res_id (negative resi escaped)."""
+    """PyMOL selection string for one RUBRIC res_id (negative resi escaped)."""
     chain, _name, seq = parse_res_id(res_id)
     resi = ("\\" + seq) if seq.startswith("-") else seq
     chain_tok = f"chain {chain} and " if chain else ""
@@ -181,7 +181,7 @@ _RIBOSE_RING = "name C1'+C2'+C3'+C4'+O4'"
 #: one line naming every colour the plugin draws
 COLOR_KEY = ("colors: gray = preferred · yellow -> orange = secondary review · "
              "red = priority review · cyan ribose = pucker mismatch (delta vs P-perp) · "
-             "green = ideal template (parse_ideal)")
+             "green = ideal template (rubric_ideal)")
 
 
 def pucker_outliers(data):
@@ -235,7 +235,7 @@ _TIER_SETS = {
 _TIER_ALIASES = {"review": "priority", "acceptable": "secondary"}
 
 #: tier labels emitted before 2026-10-30, mapped to the current ones so older
-#: parse outputs and parse_dump files still load.
+#: rubric outputs and rubric_dump files still load.
 _LEGACY_TIERS = {"Acceptable": "Secondary review", "Review": "Priority review"}
 
 
@@ -265,7 +265,7 @@ def tier_counts(data):
     """Structure-level {Preferred, Secondary review, Priority review} counts.
 
     Prefers the binary's emitted `tier_summary`; falls back to deriving from
-    per-pair scores for older `parse` outputs that predate the field.
+    per-pair scores for older `rubric` outputs that predate the field.
     """
     ts = data.get("tier_summary")
     if ts:
@@ -320,7 +320,7 @@ def severity_headline(f):
 
 
 def pair_score_str(f):
-    """The pair's 0-100 PARSE quality score, or '?' when unavailable."""
+    """The pair's 0-100 RUBRIC quality score, or '?' when unavailable."""
     s = f.get("score")
     return f"{s:.0f}" if s is not None else "?"
 
@@ -424,7 +424,7 @@ def format_summary(data, flagged, hbcount, obj, tier_label="priority"):
     n_al = sum(1 for f in flagged if f["tier"] == "Allowed")
     n_hb = sum(1 for f in flagged if f.get("kind") == "hbond")
     tc = tier_counts(data)
-    lines = [f"PARSE: {obj}  {len(data.get('pairs', []))} pairs  "
+    lines = [f"RUBRIC: {obj}  {len(data.get('pairs', []))} pairs  "
              f"(structure: {tc.get('Preferred', 0)} Preferred · "
              f"{tc.get('Secondary review', 0)} secondary review · {tc.get('Priority review', 0)} priority review)",
              f"worklist [{tier_label} tier]: {len(flagged)} flagged "
@@ -451,7 +451,7 @@ def format_summary(data, flagged, hbcount, obj, tier_label="priority"):
     puckers = pucker_outliers(data)
     if puckers:
         lines.append(f"pucker mismatch ({len(puckers)} sugar(s), cyan; "
-                     f"parse_pucker <n> for a close-up):")
+                     f"rubric_pucker <n> for a close-up):")
         for i, p in enumerate(puckers[:25], 1):
             lines.append(f"  {i:>3}  {pucker_label(p)}")
     lines.append(COLOR_KEY)
@@ -462,32 +462,32 @@ def format_summary(data, flagged, hbcount, obj, tier_label="priority"):
 # PyMOL integration
 # ---------------------------------------------------------------------------
 
-_BINARY = os.environ.get("PARSE_BINARY", "parse")
-_OVERLAY = "parse_overlay"
-_PROBLEMS = "parse_problems"
-_FOCUS = "parse_focus"        # worklist: the current pair (bright sticks)
-_CONTEXT = "parse_context"    # worklist: residues within a few A (faded lines)
-_HB = "parse_hb"              # worklist: polar contacts within the current pair
-_IDEAL = "parse_ideal_pair"   # ghost of the idealized pair, best-fit onto the focus
-_IDEAL_HB = "parse_ideal_hb"  # the idealized pair's optimized H-bonds
-_PUCKER = "parse_pucker"      # every pucker-mismatch nucleotide, cyan ribose ring
-_PK_FOCUS = "parse_pk_focus"  # parse_pucker close-up: the nucleotide + its 3' phosphate
-_PK_FOOT = "parse_pk_foot"    # foot of the P-perp perpendicular (pseudoatom)
-_PK_GLY = "parse_pk_gly"      # extended glycosidic line, C1' -> foot (light dashes)
-_PK_PPERP = "parse_pk_pperp"  # P-perp itself, 3' P -> foot (dark dashes)
-_PK_LABEL = "parse_pk_label"  # 'P-perp 2.31 Å', beside the dark dashes
+_BINARY = os.environ.get("RUBRIC_BINARY", "rubric")
+_OVERLAY = "rubric_overlay"
+_PROBLEMS = "rubric_problems"
+_FOCUS = "rubric_focus"        # worklist: the current pair (bright sticks)
+_CONTEXT = "rubric_context"    # worklist: residues within a few A (faded lines)
+_HB = "rubric_hb"              # worklist: polar contacts within the current pair
+_IDEAL = "rubric_ideal_pair"   # ghost of the idealized pair, best-fit onto the focus
+_IDEAL_HB = "rubric_ideal_hb"  # the idealized pair's optimized H-bonds
+_PUCKER = "rubric_pucker"      # every pucker-mismatch nucleotide, cyan ribose ring
+_PK_FOCUS = "rubric_pk_focus"  # rubric_pucker close-up: the nucleotide + its 3' phosphate
+_PK_FOOT = "rubric_pk_foot"    # foot of the P-perp perpendicular (pseudoatom)
+_PK_GLY = "rubric_pk_gly"      # extended glycosidic line, C1' -> foot (light dashes)
+_PK_PPERP = "rubric_pk_pperp"  # P-perp itself, 3' P -> foot (dark dashes)
+_PK_LABEL = "rubric_pk_label"  # 'P-perp 2.31 Å', beside the dark dashes
 _PK_OBJECTS = (_PK_FOCUS, _PK_FOOT, _PK_GLY, _PK_PPERP, _PK_LABEL)
-_TMP_OBJ = "_parse_tmp"
+_TMP_OBJ = "_rubric_tmp"
 
-#: worklist state set by parse_score, walked by parse_next / parse_prev / parse_goto
+#: worklist state set by rubric_score, walked by rubric_next / rubric_prev / rubric_goto
 _QUEUE = []          # flagged pairs, ordered chain-grouped then worst-first
 _POS = -1            # index of the current pair in _QUEUE (-1 = not started)
 _SCORED_OBJ = None   # object the queue was built against
-_STRUCT_SCORE = None # whole-structure scores from the last parse_score
-_SCORED_DATA = None  # full scored JSON from the last parse_score (for parse_dump)
+_STRUCT_SCORE = None # whole-structure scores from the last rubric_score
+_SCORED_DATA = None  # full scored JSON from the last rubric_score (for rubric_dump)
 _SHOW_IDEAL = False  # sticky toggle: overlay the idealized pair on each focus
-_SHOW_PUCKER = True  # sticky toggle: draw the pucker-mismatch layer (parse_pucker on/off)
-_LAST_FOCUS = None   # last pair-view rendered (so parse_ideal can act on it)
+_SHOW_PUCKER = True  # sticky toggle: draw the pucker-mismatch layer (rubric_pucker on/off)
+_LAST_FOCUS = None   # last pair-view rendered (so rubric_ideal can act on it)
 _CONTEXT_RADIUS = 8.0
 
 
@@ -501,15 +501,15 @@ def _plugin_dir():
     """
     for var in ("__script__", "__file__"):
         p = globals().get(var)
-        if p and "parse_pymol" in os.path.basename(p):
+        if p and "rubric_pymol" in os.path.basename(p):
             return os.path.dirname(os.path.abspath(p))
     return os.getcwd()
 
 
 #: idealized base-pair templates: <_IDEALS_DIR>/<lw_class>/<seq>.pdb. Defaults to
-#: the repo's resources dir next to this plugin; override with PARSE_IDEALS_DIR or
-#: the parse_set_ideals command.
-_IDEALS_DIR = os.path.normpath(os.environ.get("PARSE_IDEALS_DIR") or os.path.join(
+#: the repo's resources dir next to this plugin; override with RUBRIC_IDEALS_DIR or
+#: the rubric_set_ideals command.
+_IDEALS_DIR = os.path.normpath(os.environ.get("RUBRIC_IDEALS_DIR") or os.path.join(
     _plugin_dir(), "..", "..", "resources", "basepair-idealized"))
 #: single-char labels used to rename nucleotide chains before a legacy-PDB save
 #: (A-Z, a-z, 0-9 = 62). Legacy PDB has a 1-char chain column and a 99999-atom
@@ -526,16 +526,16 @@ def _resolve_binary():
     if found:
         return found
     raise RuntimeError(
-        f"parse binary not found ('{_BINARY}'). "
-        f"Set it with: parse_set_binary /path/to/parse")
+        f"rubric binary not found ('{_BINARY}'). "
+        f"Set it with: rubric_set_binary /path/to/rubric")
 
 
-def _run_parse(pdb_path):
+def _run_rubric(pdb_path):
     binary = _resolve_binary()
     out = subprocess.run([binary, pdb_path, "--no-download"],
                          capture_output=True, text=True)
     if out.returncode != 0:
-        raise RuntimeError(f"parse failed:\n{out.stderr.strip()}")
+        raise RuntimeError(f"rubric failed:\n{out.stderr.strip()}")
     return json.loads(out.stdout)
 
 
@@ -583,7 +583,7 @@ def _score_object(cmd, obj):
             # No nucleotides, or more chains than the single-char pool: best-effort
             # direct save (small single-char-chain structures already round-trip).
             cmd.save(tmp.name, obj)
-        data = _run_parse(tmp.name)
+        data = _run_rubric(tmp.name)
     finally:
         os.unlink(tmp.name)
 
@@ -597,15 +597,15 @@ def _score_object(cmd, obj):
     return data
 
 
-def parse_set_binary(path):
-    """Point the plugin at a specific parse binary."""
+def rubric_set_binary(path):
+    """Point the plugin at a specific rubric binary."""
     global _BINARY
     _BINARY = path
-    print(f"PARSE: binary = {path}")
+    print(f"RUBRIC: binary = {path}")
 
 
-def parse_clear(_self=None):
-    """Remove every PARSE overlay/selection; the original object is untouched."""
+def rubric_clear(_self=None):
+    """Remove every RUBRIC overlay/selection; the original object is untouched."""
     from pymol import cmd
     global _QUEUE, _POS, _SCORED_OBJ
     if _SCORED_OBJ is not None:
@@ -616,10 +616,10 @@ def parse_clear(_self=None):
               _PUCKER, *_PK_OBJECTS):
         cmd.delete(o)
     _QUEUE, _POS, _SCORED_OBJ = [], -1, None
-    print("PARSE: cleared")
+    print("RUBRIC: cleared")
 
 
-def parse_score(obj=None, tier="priority", min_severity=0.0, zoom=0,
+def rubric_score(obj=None, tier="priority", min_severity=0.0, zoom=0,
                 gray_background=1, _self=None):
     """Score the current (or named) object and highlight problematic base pairs.
 
@@ -639,9 +639,9 @@ def parse_score(obj=None, tier="priority", min_severity=0.0, zoom=0,
                     object's existing colors. Coordinates are never modified.
 
     Examples:
-        parse_score                 # current object, worklist = priority review
-        parse_score 6DN1, secondary
-        parse_score 6DN1, all, 0.3  # non-Preferred, min color severity 0.3
+        rubric_score                 # current object, worklist = priority review
+        rubric_score 6DN1, secondary
+        rubric_score 6DN1, all, 0.3  # non-Preferred, min color severity 0.3
     """
     from pymol import cmd
     min_severity = float(min_severity)
@@ -651,14 +651,14 @@ def parse_score(obj=None, tier="priority", min_severity=0.0, zoom=0,
     if obj is None:
         objs = cmd.get_object_list()
         if not objs:
-            print("PARSE: no object loaded")
+            print("RUBRIC: no object loaded")
             return
         obj = objs[0]
 
     try:
         data = _score_object(cmd, obj)
     except Exception as e:        # noqa: BLE001 - surface any failure to the user
-        print(f"PARSE: error: {e}")
+        print(f"RUBRIC: error: {e}")
         return
 
     flagged = flagged_pairs(data, min_severity, tiers)
@@ -676,8 +676,8 @@ def parse_score(obj=None, tier="priority", min_severity=0.0, zoom=0,
     _QUEUE = build_queue(flagged)
     _POS = -1
     _SCORED_OBJ = obj
-    _SCORED_DATA = data                    # full JSON, written out by parse_dump
-    _STRUCT_SCORE = {                       # per-axis scores, shown by parse_overview
+    _SCORED_DATA = data                    # full JSON, written out by rubric_dump
+    _STRUCT_SCORE = {                       # per-axis scores, shown by rubric_overview
         "pairs":    data.get("pairs_score"),
         "residues": data.get("backbone_suiteness", data.get("backbone_score")),
         "n_pairs":  data.get("n_pairs"),
@@ -698,7 +698,7 @@ def parse_score(obj=None, tier="priority", min_severity=0.0, zoom=0,
     cmd.delete(_PROBLEMS)
     if not flagged:
         tc = tier_counts(data)
-        _set_hud(cmd, f"PARSE [{tier_label} tier]  0 flagged   "
+        _set_hud(cmd, f"RUBRIC [{tier_label} tier]  0 flagged   "
                       f"(structure: {tc.get('Preferred', 0)} Preferred · "
                       f"{tc.get('Secondary review', 0)} secondary review · {tc.get('Priority review', 0)} priority review)")
         return
@@ -714,7 +714,7 @@ def parse_score(obj=None, tier="priority", min_severity=0.0, zoom=0,
     n_oc = sum(1 for x in flagged if x["tier"] == "Of Concern")
     n_pk = len(pucker_outliers(data))
     pk_note = f" · {n_pk} pucker mismatch (cyan)" if n_pk else ""
-    _set_hud(cmd, f"PARSE [{tier_label} tier]  {len(flagged)} flagged "
+    _set_hud(cmd, f"RUBRIC [{tier_label} tier]  {len(flagged)} flagged "
                   f"({n_oc} Of Concern){pk_note}   press → to start the worklist   "
                   f"(Ctrl-I = inspect a clicked pair)")
 
@@ -777,8 +777,8 @@ def _build_pucker(cmd, obj, data):
     cmd.show("sticks", _PUCKER)
     cmd.set("stick_radius", 0.30, _PUCKER)     # thicker than the pair overlay (0.18)
     cmd.color("gray60", _PUCKER)
-    cmd.set_color("parse_pucker_col", PUCKER_RGB)
-    cmd.color("parse_pucker_col", f"{_PUCKER} and {_RIBOSE_RING}")
+    cmd.set_color("rubric_pucker_col", PUCKER_RGB)
+    cmd.color("rubric_pucker_col", f"{_PUCKER} and {_RIBOSE_RING}")
     return len(puckers)
 
 
@@ -791,7 +791,7 @@ def _pucker_of(res_id):
 
 
 # ---------------------------------------------------------------------------
-# Worklist: walk the flagged pairs one at a time (parse_next / prev / goto)
+# Worklist: walk the flagged pairs one at a time (rubric_next / prev / goto)
 # ---------------------------------------------------------------------------
 
 def build_queue(flagged):
@@ -854,7 +854,7 @@ def _render_focus(cmd, f, dim=1, pos=None, total=None):
 
     `f` is a flagged_pairs-style dict (use _pair_view for a clean pair). With
     `pos`/`total` it's a worklist stop ('[3/45]'); without them it's an ad-hoc
-    residue lookup (parse_goto A-169) and the worklist cursor is left untouched.
+    residue lookup (rubric_goto A-169) and the worklist cursor is left untouched.
     A pair with nothing out of range is drawn green and reported as in-range.
     """
     global _LAST_FOCUS
@@ -887,13 +887,13 @@ def _render_focus(cmd, f, dim=1, pos=None, total=None):
         focus_col = f.get("color") or score_to_rgb(f.get("score"))
     else:
         focus_col = [0.35, 0.78, 0.35]
-    cmd.set_color("parse_focus_col", focus_col)
-    cmd.color("parse_focus_col", _FOCUS)
+    cmd.set_color("rubric_focus_col", focus_col)
+    cmd.color("rubric_focus_col", _FOCUS)
     pair_puckers = [p for p in (_pucker_of(f["res_id1"]), _pucker_of(f["res_id2"])) if p]
     if pair_puckers and _SHOW_PUCKER:
-        cmd.set_color("parse_pucker_col", PUCKER_RGB)
+        cmd.set_color("rubric_pucker_col", PUCKER_RGB)
         for p in pair_puckers:
-            cmd.color("parse_pucker_col",
+            cmd.color("rubric_pucker_col",
                       f"{_FOCUS} and {residue_selection(p['res_id'])} and {_RIBOSE_RING}")
 
     # Local context: nearby residues as thin gray lines (what's crowding it).
@@ -917,7 +917,7 @@ def _render_focus(cmd, f, dim=1, pos=None, total=None):
     # own color so they don't read as a separate (yellow) severity.
     cmd.distance(_HB, _FOCUS, _FOCUS, mode=2)
     cmd.hide("labels", _HB)
-    cmd.color("parse_focus_col", _HB)
+    cmd.color("rubric_focus_col", _HB)
 
     # One label on the pair: position tag, pair, class, score, and status.
     tag = f"#{pos} " if pos else ""
@@ -939,7 +939,7 @@ def _render_focus(cmd, f, dim=1, pos=None, total=None):
         status = f"worst: {severity_headline(f)}"
     else:
         tier, status = "Preferred", "all parameters in range"
-    print(f"PARSE {where} {pair_label(f)}  "
+    print(f"RUBRIC {where} {pair_label(f)}  "
           f"{f.get('lw_class') or '?'} {f.get('sequence') or ''}  "
           f"score {pair_score_str(f)}/100  {status}  ({tier})")
     if kind == "hbond":
@@ -959,7 +959,7 @@ def _render_focus(cmd, f, dim=1, pos=None, total=None):
         hud_status = f"{severity_headline(f)} [{tier}]"
     else:
         hud_status = f"in range [{tier}]"
-    _set_hud(cmd, f"PARSE {where_hud}  {pair_label(f)}  "
+    _set_hud(cmd, f"RUBRIC {where_hud}  {pair_label(f)}  "
                   f"{f.get('lw_class') or '?'} {f.get('sequence') or ''}  "
                   f"score {pair_score_str(f)}/100  {hud_status}   "
                   f"(→ next  ← prev  Ctrl-I = inspect click)")
@@ -1069,43 +1069,43 @@ def _set_hud(cmd, text):
 
 def _require_queue():
     if not _QUEUE:
-        print("PARSE: no worklist - run parse_score first")
+        print("RUBRIC: no worklist - run rubric_score first")
         return False
     return True
 
 
-def parse_next(_self=None):
+def rubric_next(_self=None):
     """Step to the next (less severe) flagged pair in the worklist."""
     from pymol import cmd
     if not _require_queue():
         return
     if _POS >= len(_QUEUE) - 1:
-        print(f"PARSE: at the end of the worklist ({len(_QUEUE)} pairs)")
+        print(f"RUBRIC: at the end of the worklist ({len(_QUEUE)} pairs)")
         return
     _focus(cmd, _POS + 1)
 
 
-def parse_prev(_self=None):
+def rubric_prev(_self=None):
     """Step back to the previous (more severe) flagged pair."""
     from pymol import cmd
     if not _require_queue():
         return
     if _POS <= 0:
-        print("PARSE: at the start of the worklist")
+        print("RUBRIC: at the start of the worklist")
         return
     _focus(cmd, _POS - 1)
 
 
-def parse_overview(_self=None):
-    """Zoom back out to the whole-structure overview after parse_next/parse_prev.
+def rubric_overview(_self=None):
+    """Zoom back out to the whole-structure overview after rubric_next/rubric_prev.
 
     Undims the cartoon, drops the per-pair focus objects, re-shows the overlay
     of all flagged pairs, resets the worklist to the top, and frames the whole
-    structure. Does NOT re-score (use parse_score to recompute).
+    structure. Does NOT re-score (use rubric_score to recompute).
     """
     from pymol import cmd
     if _SCORED_OBJ is None:
-        print("PARSE: nothing scored - run parse_score first")
+        print("RUBRIC: nothing scored - run rubric_score first")
         return
     global _POS
     for o in (_FOCUS, _CONTEXT, _HB, _IDEAL, _IDEAL_HB, *_PK_OBJECTS):   # per-pair objects
@@ -1126,19 +1126,19 @@ def parse_overview(_self=None):
     ss = _STRUCT_SCORE or {}
     tc = ss.get("tiers") or {}
     tlabel = ss.get("tier_label", "priority")
-    score_line = (f"{_SCORED_OBJ}: PARSE pairs {_f(ss.get('pairs'))}/100, "
+    score_line = (f"{_SCORED_OBJ}: RUBRIC pairs {_f(ss.get('pairs'))}/100, "
                   f"backbone suiteness {_f3(ss.get('residues'))}  "
                   f"(structure: {tc.get('Preferred', 0)} Preferred · "
                   f"{tc.get('Secondary review', 0)} secondary review · {tc.get('Priority review', 0)} priority review)"
                   f"  — {len(_QUEUE)} flagged [{tlabel} tier]")
-    print(f"PARSE: overview — {score_line}")
-    _set_hud(cmd, f"PARSE overview   {score_line}   (→ parse_next to step through)")
+    print(f"RUBRIC: overview — {score_line}")
+    _set_hud(cmd, f"RUBRIC overview   {score_line}   (→ rubric_next to step through)")
 
 
 def _parse_residue_token(token):
     """Parse a residue reference into (chain, resseq), or None.
 
-    Accepts 'A-169', 'A/169', 'A 169', 'A:169', 'A169', or a full PARSE res-id
+    Accepts 'A-169', 'A/169', 'A 169', 'A:169', 'A169', or a full RUBRIC res-id
     'chain-resname-resseq' (e.g. 'A-G-169', '1A-5MU-54'). Chain may be multi-char.
     """
     t = token.strip()
@@ -1183,11 +1183,11 @@ def _find_scored_pairs(chain, resseq):
     return found
 
 
-def parse_goto(which, _self=None):
+def rubric_goto(which, _self=None):
     """Jump to a pair by worklist rank, or inspect any residue by chain+number.
 
-    - `parse_goto 12`     -> the 12th worklist entry (flagged, worst-first).
-    - `parse_goto A-169`  -> the pair containing chain A residue 169, EVEN IF it
+    - `rubric_goto 12`     -> the 12th worklist entry (flagged, worst-first).
+    - `rubric_goto A-169`  -> the pair containing chain A residue 169, EVEN IF it
                              is a clean (Preferred) pair not in the worklist; prints
                              its score and which parameters (if any) are out of range.
     Residue forms: 'A-169', 'A/169', 'A 169', 'A169', or a full 'A-G-169'.
@@ -1199,14 +1199,14 @@ def parse_goto(which, _self=None):
     if token.isdigit():
         idx = int(token) - 1
         if not 0 <= idx < len(_QUEUE):
-            print(f"PARSE: out of range 1..{len(_QUEUE)}")
+            print(f"RUBRIC: out of range 1..{len(_QUEUE)}")
             return
         _focus(cmd, idx)
         return
 
     res = _parse_residue_token(token)
     if res is None:
-        print(f"PARSE: '{token}' is not a rank or a chain+number (e.g. 12 or A-169)")
+        print(f"RUBRIC: '{token}' is not a rank or a chain+number (e.g. 12 or A-169)")
         return
     chain, resseq = res
 
@@ -1221,7 +1221,7 @@ def parse_goto(which, _self=None):
     # Otherwise look across ALL scored pairs (clean ones included).
     hits = _find_scored_pairs(chain, resseq)
     if not hits:
-        print(f"PARSE: {chain}/{resseq} is not in any scored pair "
+        print(f"RUBRIC: {chain}/{resseq} is not in any scored pair "
               f"(unpaired, or not in this structure)")
         return
     _render_focus(cmd, _pair_view(hits[0]), dim=1)       # ad-hoc: cursor untouched
@@ -1230,12 +1230,12 @@ def parse_goto(which, _self=None):
         print(f"  note: {chain}/{resseq} is also in {len(hits) - 1} other pair(s): {partners}")
 
 
-def parse_list(n=25, _self=None):
+def rubric_list(n=25, _self=None):
     """Print the ranked worklist (rank, pair, class, worst |Z'|, distortion)."""
     if not _require_queue():
         return
     n = int(n)
-    print(f"PARSE worklist: {len(_QUEUE)} pairs (geometry by |Z'|, then H-bond-count)")
+    print(f"RUBRIC worklist: {len(_QUEUE)} pairs (geometry by |Z'|, then H-bond-count)")
     for i, f in enumerate(_QUEUE[:n]):
         mark = ">" if i == _POS else " "
         note = failing_params(f["details"], 2) or ("H-bond count"
@@ -1245,13 +1245,13 @@ def parse_list(n=25, _self=None):
               f"score {pair_score_str(f)}/100  "
               f"{severity_headline(f)} {f['tier']}  [{note}]")
     if len(_QUEUE) > n:
-        print(f"  ... {len(_QUEUE) - n} more (parse_list {len(_QUEUE)} for all)")
+        print(f"  ... {len(_QUEUE) - n} more (rubric_list {len(_QUEUE)} for all)")
 
 
-def parse_dump(path=None, _self=None):
+def rubric_dump(path=None, _self=None):
     """Write the current scored data to a JSON file the user can inspect.
 
-    This is exactly the JSON the last parse_score computed (every pair with its
+    This is exactly the JSON the last rubric_score computed (every pair with its
     score, issues, geometry and rigid-body params, plus the structure-level
     scores) -- including any coordinate edits you re-scored. Nothing is written
     unless you call this. Default path: '<object>_pairs.json' in the current
@@ -1260,7 +1260,7 @@ def parse_dump(path=None, _self=None):
     import json
     import os
     if _SCORED_DATA is None or _SCORED_OBJ is None:
-        print("PARSE: nothing scored - run parse_score first")
+        print("RUBRIC: nothing scored - run rubric_score first")
         return
     path = str(path) if path else f"{_SCORED_OBJ}_pairs.json"
     parent = os.path.dirname(path)
@@ -1270,21 +1270,21 @@ def parse_dump(path=None, _self=None):
         with open(path, "w") as fh:
             json.dump(_SCORED_DATA, fh, indent=1)
     except OSError as e:        # noqa: BLE001 - report write failures to the user
-        print(f"PARSE: could not write {path}: {e}")
+        print(f"RUBRIC: could not write {path}: {e}")
         return
     n = len(_SCORED_DATA.get("pairs", []))
-    print(f"PARSE: wrote {n} scored pair(s) to {path}")
+    print(f"RUBRIC: wrote {n} scored pair(s) to {path}")
 
 
-def parse_load(path, tier="priority", _self=None):
-    """Rebuild the worklist from a parse_dump JSON -- WITHOUT re-scoring.
+def rubric_load(path, tier="priority", _self=None):
+    """Rebuild the worklist from a rubric_dump JSON -- WITHOUT re-scoring.
 
     Lets anyone (e.g. a colleague you sent the .pse + JSON to) step through a
-    previously scored structure -- parse_next / parse_prev / parse_list /
-    parse_overview / parse_dump -- with no parse binary. The object named
+    previously scored structure -- rubric_next / rubric_prev / rubric_list /
+    rubric_overview / rubric_dump -- with no rubric binary. The object named
     in the JSON (its 'pdb_id') should already be loaded, e.g. from the .pse.
     `tier` selects which pair-score tier(s) populate the worklist (default
-    'priority'; see parse_score).
+    'priority'; see rubric_score).
     """
     from pymol import cmd
     import json
@@ -1292,14 +1292,14 @@ def parse_load(path, tier="priority", _self=None):
         with open(str(path)) as fh:
             data = json.load(fh)
     except (OSError, ValueError) as e:        # noqa: BLE001 - report bad file
-        print(f"PARSE: could not read {path}: {e}")
+        print(f"RUBRIC: could not read {path}: {e}")
         return
     obj = data.get("pdb_id")
     if not obj:
-        print(f"PARSE: {path} has no 'pdb_id' - not a parse_dump file?")
+        print(f"RUBRIC: {path} has no 'pdb_id' - not a rubric_dump file?")
         return
     if obj not in cmd.get_object_list():
-        print(f"PARSE: note - object '{obj}' is not loaded; navigation needs it "
+        print(f"RUBRIC: note - object '{obj}' is not loaded; navigation needs it "
               f"(open its .pse/structure first).")
 
     tier_label = tier_word(tier)
@@ -1318,22 +1318,22 @@ def parse_load(path, tier="priority", _self=None):
     if obj in cmd.get_object_list():
         _build_pucker(cmd, obj, data)
     _bind_nav(cmd)
-    print(f"PARSE: loaded {len(_QUEUE)} flagged pair(s) [{tier_label} tier] for "
-          f"'{obj}' from {path}  (parse_next to step through — no re-scoring)")
+    print(f"RUBRIC: loaded {len(_QUEUE)} flagged pair(s) [{tier_label} tier] for "
+          f"'{obj}' from {path}  (rubric_next to step through — no re-scoring)")
 
 
-def parse_ideal(state="toggle", _self=None):
+def rubric_ideal(state="toggle", _self=None):
     """Overlay the idealized version of the current pair (green ghost) to show
     the target geometry — what the pair *should* look like, so a refiner can see
     how to fix it.
 
-        parse_ideal on     keep the ideal overlaid on every parse_next/parse_goto
-        parse_ideal off    stop overlaying it
-        parse_ideal        toggle for the current pair
+        rubric_ideal on     keep the ideal overlaid on every rubric_next/rubric_goto
+        rubric_ideal off    stop overlaying it
+        rubric_ideal        toggle for the current pair
 
     The ideal is best-fit onto the actual pair (least-squares over the shared base
     atoms), so both bases show how far they sit from ideal. Templates come from
-    resources/basepair-idealized/<class>/<seq>.pdb (set with parse_set_ideals).
+    resources/basepair-idealized/<class>/<seq>.pdb (set with rubric_set_ideals).
     """
     from pymol import cmd
     global _SHOW_IDEAL
@@ -1343,33 +1343,33 @@ def parse_ideal(state="toggle", _self=None):
     elif s in ("on", "1", "true", "show", "yes"):
         _SHOW_IDEAL = True
     else:
-        _SHOW_IDEAL = not _SHOW_IDEAL        # bare `parse_ideal` toggles
+        _SHOW_IDEAL = not _SHOW_IDEAL        # bare `rubric_ideal` toggles
 
     if not _SHOW_IDEAL:
         _clear_ideal(cmd)
-        print("PARSE: ideal overlay OFF")
+        print("RUBRIC: ideal overlay OFF")
         return
-    print("PARSE: ideal overlay ON — green ghost = ideal geometry for this pair")
+    print("RUBRIC: ideal overlay ON — green ghost = ideal geometry for this pair")
     if _LAST_FOCUS is None:
-        print("  (step to a pair with parse_next / parse_goto to see it)")
+        print("  (step to a pair with rubric_next / rubric_goto to see it)")
         return
     f = _LAST_FOCUS
     if not _overlay_ideal(cmd, f):
         print(f"  ideal: no template for {f.get('lw_class')} {f.get('sequence')}")
         return
-    # Frame the ghost together with the real pair (covers the parse_overview case,
+    # Frame the ghost together with the real pair (covers the rubric_overview case,
     # where no pair is focused so the camera would otherwise stay zoomed out).
     s1, s2 = residue_selection(f["res_id1"]), residue_selection(f["res_id2"])
     cmd.zoom(f"({_IDEAL}) or (({_SCORED_OBJ}) and ({s1} or {s2}))", 5)
 
 
-def parse_pucker(which="list", _self=None):
+def rubric_pucker(which="list", _self=None):
     """Sugar-pucker mismatches: list them, toggle the cyan layer, or show one close up.
 
-        parse_pucker            list every flagged sugar (delta vs P-perp)
-        parse_pucker on|off     show / hide the cyan-ribose layer (sticky)
-        parse_pucker 1          close-up of the 1st flagged sugar
-        parse_pucker A-199      close-up of chain A residue 199
+        rubric_pucker            list every flagged sugar (delta vs P-perp)
+        rubric_pucker on|off     show / hide the cyan-ribose layer (sticky)
+        rubric_pucker 1          close-up of the 1st flagged sugar
+        rubric_pucker A-199      close-up of chain A residue 199
 
     The close-up draws the nucleotide and its 3' phosphate with the measurement
     behind the flag: the glycosidic bond extended past C1' (light dashes) and
@@ -1380,7 +1380,7 @@ def parse_pucker(which="list", _self=None):
     from pymol import cmd
     global _SHOW_PUCKER
     if _SCORED_DATA is None or _SCORED_OBJ is None:
-        print("PARSE: nothing scored - run parse_score first")
+        print("RUBRIC: nothing scored - run rubric_score first")
         return
     obj = _SCORED_OBJ
     puckers = pucker_outliers(_SCORED_DATA)
@@ -1391,20 +1391,20 @@ def parse_pucker(which="list", _self=None):
         _SHOW_PUCKER = word in ("on", "show")
         if _SHOW_PUCKER:
             n = _build_pucker(cmd, obj, _SCORED_DATA)
-            print(f"PARSE: pucker-mismatch layer ON ({n} sugar(s), cyan ribose)")
+            print(f"RUBRIC: pucker-mismatch layer ON ({n} sugar(s), cyan ribose)")
         else:
             cmd.delete(_PUCKER)
             for o in _PK_OBJECTS:
                 cmd.delete(o)
-            print("PARSE: pucker-mismatch layer OFF")
+            print("RUBRIC: pucker-mismatch layer OFF")
         return
 
     if word in ("", "list"):
         if not puckers:
-            print(f"PARSE: {obj}: no sugar-pucker mismatches")
+            print(f"RUBRIC: {obj}: no sugar-pucker mismatches")
             return
-        print(f"PARSE: {obj}: {len(puckers)} sugar-pucker mismatch(es) "
-              f"(cyan ribose; parse_pucker <n> for a close-up):")
+        print(f"RUBRIC: {obj}: {len(puckers)} sugar-pucker mismatch(es) "
+              f"(cyan ribose; rubric_pucker <n> for a close-up):")
         for i, p in enumerate(puckers, 1):
             print(f"  {i:>3}  {pucker_label(p)}")
         return
@@ -1414,14 +1414,14 @@ def parse_pucker(which="list", _self=None):
     if token.isdigit():
         idx = int(token) - 1
         if not 0 <= idx < len(puckers):
-            print(f"PARSE: out of range 1..{len(puckers)}" if puckers
-                  else f"PARSE: {obj}: no sugar-pucker mismatches")
+            print(f"RUBRIC: out of range 1..{len(puckers)}" if puckers
+                  else f"RUBRIC: {obj}: no sugar-pucker mismatches")
             return
         p = puckers[idx]
     else:
         res = _parse_residue_token(token)
         if res is None:
-            print(f"PARSE: '{token}' is not a number or a chain+number (e.g. 1 or A-199)")
+            print(f"RUBRIC: '{token}' is not a number or a chain+number (e.g. 1 or A-199)")
             return
         for q in puckers:
             c, _n, s = parse_res_id(q["res_id"])
@@ -1429,14 +1429,14 @@ def parse_pucker(which="list", _self=None):
                 p = q
                 break
         if p is None:
-            print(f"PARSE: {res[0]}/{res[1]} is not a flagged sugar "
-                  f"(`parse_pucker` lists the {len(puckers)} that are)")
+            print(f"RUBRIC: {res[0]}/{res[1]} is not a flagged sugar "
+                  f"(`rubric_pucker` lists the {len(puckers)} that are)")
             return
     _render_pucker(cmd, p)
 
 
 def _render_pucker(cmd, p):
-    """Close-up of one flagged sugar with its P-perp measurement (see parse_pucker)."""
+    """Close-up of one flagged sugar with its P-perp measurement (see rubric_pucker)."""
     obj = _SCORED_OBJ
     res = f"({obj}) and {residue_selection(p['res_id'])}"
     p3 = f"({obj}) and name P and not ({res}) and (({res} and name O3') around 2.0)"
@@ -1456,10 +1456,10 @@ def _render_pucker(cmd, p):
     cmd.show("sticks", _PK_FOCUS)
     cmd.set("stick_radius", 0.25, _PK_FOCUS)
     cmd.color("gray60", _PK_FOCUS)
-    cmd.set_color("parse_pucker_col", PUCKER_RGB)
-    cmd.color("parse_pucker_col", f"{_PK_FOCUS} and {_RIBOSE_RING}")
+    cmd.set_color("rubric_pucker_col", PUCKER_RGB)
+    cmd.color("rubric_pucker_col", f"{_PK_FOCUS} and {_RIBOSE_RING}")
 
-    print(f"PARSE pucker: {pucker_label(p)}")
+    print(f"RUBRIC pucker: {pucker_label(p)}")
     print("  delta reads the ring; P-perp (3' P to the extended glycosidic bond) "
           "reads where the phosphate sits. They disagree.")
     if not (cmd.count_atoms(p3) == 1 and cmd.count_atoms(f"{res} and name C1'")
@@ -1501,22 +1501,22 @@ def _render_pucker(cmd, p):
     cmd.orient(f"({res} and name C1') or ({glyco}) or ({p3}) or {_PK_FOOT}")
     cmd.turn("x", 30)
     cmd.zoom(f"{_PK_FOCUS} or {_PK_FOOT}", 3)
-    _set_hud(cmd, f"PARSE pucker  {pucker_label(p)}   (parse_overview to zoom out)")
+    _set_hud(cmd, f"RUBRIC pucker  {pucker_label(p)}   (rubric_overview to zoom out)")
 
 
-def parse_set_ideals(path, _self=None):
+def rubric_set_ideals(path, _self=None):
     """Set the directory holding idealized base-pair templates (<class>/<seq>.pdb)."""
     global _IDEALS_DIR
     _IDEALS_DIR = os.path.normpath(str(path))
     ok = os.path.isdir(_IDEALS_DIR)
-    print(f"PARSE: idealized-pair dir = {_IDEALS_DIR}" + ("" if ok else "  (NOT FOUND)"))
+    print(f"RUBRIC: idealized-pair dir = {_IDEALS_DIR}" + ("" if ok else "  (NOT FOUND)"))
 
 
-def parse_info(selection="pk1", _self=None):
+def rubric_info(selection="pk1", _self=None):
     """Inspect a clicked/selected residue: jump the worklist to its pair.
 
     Click an atom in the viewport (that makes the `pk1` selection), then run
-    `parse_info` (or press `i`). If the residue is a flagged pair, the worklist
+    `rubric_info` (or press `i`). If the residue is a flagged pair, the worklist
     jumps there and prints its breakdown; otherwise it says so.
     """
     from pymol import cmd
@@ -1528,7 +1528,7 @@ def parse_info(selection="pk1", _self=None):
     except Exception:        # noqa: BLE001 - empty/invalid selection
         picks = []
     if not picks:
-        print("PARSE: nothing selected — click an atom first, or pass a selection")
+        print("RUBRIC: nothing selected — click an atom first, or pass a selection")
         return
     # A selection can span several residues (a whole pair, a box-select, a named
     # `sele`); check every distinct residue in it, not just the first atom, and
@@ -1545,15 +1545,15 @@ def parse_info(selection="pk1", _self=None):
                 _focus(cmd, i)
                 return
     shown = ", ".join(f"{c}/{r}" for c, r in wanted[:6])
-    print(f"PARSE: {shown} — not in the worklist (Preferred or unscored). "
-          f"`parse_list` shows the {len(_QUEUE)} flagged pair(s).")
+    print(f"RUBRIC: {shown} — not in the worklist (Preferred or unscored). "
+          f"`rubric_list` shows the {len(_QUEUE)} flagged pair(s).")
 
 
 #: nav keybindings — PyMOL's set_key only takes special/modifier keys (not plain
 #: letters), so arrows drive the worklist and Ctrl-I inspects the clicked atom.
-_NAV_KEYS = (("right", lambda *a: parse_next()),
-             ("left", lambda *a: parse_prev()),
-             ("CTRL-I", lambda *a: parse_info("pk1")))
+_NAV_KEYS = (("right", lambda *a: rubric_next()),
+             ("left", lambda *a: rubric_prev()),
+             ("CTRL-I", lambda *a: rubric_info("pk1")))
 
 
 def _bind_nav(cmd):
@@ -1565,7 +1565,7 @@ def _bind_nav(cmd):
             pass
 
 
-def parse_keys(state="on", _self=None):
+def rubric_keys(state="on", _self=None):
     """Bind/unbind worklist keys: → next, ← prev, Ctrl-I inspect clicked atom."""
     from pymol import cmd
     if str(state).lower() in ("off", "0", "false"):
@@ -1574,34 +1574,34 @@ def parse_keys(state="on", _self=None):
                 cmd.set_key(key, lambda *a: None)
             except Exception:    # noqa: BLE001
                 pass
-        print("PARSE: keyboard navigation off")
+        print("RUBRIC: keyboard navigation off")
         return
     _bind_nav(cmd)
-    print("PARSE keys: → next   ← prev   Ctrl-I = inspect clicked atom "
-          "(or click + `parse_info`).  parse_keys off to unbind.")
+    print("RUBRIC keys: → next   ← prev   Ctrl-I = inspect clicked atom "
+          "(or click + `rubric_info`).  rubric_keys off to unbind.")
 
 
 # Register as PyMOL commands (no-op if imported outside PyMOL).
 try:
     from pymol import cmd as _cmd
-    _cmd.extend("parse_score", parse_score)
-    _cmd.extend("parse_clear", parse_clear)
-    _cmd.extend("parse_set_binary", parse_set_binary)
-    _cmd.extend("parse_next", parse_next)
-    _cmd.extend("parse_prev", parse_prev)
-    _cmd.extend("parse_overview", parse_overview)
-    _cmd.extend("parse_goto", parse_goto)
-    _cmd.extend("parse_list", parse_list)
-    _cmd.extend("parse_dump", parse_dump)
-    _cmd.extend("parse_load", parse_load)
-    _cmd.extend("parse_info", parse_info)
-    _cmd.extend("parse_keys", parse_keys)
-    _cmd.extend("parse_ideal", parse_ideal)
-    _cmd.extend("parse_set_ideals", parse_set_ideals)
-    _cmd.extend("parse_pucker", parse_pucker)
-    print("PARSE plugin loaded: parse_score / parse_clear / parse_set_binary / "
-          "parse_next / parse_prev / parse_overview / parse_goto / parse_list / "
-          "parse_dump / parse_load / parse_info / parse_keys / parse_ideal / "
-          "parse_pucker")
+    _cmd.extend("rubric_score", rubric_score)
+    _cmd.extend("rubric_clear", rubric_clear)
+    _cmd.extend("rubric_set_binary", rubric_set_binary)
+    _cmd.extend("rubric_next", rubric_next)
+    _cmd.extend("rubric_prev", rubric_prev)
+    _cmd.extend("rubric_overview", rubric_overview)
+    _cmd.extend("rubric_goto", rubric_goto)
+    _cmd.extend("rubric_list", rubric_list)
+    _cmd.extend("rubric_dump", rubric_dump)
+    _cmd.extend("rubric_load", rubric_load)
+    _cmd.extend("rubric_info", rubric_info)
+    _cmd.extend("rubric_keys", rubric_keys)
+    _cmd.extend("rubric_ideal", rubric_ideal)
+    _cmd.extend("rubric_set_ideals", rubric_set_ideals)
+    _cmd.extend("rubric_pucker", rubric_pucker)
+    print("RUBRIC plugin loaded: rubric_score / rubric_clear / rubric_set_binary / "
+          "rubric_next / rubric_prev / rubric_overview / rubric_goto / rubric_list / "
+          "rubric_dump / rubric_load / rubric_info / rubric_keys / rubric_ideal / "
+          "rubric_pucker")
 except ImportError:
     pass

@@ -9,7 +9,7 @@ cmake-build-*/
 *.dSYM/
 
 # ---- CLI output written during use/testing ----------------------------------
-# Any root-level JSON is `parse --out` output (e.g. "1GID.json", "<id>_pairs.json").
+# Any root-level JSON is `rubric --out` output (e.g. "1GID.json", "<id>_pairs.json").
 # Anchored to root: does NOT touch resources/**/*.json or data/**/*.json (bundled).
 /*.json
 /*.out

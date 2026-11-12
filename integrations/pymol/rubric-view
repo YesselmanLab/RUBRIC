@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 #
-# parse-view <pdb-id | structure-file> [tier]
+# rubric-view <pdb-id | structure-file> [tier]
 #
 # One command: open PyMOL, load the structure (a PDB id is fetched from RCSB, a
-# local .pdb/.cif is loaded directly), score it with parse, and highlight
+# local .pdb/.cif is loaded directly), score it with rubric, and highlight
 # the problematic base pairs. The PyMOL window stays open for inspection.
 #
 # The optional [tier] selects which pair-score tier populates the worklist:
@@ -11,52 +11,52 @@
 #   ('review' and 'acceptable' still work as aliases.)
 # Sugar-pucker mismatches (cyan ribose) are drawn whatever the tier.
 #
-#   ./parse-view 1GID
-#   ./parse-view 1GID secondary
-#   ./parse-view /path/to/mymodel.pdb all
+#   ./rubric-view 1GID
+#   ./rubric-view 1GID secondary
+#   ./rubric-view /path/to/mymodel.pdb all
 #
 # Env overrides:
 #   PYMOL=/path/to/pymol          pick a specific PyMOL executable
-#   PARSE_BINARY=/path/...    pick a specific parse binary
-#   PARSE_VIEW_DRYRUN=1            print the PyMOL command block and exit
+#   RUBRIC_BINARY=/path/...    pick a specific rubric binary
+#   RUBRIC_VIEW_DRYRUN=1            print the PyMOL command block and exit
 #
 set -euo pipefail
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"   # integrations/pymol
 REPO="$(cd "$HERE/../.." 2>/dev/null && pwd || echo "$HERE")"   # repo root (if in a checkout)
 
-# PyMOL plugin: repo checkout (next to this script) or installed (../share/parse).
-if [ -f "$HERE/parse_pymol.py" ]; then
-    PLUGIN="$HERE/parse_pymol.py"
+# PyMOL plugin: repo checkout (next to this script) or installed (../share/rubric).
+if [ -f "$HERE/rubric_pymol.py" ]; then
+    PLUGIN="$HERE/rubric_pymol.py"
 else
-    PLUGIN="$HERE/../share/parse/parse_pymol.py"
+    PLUGIN="$HERE/../share/rubric/rubric_pymol.py"
 fi
 
-# parse binary: explicit override -> on PATH -> repo build dir.
-if [ -n "${PARSE_BINARY:-}" ]; then
-    BIN="$PARSE_BINARY"
-elif command -v parse >/dev/null 2>&1; then
-    BIN="$(command -v parse)"
+# rubric binary: explicit override -> on PATH -> repo build dir.
+if [ -n "${RUBRIC_BINARY:-}" ]; then
+    BIN="$RUBRIC_BINARY"
+elif command -v rubric >/dev/null 2>&1; then
+    BIN="$(command -v rubric)"
 else
-    BIN="$REPO/build/parse"
+    BIN="$REPO/build/rubric"
 fi
 
 INPUT="${1:-}"
 TIER="${2:-priority}"   # worklist score-tier: priority (default) | secondary | all
 if [ -z "$INPUT" ]; then
-    echo "usage: parse-view <pdb-id | structure-file> [priority|secondary|all]" >&2
+    echo "usage: rubric-view <pdb-id | structure-file> [priority|secondary|all]" >&2
     exit 2
 fi
 if [ ! -x "$BIN" ]; then
-    echo "parse binary not found/executable: $BIN" >&2
-    echo "build it first, or set PARSE_BINARY=/path/to/parse" >&2
+    echo "rubric binary not found/executable: $BIN" >&2
+    echo "build it first, or set RUBRIC_BINARY=/path/to/rubric" >&2
     exit 1
 fi
 
 # Load a local file directly; otherwise treat the argument as a PDB id to fetch.
 # Name the object after the structure (PDB id, or local file stem) so downstream
-# commands (e.g. parse_dump -> <obj>_pairs.json) carry the real name, not "target".
-# async=0 makes the load/fetch finish before parse_score runs.
+# commands (e.g. rubric_dump -> <obj>_pairs.json) carry the real name, not "target".
+# async=0 makes the load/fetch finish before rubric_score runs.
 if [ -f "$INPUT" ]; then
     OBJ="$(basename "${INPUT%.*}")"; KIND=file
 else
@@ -64,10 +64,10 @@ else
 fi
 # PyMOL object names must be simple tokens; sanitize before using the name.
 OBJ="$(printf '%s' "$OBJ" | tr -c 'A-Za-z0-9_-' '_')"
-# Cache fetched structures in the parse cache (~/.cache/parse, or
-# $PARSE_CACHE_DIR) instead of the current directory, so `fetch` never
+# Cache fetched structures in the rubric cache (~/.cache/rubric, or
+# $RUBRIC_CACHE_DIR) instead of the current directory, so `fetch` never
 # drops a .cif into the working folder.
-CACHE="${PARSE_CACHE_DIR:-$HOME/.cache/parse}"
+CACHE="${RUBRIC_CACHE_DIR:-$HOME/.cache/rubric}"
 mkdir -p "$CACHE"
 if [ "$KIND" = file ]; then
     LOADCMD="load $INPUT, $OBJ"
@@ -77,14 +77,14 @@ fi
 
 read -r -d '' CMDS <<EOF || true
 run $PLUGIN
-parse_set_binary $BIN
+rubric_set_binary $BIN
 set fetch_path, $CACHE
 $LOADCMD
-parse_score $OBJ, $TIER, 0, 0
-parse_dump
+rubric_score $OBJ, $TIER, 0, 0
+rubric_dump
 EOF
 
-if [ "${PARSE_VIEW_DRYRUN:-}" = "1" ]; then
+if [ "${RUBRIC_VIEW_DRYRUN:-}" = "1" ]; then
     printf 'PyMOL commands:\n%s\n' "$CMDS"
     exit 0
 fi

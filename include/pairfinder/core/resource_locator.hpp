@@ -4,9 +4,9 @@
  *        distributions, idealized templates, richardson suites).
  *
  * Resolution order (computed once):
- *   1. $PARSE_RESOURCES (explicit override)
+ *   1. $RUBRIC_RESOURCES (explicit override)
  *   2. executable-relative: <exe>/resources, <exe>/../resources,
- *      <exe>/../share/parse/resources   (deployed/installed layout)
+ *      <exe>/../share/rubric/resources   (deployed/installed layout)
  *   3. cwd-relative: resources, ../resources, ../../resources
  *   4. compile-time source path PAIRFINDER_SOURCE_RESOURCES (dev fallback)
  *

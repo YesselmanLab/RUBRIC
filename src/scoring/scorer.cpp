@@ -192,7 +192,7 @@ struct HBF {
 // class. Parsing ~1.6 MB of JSON into a document tree took ~15-20 ms per run, as
 // long as scoring a small RNA; these flat tables hold exactly the values the
 // lookups read (the same doubles, taken from the parsed JSON), so every score is
-// unchanged. They are loaded from scoring_tables_cache.bin (written by `parse
+// unchanged. They are loaded from scoring_tables_cache.bin (written by `rubric
 // dump-caches`) when its stored content hash matches the JSON files, and built
 // from the JSON otherwise, so a stale cache can only make a run slower.
 // ---------------------------------------------------------------------------

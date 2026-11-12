@@ -55,7 +55,7 @@ target_include_directories(pairfinder_core
 target_compile_features(pairfinder_core PUBLIC cxx_std_20)
 # Dev fallback for the resource locator: the in-source resources/ dir, used only
 # when the locator can't find resources exe-relative, cwd-relative, or via
-# $PARSE_RESOURCES (so running from a dev tree always works).
+# $RUBRIC_RESOURCES (so running from a dev tree always works).
 target_compile_definitions(pairfinder_core PRIVATE
     PAIRFINDER_SOURCE_RESOURCES="${CMAKE_CURRENT_SOURCE_DIR}/resources")
 
@@ -90,14 +90,14 @@ target_compile_options(pairfinder_core PRIVATE
     $<$<BOOL:${PAIRFINDER_WARNINGS_AS_ERRORS}>:-Werror>)
 
 # ---- CLI app ----------------------------------------------------------------
-add_executable(parse
+add_executable(rubric
     apps/main.cpp
     apps/support/cli_support.cpp
     apps/differential/differential_commands.cpp)
-target_link_libraries(parse PRIVATE pairfinder_core)
+target_link_libraries(rubric PRIVATE pairfinder_core)
 # apps/ on the include path so the CLI TUs include their siblings as
 # "support/cli_support.hpp" / "differential/differential_commands.hpp" (no ../ paths).
-target_include_directories(parse PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/apps)
+target_include_directories(rubric PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/apps)
 
 # After each build: (1) regenerate the precomputed resource caches (H-bond
 # patterns from the idealized templates, plus base-typing + H-bond-chemistry
@@ -105,25 +105,25 @@ target_include_directories(parse PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/apps)
 # next to the binary so the exe-relative locator finds it (build/<cfg>/resources).
 # Step 1 writes into the source tree (output is deterministic, so it only changes
 # when the underlying data does) and step 2 stages the fresh copies for the build.
-add_custom_command(TARGET parse POST_BUILD
-    COMMAND parse dump-caches "${CMAKE_CURRENT_SOURCE_DIR}/resources"
+add_custom_command(TARGET rubric POST_BUILD
+    COMMAND rubric dump-caches "${CMAKE_CURRENT_SOURCE_DIR}/resources"
     COMMAND ${CMAKE_COMMAND} -E copy_directory
-        "${CMAKE_CURRENT_SOURCE_DIR}/resources" "$<TARGET_FILE_DIR:parse>/resources"
-    COMMENT "Regenerating resource caches + staging bundled resources next to parse")
+        "${CMAKE_CURRENT_SOURCE_DIR}/resources" "$<TARGET_FILE_DIR:rubric>/resources"
+    COMMENT "Regenerating resource caches + staging bundled resources next to rubric")
 
 # ---- Install ----------------------------------------------------------------
-# Installed layout: <prefix>/bin/parse + <prefix>/share/parse/resources
-# (resolved by the locator's <exe>/../share/parse/resources rule).
-install(TARGETS parse RUNTIME DESTINATION bin)
+# Installed layout: <prefix>/bin/rubric + <prefix>/share/rubric/resources
+# (resolved by the locator's <exe>/../share/rubric/resources rule).
+install(TARGETS rubric RUNTIME DESTINATION bin)
 install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/resources/"
-    DESTINATION share/parse/resources)
+    DESTINATION share/rubric/resources)
 
 # Optional PyMOL viewer: the launcher goes on PATH (bin/), its plugin alongside
-# the shared data. parse-view resolves the plugin from ../share/parse and
-# finds `parse` on PATH when installed.
-install(PROGRAMS "${CMAKE_CURRENT_SOURCE_DIR}/integrations/pymol/parse-view"
+# the shared data. rubric-view resolves the plugin from ../share/rubric and
+# finds `rubric` on PATH when installed.
+install(PROGRAMS "${CMAKE_CURRENT_SOURCE_DIR}/integrations/pymol/rubric-view"
     DESTINATION bin)
-install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/integrations/pymol/parse_pymol.py"
-    DESTINATION share/parse)
+install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/integrations/pymol/rubric_pymol.py"
+    DESTINATION share/rubric)
 
 # Unit tests are developer-only and are not part of this package.

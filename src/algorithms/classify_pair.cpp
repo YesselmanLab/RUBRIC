@@ -10,7 +10,6 @@
 #include <unordered_set>
 
 #include <pairfinder/algorithms/edge_classifier.hpp>
-#include <pairfinder/algorithms/saenger.hpp>
 
 namespace pairfinder::algorithms::classification {
 
@@ -20,58 +19,19 @@ using core::BaseTyping;
 using core::Residue;
 using hbond::HBond;
 
-constexpr double kRmsdResolutionThreshold = 0.15;
-
-int face_priority(char f) { return f == 'W' ? 0 : (f == 'H' ? 1 : 2); }
-
-std::string canonicalize_lw(char orientation, char f1, char f2) {
-    std::string o(1, orientation);
-    if (face_priority(f1) <= face_priority(f2)) return o + f1 + f2;
-    return o + f2 + f1;
-}
-
-std::optional<std::string> resolve_by_o2prime(const std::array<std::string, 2>& classes,
-                                              const Residue& res1, const Residue& res2,
-                                              const std::vector<HBond>& hbonds) {
-    if (hbonds.empty()) return std::nullopt;
-    bool r1 = false, r2 = false;
-    for (const auto& hb : hbonds) {
-        if (hb.donor_atom == "O2'" && hb.donor_res_id == res1.res_id()) r1 = true;
-        else if (hb.acceptor_atom == "O2'" && hb.acceptor_res_id == res1.res_id()) r1 = true;
-        if (hb.donor_atom == "O2'" && hb.donor_res_id == res2.res_id()) r2 = true;
-        else if (hb.acceptor_atom == "O2'" && hb.acceptor_res_id == res2.res_id()) r2 = true;
-    }
-    if (!r1 && !r2) return std::nullopt;
-    const char e00 = classes[0][1], e01 = classes[0][2];
-    const char e10 = classes[1][1], e11 = classes[1][2];
-    const std::array<std::pair<char, char>, 2> edges = {std::pair{e00, e10}, std::pair{e01, e11}};
-    for (int pos = 0; pos < 2; ++pos) {
-        if (edges[pos].first == edges[pos].second) continue;  // not a differing position
-        const bool s0 = edges[pos].first == 'S';
-        const bool s1 = edges[pos].second == 'S';
-        if (s0 == s1) continue;  // not exactly one S
-        if (r1 || r2) return s0 ? classes[0] : classes[1];
-    }
-    return std::nullopt;
-}
+// Uniform ambiguity rule (2026-11-11): every two-class candidate ("X|Y"), whatever its
+// edges, is resolved by template fit alone. If the RMSDs to the templates of the two
+// classes differ by more than kAmbiguityMargin, the better-fitting class is assigned;
+// otherwise the pair stays ambiguous. 0.5 A was chosen from the template-call accuracy
+// against the other six annotators (prototypes/template_resolution/REPORT.md): W/H calls
+// were right 96% of the time above 0.5 A, 79% at 0.4-0.5 A and 71% at 0.3-0.4 A.
+constexpr double kAmbiguityMargin = 0.5;
 
 std::optional<std::string> resolve_ambiguity(const std::array<std::string, 2>& classes,
-                                             const std::array<std::optional<double>, 2>& rmsds,
-                                             const Residue& res1, const Residue& res2,
-                                             const std::vector<HBond>& hbonds,
-                                             const BaseTyping& typing) {
-    if (!hbonds.empty()) {
-        const SaengerMatch sm = match_saenger(res1, res2, hbonds, typing);
-        if (sm.found) {
-            const char orientation = classes[0][0];
-            const std::string sc = canonicalize_lw(orientation, sm.face1, sm.face2);
-            if (sc == classes[0] || sc == classes[1]) return sc;
-        }
-    }
-    if (auto o = resolve_by_o2prime(classes, res1, res2, hbonds)) return o;
+                                             const std::array<std::optional<double>, 2>& rmsds) {
     if (rmsds[0] && rmsds[1]) {
         const double diff = std::abs(*rmsds[0] - *rmsds[1]);
-        if (diff > kRmsdResolutionThreshold) return *rmsds[0] < *rmsds[1] ? classes[0] : classes[1];
+        if (diff > kAmbiguityMargin) return *rmsds[0] < *rmsds[1] ? classes[0] : classes[1];
     }
     return std::nullopt;
 }
@@ -134,7 +94,7 @@ double compute_selection_quality(const ValidationResult& validation, const std::
 ClassifiedPair classify_pair(const core::ReferenceFrame& frame1,
                              const core::ReferenceFrame& frame2, const core::Residue& res1_in,
                              const core::Residue& res2_in, const std::vector<HBond>& voters,
-                             const std::vector<HBond>& strict, const TemplateAligner& aligner,
+                             const std::vector<HBond>& /*strict*/, const TemplateAligner& aligner,
                              const BaseTyping& typing) {
     LwResult geo = classify_lw_class(frame1, frame2, res1_in, res2_in, voters, typing);
     ClassifiedPair out;
@@ -152,13 +112,7 @@ ClassifiedPair classify_pair(const core::ReferenceFrame& frame1,
         std::array<std::optional<double>, 2> rmsds = {
             aligner.compute_template_rmsd(*r1, *r2, classes[0], typing),
             aligner.compute_template_rmsd(*r1, *r2, classes[1], typing)};
-        auto resolved = resolve_ambiguity(classes, rmsds, *r1, *r2, strict, typing);
-        // A pure W/H boundary ambiguity (no S edge) is genuinely undetermined,
-        // so keep it rather than committing via template/Saenger. The W/S path
-        // is resolved.
-        if (classes[0].find('S') == std::string::npos &&
-            classes[1].find('S') == std::string::npos)
-            resolved = std::nullopt;
+        const auto resolved = resolve_ambiguity(classes, rmsds);
         if (resolved) {
             out.lw_class = *resolved;
             out.template_rmsd = rmsds[*resolved == classes[0] ? 0 : 1];

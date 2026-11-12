@@ -213,7 +213,7 @@ public:
 
     /// Write the scoring tables in native form (scoring_tables_cache.bin next to
     /// prosco_distributions.json unless @p path is given), stamped with the hash
-    /// of the JSON they came from. Run by `parse dump-caches` after each build.
+    /// of the JSON they came from. Run by `rubric dump-caches` after each build.
     void save_tables_cache(const std::filesystem::path& path = {}) const;
 
 private:

@@ -1,4 +1,4 @@
-# parse
+# RUBRIC
 
 A fast, self-contained C++ tool that reads an RNA structure file (mmCIF or PDB),
 **finds** base pairs, **classifies** them (Leontis–Westhof), and **scores** their
@@ -31,8 +31,8 @@ scoring data) or fetched automatically by CMake (GEMMI). There is nothing to
 
 ```bash
 # 1. clone
-git clone https://github.com/YesselmanLab/FastRNA.git
-cd FastRNA
+git clone https://github.com/YesselmanLab/RUBRIC.git
+cd RUBRIC
 
 # 2. configure (Release = optimized)
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
@@ -43,21 +43,21 @@ cmake --build build -j
 
 The first configure/build takes a few minutes because it fetches and compiles
 GEMMI; later builds are fast. When it finishes, the executable is at
-`build/parse`, and the reference scoring data is staged next to it
+`build/rubric`, and the reference scoring data is staged next to it
 automatically — the tool finds it with no extra setup.
 
-### Install (recommended — run `parse` from anywhere)
+### Install (recommended — run `rubric` from anywhere)
 
-So you don't have to type `./build/parse` each time:
+So you don't have to type `./build/rubric` each time:
 
 ```bash
 cmake --install build --prefix ~/.local
 ```
 
-This installs `parse` (and the optional `parse-view` viewer) into
-`~/.local/bin`, and the reference data into `~/.local/share/parse`. If
-`~/.local/bin` is on your `PATH` (it usually is), you can now run **`parse
-1GID`** and **`parse-view 1GID`** from any directory.
+This installs `rubric` (and the optional `rubric-view` viewer) into
+`~/.local/bin`, and the reference data into `~/.local/share/rubric`. If
+`~/.local/bin` is on your `PATH` (it usually is), you can now run **`rubric
+1GID`** and **`rubric-view 1GID`** from any directory.
 
 If they're not found afterwards, add `~/.local/bin` to your PATH:
 
@@ -66,31 +66,31 @@ echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc   # or ~/.bashrc
 ```
 
 (You can also install system-wide with `sudo cmake --install build --prefix
-/usr/local`.) The examples below use the installed `parse`; if you skip the
+/usr/local`.) The examples below use the installed `rubric`; if you skip the
 install, just prefix them with `./build/`.
 
 ---
 
 ## 3. Run
 
-The basic form is `parse <input> [options]`, where `<input>` is either a
+The basic form is `rubric <input> [options]`, where `<input>` is either a
 4-character **PDB ID** (downloaded from RCSB and cached) or a path to a local
 `.cif` / `.pdb` (`.gz` accepted).
 
 ```bash
-# by PDB ID (downloaded + cached under ~/.cache/parse)
-parse 1EHZ
+# by PDB ID (downloaded + cached under ~/.cache/rubric)
+rubric 1EHZ
 
 # save to a file — bare --out uses the PDB id → ./1EHZ.json
-parse 1EHZ --out
+rubric 1EHZ --out
 
 # from a local file (no download) — just the name if it's in the current
 # folder, or its path if it's elsewhere
-parse mymodel.cif --out              # file in the current directory
-parse path/to/mymodel.cif --out      # file in another directory
+rubric mymodel.cif --out              # file in the current directory
+rubric path/to/mymodel.cif --out      # file in another directory
 
 # a full ribosome — still sub-second
-parse 7K00 --out
+rubric 7K00 --out
 ```
 
 ### Where the output goes
@@ -98,13 +98,13 @@ parse 7K00 --out
 | you run | JSON goes to |
 |---|---|
 | no `--out` | **stdout** (redirect with `> file.json` if you like) |
-| `--out` (no name) | **`<PDB_id>.json` in the current directory** — e.g. `parse 1GID --out` → `./1GID.json` |
+| `--out` (no name) | **`<PDB_id>.json` in the current directory** — e.g. `rubric 1GID --out` → `./1GID.json` |
 | `--out name.json` (bare name) | **`./name.json`** (current directory) |
 | `--out path/to/name.json` (has a directory) | exactly that path (created if needed) |
 
 The output goes exactly where you point it — no folder is imposed.
 
-Downloaded structures are cached in **`~/.cache/parse/`** — nothing is
+Downloaded structures are cached in **`~/.cache/rubric/`** — nothing is
 written into your working directory unless you ask for it.
 
 ### Options
@@ -116,7 +116,7 @@ written into your working directory unless you ask for it.
 | `--details` | include extra per-pair fields (template RMSD, score breakdown) |
 | `--no-score` | find + classify only, skip quality scoring |
 | `--no-download` | never fetch from RCSB; only use a local file |
-| `--cache-dir DIR` | where downloaded structures are cached (default `$PARSE_CACHE_DIR` or `~/.cache/parse`) |
+| `--cache-dir DIR` | where downloaded structures are cached (default `$RUBRIC_CACHE_DIR` or `~/.cache/rubric`) |
 
 ---
 
@@ -199,9 +199,9 @@ If you have **PyMOL** installed, you can open a structure, score it, and
 highlight the pairs that need attention in one command:
 
 ```bash
-parse-view 1GID              # a PDB id
-parse-view file.cif          # or a local file
-parse-view 1GID secondary    # optional tier: priority (default) | secondary | all
+rubric-view 1GID              # a PDB id
+rubric-view file.cif          # or a local file
+rubric-view 1GID secondary    # optional tier: priority (default) | secondary | all
 ```
 
 The optional **tier** selects which pairs populate the worklist, by whole-pair
@@ -215,7 +215,7 @@ flagged pairs lit up — and the scored JSON is also written to
 score: **gray** = preferred (score 100, not flagged), **yellow → orange** =
 secondary review (80 ≤ score < 100), **red** = priority review (score < 80).
 Separately, a sugar whose pucker is inconsistent (δ vs P-perp) gets a **cyan**
-ribose ring, whatever its pair's tier, and `parse_ideal` draws the ideal
+ribose ring, whatever its pair's tier, and `rubric_ideal` draws the ideal
 template of the current pair in **green**.
 
 ### Commands inside PyMOL
@@ -225,37 +225,37 @@ command line). Arguments in `[...]` are optional.
 
 | command | what it does |
 |---|---|
-| `parse_score [obj], [tier]` | score the structure + highlight the flagged pairs (colored by pair score) and the pucker-mismatch sugars (cyan); `tier` = `priority` (default) / `secondary` / `all` |
-| `parse_list [n]` | print the ranked worklist of the worst pairs (default 25) |
-| `parse_next` / `parse_prev` | step through the worklist one pair at a time |
-| `parse_goto <rank \| residue>` | jump to worklist entry `12`, **or** inspect any residue by `A-169` / `A169` / `A-G-169` (even a clean pair not in the worklist) — prints its score and what's out of range |
-| `parse_info [selection]` | inspect a clicked/selected residue → jump the worklist to its pair |
-| `parse_overview` | zoom back out to the whole-structure overview |
-| `parse_ideal [on\|off]` | overlay the **idealized** target geometry of the current pair (green ghost) so you can see how to fix it; sticky toggle, default off |
-| `parse_pucker [list \| on \| off \| n \| residue]` | list the sugar-pucker mismatches, show/hide the cyan layer, or a close-up of one (`parse_pucker 1`, `parse_pucker A-199`) with its P-perp measurement |
-| `parse_dump [path]` | write the scored pairs (incl. any coordinate edits) to `<obj>_pairs.json` in the current directory, or a path you give |
-| `parse_load <path>` | rebuild the worklist from a `parse_dump` JSON — **no binary, no re-scoring** (for sharing a scored session) |
-| `parse_keys [on\|off]` | bind/unbind arrow-key navigation |
-| `parse_clear` | remove every overlay and reset |
-| `parse_set_binary <path>` | point the plugin at a specific `parse` binary |
-| `parse_set_ideals <path>` | set the idealized-template dir |
+| `rubric_score [obj], [tier]` | score the structure + highlight the flagged pairs (colored by pair score) and the pucker-mismatch sugars (cyan); `tier` = `priority` (default) / `secondary` / `all` |
+| `rubric_list [n]` | print the ranked worklist of the worst pairs (default 25) |
+| `rubric_next` / `rubric_prev` | step through the worklist one pair at a time |
+| `rubric_goto <rank \| residue>` | jump to worklist entry `12`, **or** inspect any residue by `A-169` / `A169` / `A-G-169` (even a clean pair not in the worklist) — prints its score and what's out of range |
+| `rubric_info [selection]` | inspect a clicked/selected residue → jump the worklist to its pair |
+| `rubric_overview` | zoom back out to the whole-structure overview |
+| `rubric_ideal [on\|off]` | overlay the **idealized** target geometry of the current pair (green ghost) so you can see how to fix it; sticky toggle, default off |
+| `rubric_pucker [list \| on \| off \| n \| residue]` | list the sugar-pucker mismatches, show/hide the cyan layer, or a close-up of one (`rubric_pucker 1`, `rubric_pucker A-199`) with its P-perp measurement |
+| `rubric_dump [path]` | write the scored pairs (incl. any coordinate edits) to `<obj>_pairs.json` in the current directory, or a path you give |
+| `rubric_load <path>` | rebuild the worklist from a `rubric_dump` JSON — **no binary, no re-scoring** (for sharing a scored session) |
+| `rubric_keys [on\|off]` | bind/unbind arrow-key navigation |
+| `rubric_clear` | remove every overlay and reset |
+| `rubric_set_binary <path>` | point the plugin at a specific `rubric` binary |
+| `rubric_set_ideals <path>` | set the idealized-template dir |
 
-A typical loop: `parse_score` (priority review) → `parse_next` through the flagged
-pairs → `parse_ideal` to see the target → fix geometry / re-refine → re-run
-`parse_score`; when the priority-review worklist is clear, `parse_score obj, secondary`
+A typical loop: `rubric_score` (priority review) → `rubric_next` through the flagged
+pairs → `rubric_ideal` to see the target → fix geometry / re-refine → re-run
+`rubric_score`; when the priority-review worklist is clear, `rubric_score obj, secondary`
 to polish the middle. Keyboard navigation and the full color scheme are covered in
 [`integrations/pymol/README.md`](integrations/pymol/README.md).
 
 ### No plugin? Write a standalone script
 
-`parse 1GID --pml` writes `1GID.pml`, a plain PyMOL script that loads the
+`rubric 1GID --pml` writes `1GID.pml`, a plain PyMOL script that loads the
 structure and shows the same picture (flagged pairs colored by score, cyan
 pucker-mismatch riboses) with named selections for each tier and one per
 priority-review pair. Open it with `pymol 1GID.pml` on any machine with PyMOL;
 neither the plugin nor the binary is needed to view it. Details in
-[`integrations/pymol/README.md`](integrations/pymol/README.md#without-the-plugin-a-standalone-script-parse---pml).
+[`integrations/pymol/README.md`](integrations/pymol/README.md#without-the-plugin-a-standalone-script-rubric---pml).
 
-PyMOL is only needed for this viewer — the core `parse` tool does not require it.
+PyMOL is only needed for this viewer — the core `rubric` tool does not require it.
 
 ---
 
@@ -264,8 +264,8 @@ PyMOL is only needed for this viewer — the core `parse` tool does not require 
 - **Internet:** needed once (first build, to fetch GEMMI) and at runtime only
   when you give a bare PDB ID (it downloads via `curl` and caches the file).
   Local-file runs need no network — use `--no-download` to enforce that.
-- **Cache:** downloaded structures live in `~/.cache/parse` (override with
-  `--cache-dir` or `$PARSE_CACHE_DIR`). Safe to delete anytime.
+- **Cache:** downloaded structures live in `~/.cache/rubric` (override with
+  `--cache-dir` or `$RUBRIC_CACHE_DIR`). Safe to delete anytime.
 - **Reference data** (`resources/`) ships with the repo and is staged next to the
   binary at build time; the tool finds it automatically.
 - **Performance:** ~4,000 base pairs/second; a 70S ribosome (~2,100 pairs) scores
@@ -280,7 +280,7 @@ include/pairfinder/   public headers (geometry, core, io, algorithms, scoring)
 src/                  implementations
 apps/main.cpp         the CLI
 resources/            bundled reference data + templates (ship with the binary)
-integrations/pymol/   optional PyMOL viewer (parse-view, parse_pymol.py)
+integrations/pymol/   optional PyMOL viewer (rubric-view, rubric_pymol.py)
 CMakeLists.txt        build (fetches GEMMI, vendors nlohmann/json)
 ```
 

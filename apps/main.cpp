@@ -1,6 +1,6 @@
 /**
  * @file main.cpp
- * @brief parse CLI entry point.
+ * @brief rubric CLI entry point.
  *
  * Production path: resolve the input (a 4-char PDB id fetched from RCSB, or a
  * local .cif/.pdb(.gz)), run the find + classify + score pipeline, and emit the
@@ -109,7 +109,7 @@ json frame_json(const pairfinder::core::ReferenceFrame& f) {
 }
 
 // ---- --pml: a standalone PyMOL script reproducing the plug-in's display ------
-// Mirrors integrations/pymol/parse_pymol.py (score_to_rgb, _build_overlay,
+// Mirrors integrations/pymol/rubric_pymol.py (score_to_rgb, _build_overlay,
 // _build_pucker) so the script and the plug-in draw the same picture without
 // needing the plug-in or the binary at view time.
 
@@ -122,7 +122,7 @@ constexpr std::size_t kResiPerLine = 60;     // residues per selection line
 std::string pymol_name(const std::string& s) {
     std::string n;
     for (char c : s) n += std::isalnum(static_cast<unsigned char>(c)) ? c : '_';
-    return n.empty() ? "fastrna_model" : n;
+    return n.empty() ? "rubric_model" : n;
 }
 
 // res_id "<chain>-<resname>-<seq+icode>" -> (chain, resi); seq may be negative.
@@ -231,7 +231,7 @@ void write_pml(const json& out, const std::string& structure_path, const std::st
         return buf;
     };
     const json ts = out.value("tier_summary", json::object());
-    o << "# FastRNA " << kVersion << " - PyMOL view of " << out.value("pdb_id", std::string()) << "\n"
+    o << "# RUBRIC " << kVersion << " - PyMOL view of " << out.value("pdb_id", std::string()) << "\n"
       << "# structure: " << abs_path << "\n"
       << "# base-pair score " << num_or(out.value("pairs_score", json()), "%.2f")
       << "  |  backbone suiteness " << num_or(out.value("backbone_suiteness", json()), "%.3f")
@@ -242,7 +242,7 @@ void write_pml(const json& out, const std::string& structure_path, const std::st
          " red = priority review | cyan ribose = pucker outlier (delta vs Pperp)\n"
       << "# Open with: pymol " << std::filesystem::path(pml_path).filename().string()
       << "   (or @file.pml inside PyMOL). Coordinates are never modified;\n"
-      << "# re-run FastRNA with --pml after editing the model to refresh this view.\n\n"
+      << "# re-run RUBRIC with --pml after editing the model to refresh this view.\n\n"
       << "set ignore_case_chain, 0\n"
       << "/cmd.load(r\"\"\"" << abs_path << "\"\"\", \"" << obj << "\")\n"
       << "hide everything, " << obj << "\n"
@@ -282,7 +282,7 @@ void write_pml(const json& out, const std::string& structure_path, const std::st
         // model itself is untouched.
         o << "# ---- flagged pairs as sticks on a copy, colored by pair score ----\n"
           << "python\n"
-          << "_fastrna_b = {\n";
+          << "_rubric_b = {\n";
         for (std::size_t i = 0; i < res_order.size(); ++i) {  // 8 per line: PyMOL echoes each line
             const std::string& id = res_order[i];
             const auto a = id.find('-');
@@ -294,40 +294,40 @@ void write_pml(const json& out, const std::string& structure_path, const std::st
               << (i % 8 == 7 || i + 1 == res_order.size() ? "\n" : "");
         }
         o << "}\n"
-          << "cmd.create(\"fastrna_pairs\", " << py_str(nuc) << ")\n"
-          << "cmd.alter(\"fastrna_pairs\", \"b = _fastrna_b.get((chain, resi), -1.0)\",\n"
-          << "          space={\"_fastrna_b\": _fastrna_b})\n"
-          << "cmd.remove(\"fastrna_pairs and b < -0.5\")\n"
-          << "del _fastrna_b\n"
+          << "cmd.create(\"rubric_pairs\", " << py_str(nuc) << ")\n"
+          << "cmd.alter(\"rubric_pairs\", \"b = _rubric_b.get((chain, resi), -1.0)\",\n"
+          << "          space={\"_rubric_b\": _rubric_b})\n"
+          << "cmd.remove(\"rubric_pairs and b < -0.5\")\n"
+          << "del _rubric_b\n"
           << "python end\n"
-          << "hide everything, fastrna_pairs\n"
-          << "show sticks, fastrna_pairs\n"
-          << "set stick_radius, 0.18, fastrna_pairs\n"
-          << "spectrum b, yellow red, fastrna_pairs, minimum=0, maximum=1\n"
-          << "select fastrna_priority, fastrna_pairs and b > 0.999\n"
-          << "select fastrna_secondary, fastrna_pairs and b < 0.999\n\n";
+          << "hide everything, rubric_pairs\n"
+          << "show sticks, rubric_pairs\n"
+          << "set stick_radius, 0.18, rubric_pairs\n"
+          << "spectrum b, yellow red, rubric_pairs, minimum=0, maximum=1\n"
+          << "select rubric_priority, rubric_pairs and b > 0.999\n"
+          << "select rubric_secondary, rubric_pairs and b < 0.999\n\n";
 
         // One named selection per priority-review pair (on the model), in worklist order.
         int k = 0;
         for (const json* p : flagged) {
             if ((*p)["score"].get<double>() >= kReviewMax) continue;
             char nm[32];
-            std::snprintf(nm, sizeof nm, "fastrna_pr_%03d", ++k);
+            std::snprintf(nm, sizeof nm, "rubric_pr_%03d", ++k);
             write_selection(o, nm, obj, {(*p)["res_id1"].get<std::string>(),
                                          (*p)["res_id2"].get<std::string>()});
         }
-        if (k > 0) o << "group fastrna_worklist, fastrna_pr_*\n\n";
+        if (k > 0) o << "group rubric_worklist, rubric_pr_*\n\n";
     }
     if (!pucker_res.empty()) {
         o << "# ---- pucker outliers: gray sticks with a cyan ribose ring ----\n";
-        write_selection(o, "fastrna_pucker_outliers", obj, pucker_res);
-        o << "create fastrna_pucker, (" << obj << ") and fastrna_pucker_outliers\n"
-          << "hide everything, fastrna_pucker\n"
-          << "show sticks, fastrna_pucker\n"
-          << "set stick_radius, 0.30, fastrna_pucker\n"
-          << "color gray60, fastrna_pucker\n"
-          << "set_color fastrna_pucker_col, [0.000, 0.750, 0.850]\n"
-          << "color fastrna_pucker_col, fastrna_pucker and name C1'+C2'+C3'+C4'+O4'\n\n";
+        write_selection(o, "rubric_pucker_outliers", obj, pucker_res);
+        o << "create rubric_pucker, (" << obj << ") and rubric_pucker_outliers\n"
+          << "hide everything, rubric_pucker\n"
+          << "show sticks, rubric_pucker\n"
+          << "set stick_radius, 0.30, rubric_pucker\n"
+          << "color gray60, rubric_pucker\n"
+          << "set_color rubric_pucker_col, [0.000, 0.750, 0.850]\n"
+          << "color rubric_pucker_col, rubric_pucker and name C1'+C2'+C3'+C4'+O4'\n\n";
     }
     o << "deselect\nzoom " << obj << "\n";
 
@@ -343,7 +343,7 @@ int find_json(const std::string& path, bool score, bool details, bool emit_class
               const std::string& out_path, const std::string& pml_path) {
     using namespace pairfinder;
     // Per-stage wall-clock when PAIRFINDER_PROFILE is set (-> stderr).
-    const bool prof = std::getenv("PARSE_PROFILE") != nullptr;
+    const bool prof = std::getenv("RUBRIC_PROFILE") != nullptr;
     auto t0 = std::chrono::steady_clock::now();
     auto lap = [&](const char* name) {
         if (!prof) return;
@@ -711,14 +711,14 @@ int find_json(const std::string& path, bool score, bool details, bool emit_class
 
 // ---- PDB-ID auto-fetch (input acquisition; upstream of the pipeline) ---------
 
-// Cache dir for downloaded structures: --cache-dir, else $PARSE_CACHE_DIR,
-// else ~/.cache/parse, else <tmp>/parse. Persistent + per-user.
+// Cache dir for downloaded structures: --cache-dir, else $RUBRIC_CACHE_DIR,
+// else ~/.cache/rubric, else <tmp>/rubric. Persistent + per-user.
 std::filesystem::path cache_dir(const std::string& override_dir) {
     if (!override_dir.empty()) return override_dir;
-    if (const char* e = std::getenv("PARSE_CACHE_DIR")) return e;
+    if (const char* e = std::getenv("RUBRIC_CACHE_DIR")) return e;
     if (const char* h = std::getenv("HOME"))
-        return std::filesystem::path(h) / ".cache" / "parse";
-    return std::filesystem::temp_directory_path() / "parse";
+        return std::filesystem::path(h) / ".cache" / "rubric";
+    return std::filesystem::temp_directory_path() / "rubric";
 }
 
 // A bare PDB id: short, all-alphanumeric (e.g. 6V3A, 1GID). Distinguishes an id
@@ -808,9 +808,9 @@ int main(int argc, char** argv) {
     std::vector<std::string> args(argv + 1, argv + argc);
 
     if (args.empty() || args[0] == "-h" || args[0] == "--help") {
-        std::cout << "parse " << kVersion << "\n"
+        std::cout << "rubric " << kVersion << "\n"
                   << "usage:\n"
-                  << "  parse <pdb-id | structure-file> [options]\n"
+                  << "  rubric <pdb-id | structure-file> [options]\n"
                   << "      find + classify + score -> JSON (stdout, or a file with --out)\n"
                   << "      a bare PDB id (e.g. 6V3A) is downloaded from RCSB and cached;\n"
                   << "      an existing .cif/.pdb(.gz) path is used directly.\n"
@@ -821,8 +821,8 @@ int main(int argc, char** argv) {
                   << "                pucker outliers (bare --pml -> <id>.pml in the current\n"
                   << "                directory); open it with `pymol FILE`\n"
                   << "  options: --details  --no-score  --no-download  --cache-dir DIR\n"
-                  << "  cache:   $PARSE_CACHE_DIR or ~/.cache/parse\n"
-                  << "  parse dump-parse <input.pdb>   # parsed atoms (TSV)\n";
+                  << "  cache:   $RUBRIC_CACHE_DIR or ~/.cache/rubric\n"
+                  << "  rubric dump-parse <input.pdb>   # parsed atoms (TSV)\n";
         return args.empty() ? 1 : 0;
     }
     if (args[0] == "--version") {
@@ -847,7 +847,7 @@ int main(int argc, char** argv) {
     // Regenerate the precomputed resource caches (H-bond patterns from the
     // idealized templates; base-typing + H-bond-chemistry tables from the ligand
     // DB) so the runtime use_cache paths avoid re-parsing them every startup.
-    // `parse dump-caches [resources_root]`: with a root, writes into that source
+    // `rubric dump-caches [resources_root]`: with a root, writes into that source
     // tree; otherwise into the resolved (staged) resource locations.
     if (args[0] == "dump-caches" || args[0] == "dump-hbond-patterns") {
         using namespace pairfinder;
@@ -884,7 +884,7 @@ int main(int argc, char** argv) {
         return 0;
     }
 
-    // Default: `parse <pdb-id | structure-file> [options]` runs the full
+    // Default: `rubric <pdb-id | structure-file> [options]` runs the full
     // pipeline and emits the report JSON. A bare PDB id is fetched
     // from RCSB (cached) unless an existing file path is given.
     const std::string input = args[0];

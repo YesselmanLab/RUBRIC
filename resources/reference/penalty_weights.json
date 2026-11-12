@@ -1,6 +1,6 @@
 {
   "schema_version": "4.0-per-parameter-shannon",
-  "generated_at": "2026-11-03",
+  "generated_at": "2026-11-11",
   "weight_scheme": "shannon-log-odds-per-parameter",
   "method": {
     "_documentation": [
@@ -24,61 +24,61 @@
     "prosco_preferred_threshold": 5.0
   },
   "good_reference_set": {
-    "n_pairs": 371137,
+    "n_pairs": 371960,
     "feature_dir": "/Users/kdewan2/Desktop/Projects/find-pair-score-rna/PARSE-RNA-Analysis/data/reference/high_quality_features",
     "distributions": "/Users/kdewan2/Desktop/Projects/find-pair-score-rna/PARSE-RNA-Analysis/data/reference/scoring_tables/parameter_distributions.json",
     "mean_severity": {
-      "stagger": 0.018473,
-      "clash": 0.001874,
-      "hbond_angles": 0.036366,
-      "distance": 0.025221,
-      "shear": 0.015494,
-      "propeller": 0.013521,
-      "buckle": 0.014443,
-      "stretch": 0.016665,
-      "opening": 0.014946,
-      "incorrect_hbond_count": 0.019512
+      "stagger": 0.018348,
+      "clash": 0.001878,
+      "hbond_angles": 0.036355,
+      "distance": 0.025125,
+      "shear": 0.015308,
+      "propeller": 0.013436,
+      "buckle": 0.014452,
+      "stretch": 0.016511,
+      "opening": 0.014857,
+      "incorrect_hbond_count": 0.019928
     }
   },
   "poor_reference_set": {
-    "n_pairs": 511181,
+    "n_pairs": 512247,
     "feature_dir": "/Users/kdewan2/Desktop/Projects/find-pair-score-rna/PARSE-RNA-Analysis/data/reference/low_quality_features",
     "mean_severity": {
-      "stagger": 0.0533,
+      "stagger": 0.052962,
       "clash": 0.004474,
-      "hbond_angles": 0.080252,
-      "distance": 0.051387,
-      "shear": 0.03141,
-      "propeller": 0.02685,
-      "buckle": 0.028211,
-      "stretch": 0.032492,
-      "opening": 0.028572,
-      "incorrect_hbond_count": 0.023292
+      "hbond_angles": 0.080091,
+      "distance": 0.051179,
+      "shear": 0.031019,
+      "propeller": 0.026717,
+      "buckle": 0.028233,
+      "stretch": 0.031958,
+      "opening": 0.028304,
+      "incorrect_hbond_count": 0.023695
     }
   },
   "raw_logodds_nats": {
-    "stagger": 1.0595,
-    "clash": 0.869,
-    "hbond_angles": 0.7915,
-    "distance": 0.7117,
-    "shear": 0.7066,
-    "propeller": 0.6859,
-    "buckle": 0.6694,
-    "stretch": 0.6676,
-    "opening": 0.6479,
-    "incorrect_hbond_count": 0.177
+    "stagger": 1.06,
+    "clash": 0.8672,
+    "hbond_angles": 0.7898,
+    "distance": 0.7114,
+    "shear": 0.7061,
+    "propeller": 0.6872,
+    "buckle": 0.6695,
+    "stretch": 0.6603,
+    "opening": 0.6444,
+    "incorrect_hbond_count": 0.1731
   },
   "penalty_weights": {
-    "stagger": 15.1664,
-    "clash": 12.4388,
-    "hbond_angles": 11.3296,
-    "distance": 10.1869,
-    "shear": 10.1144,
-    "propeller": 9.8182,
-    "buckle": 9.5816,
-    "stretch": 9.5557,
-    "opening": 9.2742,
-    "incorrect_hbond_count": 2.5342
+    "stagger": 15.2095,
+    "clash": 12.4437,
+    "hbond_angles": 11.3328,
+    "distance": 10.2082,
+    "shear": 10.1323,
+    "propeller": 9.8612,
+    "buckle": 9.6072,
+    "stretch": 9.4745,
+    "opening": 9.247,
+    "incorrect_hbond_count": 2.4837
   },
   "features": [
     "shear",
@@ -123,83 +123,83 @@
   "summary_table": [
     {
       "param": "stagger",
-      "mean_sev_good": 0.0185,
-      "mean_sev_poor": 0.0533,
+      "mean_sev_good": 0.0183,
+      "mean_sev_poor": 0.053,
       "ratio_poor_over_good": 2.89,
-      "raw_logodds": 1.0595,
-      "weight": 15.17
+      "raw_logodds": 1.06,
+      "weight": 15.21
     },
     {
       "param": "clash",
       "mean_sev_good": 0.0019,
       "mean_sev_poor": 0.0045,
       "ratio_poor_over_good": 2.38,
-      "raw_logodds": 0.869,
+      "raw_logodds": 0.8672,
       "weight": 12.44
     },
     {
       "param": "hbond_angles",
       "mean_sev_good": 0.0364,
-      "mean_sev_poor": 0.0803,
-      "ratio_poor_over_good": 2.21,
-      "raw_logodds": 0.7915,
+      "mean_sev_poor": 0.0801,
+      "ratio_poor_over_good": 2.2,
+      "raw_logodds": 0.7898,
       "weight": 11.33
     },
     {
       "param": "distance",
-      "mean_sev_good": 0.0252,
-      "mean_sev_poor": 0.0514,
+      "mean_sev_good": 0.0251,
+      "mean_sev_poor": 0.0512,
       "ratio_poor_over_good": 2.04,
-      "raw_logodds": 0.7117,
-      "weight": 10.19
+      "raw_logodds": 0.7114,
+      "weight": 10.21
     },
     {
       "param": "shear",
-      "mean_sev_good": 0.0155,
-      "mean_sev_poor": 0.0314,
+      "mean_sev_good": 0.0153,
+      "mean_sev_poor": 0.031,
       "ratio_poor_over_good": 2.03,
-      "raw_logodds": 0.7066,
-      "weight": 10.11
+      "raw_logodds": 0.7061,
+      "weight": 10.13
     },
     {
       "param": "propeller",
-      "mean_sev_good": 0.0135,
-      "mean_sev_poor": 0.0268,
+      "mean_sev_good": 0.0134,
+      "mean_sev_poor": 0.0267,
       "ratio_poor_over_good": 1.99,
-      "raw_logodds": 0.6859,
-      "weight": 9.82
+      "raw_logodds": 0.6872,
+      "weight": 9.86
     },
     {
       "param": "buckle",
-      "mean_sev_good": 0.0144,
+      "mean_sev_good": 0.0145,
       "mean_sev_poor": 0.0282,
       "ratio_poor_over_good": 1.95,
-      "raw_logodds": 0.6694,
-      "weight": 9.58
+      "raw_logodds": 0.6695,
+      "weight": 9.61
     },
     {
       "param": "stretch",
-      "mean_sev_good": 0.0167,
-      "mean_sev_poor": 0.0325,
-      "ratio_poor_over_good": 1.95,
-      "raw_logodds": 0.6676,
-      "weight": 9.56
+      "mean_sev_good": 0.0165,
+      "mean_sev_poor": 0.032,
+      "ratio_poor_over_good": 1.94,
+      "raw_logodds": 0.6603,
+      "weight": 9.47
     },
     {
       "param": "opening",
       "mean_sev_good": 0.0149,
-      "mean_sev_poor": 0.0286,
-      "ratio_poor_over_good": 1.91,
-      "raw_logodds": 0.6479,
-      "weight": 9.27
+      "mean_sev_poor": 0.0283,
+      "ratio_poor_over_good": 1.9,
+      "raw_logodds": 0.6444,
+      "weight": 9.25
     },
     {
       "param": "incorrect_hbond_count",
-      "mean_sev_good": 0.0195,
-      "mean_sev_poor": 0.0233,
+      "mean_sev_good": 0.0199,
+      "mean_sev_poor": 0.0237,
       "ratio_poor_over_good": 1.19,
-      "raw_logodds": 0.177,
-      "weight": 2.53
+      "raw_logodds": 0.1731,
+      "weight": 2.48
     }
   ]
 }
