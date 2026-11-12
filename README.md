@@ -1,10 +1,17 @@
 # RUBRIC
 
-A fast, self-contained C++ tool that reads an RNA structure file (mmCIF or PDB),
-**finds** base pairs, **classifies** them (Leontis–Westhof), and **scores** their
-geometric quality — emitting per-pair and whole-structure quality as JSON.
-
-A full 70S ribosome is annotated and scored in **under a second**.
+RUBRIC (Rapid Unified Base-pair, Ribose and backbone Integrity Check) is an
+open-source program that combines RNA base-pair annotation with local quality
+assessment of base pairs, backbone suites and riboses. RUBRIC classifies base
+pairs in the Leontis-Westhof scheme and flags pairs whose geometry lies between
+two classes as ambiguous. Each unambiguous pair is scored from 0 to 100 against
+pairs of the same type and class in high-quality structures, and the parameters
+that lowered the score are reported. RUBRIC also assigns each backbone suite to
+one of the 54 conformers, suggests target torsions for suites that fit poorly
+or match none, and flags riboses with an incorrect pucker. All results are
+written to one machine-readable JSON file, and a PyMOL plug-in shows the
+flagged features on the structure. A complete human ribosome is analyzed in
+under a second.
 
 ---
 
