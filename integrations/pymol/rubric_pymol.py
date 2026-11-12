@@ -32,8 +32,7 @@ Which pairs are flagged is gated by the whole-pair SCORE tier (`tier` arg to
 rubric_score): 'priority' (score<80, default), 'secondary' (80<=score<100), or
 'all'. The pair score decides both *membership* and *color*; the per-parameter
 Cerny |Z'| severity decides the order *within* a tier and the 'worst: ...'
-readout. (Until 2026-10 the color came from the single worst parameter, so a
-pair with one big low-weight outlier could show red while in secondary review.)
+readout.
 
 Re-run after an edit/refinement round and the overlay rebuilds from scratch, so a
 pair that's been fixed simply disappears. Only colors change — coordinates are
@@ -185,7 +184,7 @@ COLOR_KEY = ("colors: gray = preferred · yellow -> orange = secondary review ·
 
 
 def pucker_outliers(data):
-    """The flagged sugars of a scored structure (empty for older outputs)."""
+    """The flagged sugars of a scored structure (empty when there are none)."""
     return list(data.get("pucker_outliers") or [])
 
 
@@ -231,11 +230,11 @@ _TIER_SETS = {
     "all": {"Secondary review", "Priority review"},  # everything non-Preferred
 }
 
-#: older filter words, kept working as aliases.
+#: alternative filter words accepted as aliases.
 _TIER_ALIASES = {"review": "priority", "acceptable": "secondary"}
 
-#: tier labels emitted before 2026-10-30, mapped to the current ones so older
-#: rubric outputs and rubric_dump files still load.
+#: alternative tier labels, mapped to the current ones so rubric_dump files that
+#: use them still load.
 _LEGACY_TIERS = {"Acceptable": "Secondary review", "Review": "Priority review"}
 
 
@@ -265,7 +264,7 @@ def tier_counts(data):
     """Structure-level {Preferred, Secondary review, Priority review} counts.
 
     Prefers the binary's emitted `tier_summary`; falls back to deriving from
-    per-pair scores for older `rubric` outputs that predate the field.
+    per-pair scores when that field is absent.
     """
     ts = data.get("tier_summary")
     if ts:
@@ -627,7 +626,6 @@ def rubric_score(obj=None, tier="priority", min_severity=0.0, zoom=0,
     tier            which pair-score tier(s) populate the worklist:
                       'priority'   (default) score < 80  — the genuinely-bad pairs
                       'secondary'  80 <= score < 100     — the minor-issue middle
-                    ('review' and 'acceptable' still work as aliases)
                       'all'        both (everything non-Preferred)
                     Preferred (score 100) pairs are never flagged. The tier gates
                     *membership*; |Z'| severity still colors/ranks within it.

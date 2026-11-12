@@ -8,11 +8,19 @@ cmake-build-*/
 *.so
 *.dSYM/
 
-# ---- CLI output written during use/testing ----------------------------------
+# ---- Python package builds (python -m build, cibuildwheel) ------------------
+/dist/
+/wheelhouse/
+*.egg-info/
+
+# ---- CLI output written during use ------------------------------------------
 # Any root-level JSON is `rubric --out` output (e.g. "1GID.json", "<id>_pairs.json").
-# Anchored to root: does NOT touch resources/**/*.json or data/**/*.json (bundled).
+# Anchored to root: does NOT touch resources/**/*.json (bundled).
 /*.json
 /*.out
+/*.pml
+*.pse
+*.cif
 
 # ---- OS / editor junk -------------------------------------------------------
 .DS_Store
@@ -27,18 +35,3 @@ cmake-build-*/
 __pycache__/
 *.pyc
 *.pyo
-tests/differential/
-PORT_DEVIATIONS.md
-
-# ---- CLI/PyMOL output ----
-/pairs/
-*.pse
-*.cif
-
-# ---- dev-only tooling (not shipped to PI) ----
-/tools/
-integrations/pymol/view_ideals.py
-integrations/pymol/view-ideals
-integrations/pymol/view-ideals-new
-resources/basepair-idealized_new/
-/tests/

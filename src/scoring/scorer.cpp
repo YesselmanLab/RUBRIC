@@ -897,25 +897,35 @@ std::optional<std::array<double, 7>> build_suite(
 
 double round2(double v) { return std::round(v * 100.0) / 100.0; }
 
-// DNA residues have no RNA backbone suite - exclude them so they don't deflate
-// residues_score for DNA/RNA complexes (matches the wwPDB rnasuiteness RNA-only
-// convention). res_id is chain-resname-num
-// (e.g. N-DA-102).
-//
-// The test is data-driven rather than name-based: modified DNA carries no ``D``
-// prefix (2'-fluoro AF2/GF2/CFZ/UFT, BRU, ...), so matching only D<base> would
-// let those through to be scored as RNA.
-// A residue carries an RNA backbone suite only if it is a polymer nucleotide.
-// DNA has no RNA suite, and a free nucleotide or cofactor (ATP, GTP, ... typed
-// LIGAND in the ligand DB) is not a polymer residue at all: it may still pair,
-// which is why it is parsed, but it has no place in an RNA backbone score.
-bool no_rna_suite(const std::string& res_id, const core::BaseTyping& typing) {
+// Longest C2'-O2' distance accepted as a bond (the same cutoff as the backbone
+// measurement in MolProbity's dangle, `rnabb`).
+constexpr double kMaxC2O2 = 2.0;
+
+// A residue carries an RNA backbone suite only if it is a polymer nucleotide
+// whose ribose is modelled with its 2' oxygen: its C2' must be bonded to an O2'.
+// DNA (no 2' oxygen), RNA residues modelled without their O2', and 2'-fluoro or
+// 2'-seleno nucleotides therefore have no suite; the wwPDB validation reports
+// give no suite for such residues either. A free nucleotide or cofactor (ATP,
+// GTP, ... typed LIGAND in the ligand DB) is not a polymer residue at all: it may
+// still pair, which is why it is parsed, but it has no place in an RNA backbone
+// score.
+bool has_rna_suite(const std::string& res_id, const core::Residue* res,
+                   const core::BaseTyping& typing) {
+    if (res == nullptr) return false;
     const auto a = res_id.find('-');
-    if (a == std::string::npos) return false;
-    const auto b = res_id.find('-', a + 1);
-    const std::string name =
-        res_id.substr(a + 1, (b == std::string::npos ? res_id.size() : b) - a - 1);
-    return typing.is_dna(name) || typing.is_ligand(name);
+    if (a != std::string::npos) {
+        const auto b = res_id.find('-', a + 1);
+        const std::string name =
+            res_id.substr(a + 1, (b == std::string::npos ? res_id.size() : b) - a - 1);
+        if (typing.is_ligand(name)) return false;
+    }
+    const core::Atom* c2 = res->get_atom("C2'");
+    if (c2 == nullptr) return false;
+    for (const char* name : {"O2'", "O2*"}) {
+        const core::Atom* o2 = res->get_atom(name);
+        if (o2 != nullptr && c2->distance_to(*o2) < kMaxC2O2) return true;
+    }
+    return false;
 }
 
 }  // namespace
@@ -950,7 +960,8 @@ StructureScore Scorer::score_structure(
         // "Unusual sugar pucker": C2'-endo (by delta) in a helical cWW G-C/A-U pair.
         if (in_helix[i] && ps.lw_class == "cWW" && kHelicalWcBp.count(ps.bp_type)) {
             for (const core::Residue* res : {r1->second, r2->second}) {
-                if (no_rna_suite(res->res_id(), typing)) continue;  // DNA is natively C2'-endo
+                // DNA is natively C2'-endo; a ribose without its O2' is not judged.
+                if (!has_rna_suite(res->res_id(), res, typing)) continue;
                 const auto tit = tors.find(res->res_id());
                 if (tit == tors.end() || !tit->second.delta) continue;
                 const double delta = *tit->second.delta;
@@ -976,30 +987,23 @@ StructureScore Scorer::score_structure(
         const auto suite = build_suite(rid, tors, pred_index);
         if (!suite) continue;
         const SuiteResult sr = impl_->richardson->classify(*suite);
-        // Full torsion row for every classifiable residue (incl. DNA, outliers,
-        // L-RNA) - captured before the RNA-only / L-RNA scoring filters below,
-        // so the emitted table covers every residue the parser could type.
-        if (collect_backbone) {
-            BackboneTorsion bt;
-            bt.res_id = rid;
-            if (const auto rit = res_by_id.find(rid); rit != res_by_id.end())
-                bt.base_type = typing.normalize(rit->second->base_type());
-            bt.alpha = t.alpha; bt.beta = t.beta; bt.gamma = t.gamma;
-            bt.delta = t.delta; bt.epsilon = t.epsilon; bt.zeta = t.zeta;
-            bt.conformer = sr.conformer;
-            bt.suiteness = sr.suiteness;
-            bt.suite_bin = sr.bin;
-            bt.is_outlier = sr.is_outlier;
-            ss.backbone_torsions.push_back(std::move(bt));
+        const auto residue_of = [&](const std::string& id) -> const core::Residue* {
+            const auto it = res_by_id.find(id);
+            return it == res_by_id.end() ? nullptr : it->second;
+        };
+        // RNA-only backbone score (see has_rna_suite). The suite's delta, epsilon
+        // and zeta come from the PREDECESSOR, so a residue whose 5' neighbour is
+        // not an RNA nucleotide with its O2' (a DNA sugar, a ribose modelled
+        // without O2', or an initiating free nucleotide such as ATP) has
+        // no RNA suite either.
+        bool scored = has_rna_suite(rid, residue_of(rid), typing);
+        if (scored) {
+            if (const auto pit = pred_index.find(rid);
+                pit != pred_index.end() &&
+                !has_rna_suite(pit->second, residue_of(pit->second), typing))
+                scored = false;
         }
-        if (no_rna_suite(rid, typing)) continue;  // RNA-only backbone score (see helper)
-        // ...and the suite's delta/epsilon/zeta come from the PREDECESSOR, so a
-        // residue whose 5' neighbour is not RNA polymer (a DNA sugar, or an
-        // initiating free nucleotide such as ATP) has no RNA suite either.
-        if (const auto pit = pred_index.find(rid);
-            pit != pred_index.end() && no_rna_suite(pit->second, typing))
-            continue;
-        if (sr.suiteness <= 0.0) {
+        if (scored && sr.suiteness <= 0.0) {
             // L-RNA enantiomer check: a rejected suite may be mirror-image RNA
             // (e.g. a Spiegelmer aptamer). Negate every torsion (360 - t) and
             // re-classify; if the mirror fits a D-RNA cluster it is L-RNA  -
@@ -1009,8 +1013,25 @@ StructureScore Scorer::score_structure(
             std::array<double, 7> mirror;
             for (int k = 0; k < 7; ++k)
                 mirror[k] = std::fmod(360.0 - (*suite)[k], 360.0);
-            if (impl_->richardson->suiteness(mirror) > 0.0) continue;
+            if (impl_->richardson->suiteness(mirror) > 0.0) scored = false;
         }
+        // Full torsion row for every classifiable residue (incl. DNA, outliers,
+        // L-RNA), with `scored` marking the rows that enter the backbone score,
+        // so the emitted table covers every residue the parser could type.
+        if (collect_backbone) {
+            BackboneTorsion bt;
+            bt.res_id = rid;
+            if (const core::Residue* r = residue_of(rid)) bt.base_type = typing.normalize(r->base_type());
+            bt.alpha = t.alpha; bt.beta = t.beta; bt.gamma = t.gamma;
+            bt.delta = t.delta; bt.epsilon = t.epsilon; bt.zeta = t.zeta;
+            bt.conformer = sr.conformer;
+            bt.suiteness = sr.suiteness;
+            bt.suite_bin = sr.bin;
+            bt.is_outlier = sr.is_outlier;
+            bt.scored = scored;
+            ss.backbone_torsions.push_back(std::move(bt));
+        }
+        if (!scored) continue;
         ResidueScore rs;
         rs.res_id   = rid;
         rs.suiteness = sr.suiteness;

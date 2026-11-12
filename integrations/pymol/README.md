@@ -56,7 +56,7 @@ Each `rubric_score` run:
 
 **Which pairs are flagged** is gated by the whole-pair **score tier** (`tier`
 arg): `priority` (score < 80, the default), `secondary` (80 ≤ score < 100), or
-`all` (both); the older words `review` and `acceptable` still work. The pair score decides *membership and color* — who a refiner
+`all` (both). The pair score decides *membership and color* — who a refiner
 reviews, and how urgently — while the ProSco/Z′ severity decides the *order within
 a tier* and names each pair's worst parameter. So the
 default `rubric_score` shows only the genuinely-poor pairs, and `rubric_score obj,
@@ -86,12 +86,8 @@ Gray, yellow → orange and red are one scale, the pair score. Cyan is separate:
 pucker mismatch can sit on a pair of any tier, or on an unpaired nucleotide.
 
 The worst parameter (e.g. `buckle 4.3σ`), its Z′ and its Černý tier still appear in
-the printed summary and in the per-pair readout. Until 2026-10 the color came from
-the single worst parameter's severity instead, so a pair with one large outlier in a
-low-weight parameter could show red while it was in secondary review (e.g. 1GID
-A226–U249: propeller 6.3σ, score 85). H-bond-count pairs are no longer drawn blue;
-they are colored by their score like any other pair, and still sort to the bottom
-of the worklist.
+the printed summary and in the per-pair readout. H-bond-count pairs are colored by
+their score like any other pair and sort to the bottom of the worklist.
 
 Pass `rubric_score target, priority, 0, 0, 0` (last arg `gray_background=0`) to keep
 the object's existing colors instead of graying. Only colors change — coordinates
@@ -156,7 +152,7 @@ ProSco-gated Černý severity, *uncapped* so a 6.6σ pair outranks a 5.1σ one) 
 by the 0–100 quality score, which saturates near 100 for most pairs and so makes a
 poor rank key. Each entry shows **both**: the pair's score (e.g. `score 65/100`)
 *and* its worst parameter (e.g. `propeller 6.2σ`). `rubric_overview` additionally
-prints the whole-structure score (overall / pairs / backbone).
+prints the whole-structure scores (base pairs and backbone suiteness).
 
 **Visual priority:** the worklist is a *visual* triage tool, so `hbond_angles` —
 a bond-geometry (chemistry) strain that doesn't make a pair *look* distorted — is
@@ -218,7 +214,7 @@ rubric_pucker off          # hide the cyan layer (sticky; `on` brings it back)
 rubric_overview            # back to the whole structure
 ```
 
-The close-up (as in Figure 7D) shows the nucleotide and its 3′ phosphate, the
+The close-up shows the nucleotide and its 3′ phosphate, the
 glycosidic bond extended past C1′ (light dashes), and the perpendicular from the
 3′ P onto it (dark dashes, labelled `P-perp 2.31 Å`). The view faces the plane of
 that right angle, tilted 30° so the ring's pucker is visible. The plugin

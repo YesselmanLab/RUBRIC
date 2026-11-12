@@ -1,0 +1,99 @@
+RUBRIC
+Copyright (c) 2026 Yesselman Lab. Licensed under the MIT License (see LICENSE).
+
+RUBRIC includes or builds with the third-party components listed below. Each
+keeps its own license, reproduced or referenced here.
+
+------------------------------------------------------------------------------
+1. 3DNA standard base templates
+------------------------------------------------------------------------------
+Files:    resources/templates/Atomic_*.pdb, resources/templates/Atomic.*.pdb,
+          and the standard ring coordinates in src/algorithms/base_frame_calculator.cpp
+Source:   3DNA, Xiang-Jun Lu (http://x3dna.org/)
+License:  3DNA "citation-ware" license, as published by its author:
+
+  "Permission to use, copy, modify, and distribute this suite for any purpose,
+  with or without fee, is hereby granted, subject to the following conditions:
+  At least one of the 3DNA papers must be cited, including the following two
+  primary ones:"
+
+    Lu, X. J., & Olson, W. K. (2003). 3DNA: a software package for the
+    analysis, rebuilding and visualization of three-dimensional nucleic acid
+    structures. Nucleic Acids Research, 31(17), 5108-5121.
+
+    Lu, X. J., & Olson, W. K. (2008). 3DNA: a versatile, integrated software
+    system for the analysis, rebuilding and visualization of three-dimensional
+    nucleic-acid structures. Nature Protocols, 3(7), 1213-1227.
+
+  "THE 3DNA SOFTWARE IS PROVIDED "AS IS", WITHOUT EXPRESSED OR IMPLIED
+  WARRANTY OF ANY KIND."
+
+------------------------------------------------------------------------------
+2. GEMMI
+------------------------------------------------------------------------------
+Use:      structure-file parsing; GEMMI v0.6.5 is downloaded by CMake at build
+          time and linked into the rubric executable, unmodified
+Source:   https://github.com/project-gemmi/gemmi (tag v0.6.5)
+License:  Mozilla Public License 2.0 (or, at the recipient's option, LGPL 3.0).
+          The source code of the GEMMI version used is available at the
+          address above, as required by Section 3.2 of the MPL 2.0.
+
+------------------------------------------------------------------------------
+3. JSON for Modern C++ (nlohmann/json)
+------------------------------------------------------------------------------
+Files:    third_party/nlohmann/json.hpp (version 3.11.3)
+Source:   https://github.com/nlohmann/json
+License:  MIT. Copyright (c) 2013-2023 Niels Lohmann. The full license notice
+          is retained at the top of the file.
+
+------------------------------------------------------------------------------
+4. Richardson RNA backbone suite conformers
+------------------------------------------------------------------------------
+Files:    resources/richardson_suites.json (conformer centres, widths and
+          screening limits)
+Source:   suitename, https://github.com/rlabduke/suitename
+          Richardson et al. (2008). RNA backbone: consensus all-angle
+          conformers and modular string nomenclature. RNA, 14(3), 465-481.
+License:  BSD 3-Clause License, reproduced below.
+
+  BSD 3-Clause License
+
+  Copyright (c) 2007-2026 David C. Richardson
+  Copyright (c) 2007-2026 David C. Richardson, Jane S. Richardson, and contributors
+
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions are met:
+
+  1. Redistributions of source code must retain the above copyright notice, this
+     list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above copyright notice,
+     this list of conditions and the following disclaimer in the documentation
+     and/or other materials provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products derived from
+     this software without specific prior written permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+  FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+  DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+  SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+------------------------------------------------------------------------------
+5. Coordinates from the Protein Data Bank
+------------------------------------------------------------------------------
+Files:    resources/basepair-catalog-exemplars/ (base-pair exemplars selected
+          through the BGSU/NAKB RNA base-pair catalog,
+          https://nakb.org/ndbmodule/bp-catalog/)
+Source:   PDB entries named in the REMARK records of each file
+License:  PDB archive data are available under the CC0 1.0 Universal Public
+          Domain Dedication (https://www.wwpdb.org/about/usage-policies).
+          Each file holds the coordinates of one base pair re-oriented to a
+          standard frame, not a copy of an original PDB file.

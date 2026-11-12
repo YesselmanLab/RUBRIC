@@ -1,0 +1,61 @@
+[build-system]
+requires = ["scikit-build-core>=0.11"]
+build-backend = "scikit_build_core.build"
+
+[project]
+name = "rubric-rna"
+dynamic = ["version"]
+description = "RUBRIC: base-pair annotation and local quality assessment of RNA 3D structures"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE", "NOTICE"]
+requires-python = ">=3.8"
+authors = [{ name = "Yesselman Lab" }]
+keywords = ["RNA", "structure validation", "base pairs", "Leontis-Westhof", "PDB", "mmCIF"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Operating System :: MacOS",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: C++",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+    "Topic :: Scientific/Engineering :: Chemistry",
+]
+
+[project.urls]
+Homepage = "https://github.com/YesselmanLab/RUBRIC"
+Repository = "https://github.com/YesselmanLab/RUBRIC"
+Issues = "https://github.com/YesselmanLab/RUBRIC/issues"
+
+[project.scripts]
+rubric = "rubric_rna:main"
+rubric-view = "rubric_rna:view_main"
+
+[tool.scikit-build]
+minimum-version = "build-system.requires"
+cmake.version = ">=3.28"
+cmake.build-type = "Release"
+wheel.packages = ["python/rubric_rna"]
+# The executable does not use the Python C API, so one wheel per platform serves
+# every Python 3 version.
+wheel.py-api = "py3"
+sdist.exclude = [".github", "scripts"]
+
+[tool.cibuildwheel]
+# One py3 wheel per platform serves every Python 3, so build with a single Python.
+build = "cp312-*"
+skip = ["*-musllinux_*", "*-manylinux_i686"]
+archs = ["auto64"]
+build-verbosity = 1
+test-command = "python {project}/tests/check_package.py"
+
+[tool.cibuildwheel.macos]
+archs = ["x86_64", "arm64"]
+environment = { MACOSX_DEPLOYMENT_TARGET = "11.0" }
+
+[tool.scikit-build.metadata.version]
+provider = "scikit_build_core.metadata.regex"
+input = "CMakeLists.txt"
+regex = 'project\([^)]*VERSION\s+(?P<value>[0-9][0-9.]*)'

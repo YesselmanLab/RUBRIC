@@ -8,7 +8,7 @@
  *   - base_type is the parse-time name (upper/stripped; DNA & modified codes are
  *     KEPT, never converted) - conversion to a parent base happens only in
  *     is_purine/is_pyrimidine/normalize_base_type below.
- *   - add_atom overwrites an existing atom of the same name (dict semantics).
+ *   - add_atom overwrites an existing atom of the same name.
  */
 #ifndef PAIRFINDER_CORE_RESIDUE_HPP
 #define PAIRFINDER_CORE_RESIDUE_HPP

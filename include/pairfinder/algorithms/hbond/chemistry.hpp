@@ -33,9 +33,9 @@ Vector3d rotate_vector(const Vector3d& v, const Vector3d& axis, double angle_deg
 /// Unit normal to the base plane from ring atoms C2,C4,C6,N1,N3 (first 3 present).
 Vector3d compute_base_normal(const std::unordered_map<std::string, Vector3d>& atoms);
 
-/// A donor H slot or acceptor lone-pair slot. (bond_directions/max_bonds are
-/// retained for fidelity with the bifurcation model; the per-pair
-/// selection path used by find_between does not mutate them.)
+/// A donor H slot or acceptor lone-pair slot. (bond_directions/max_bonds describe
+/// the bifurcation model; the per-pair selection path used by find_between does
+/// not mutate them.)
 struct HbSlot {
     Vector3d direction;
     int max_bonds = 2;

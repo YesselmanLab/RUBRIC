@@ -2,8 +2,7 @@
  * @file nucleotide_registry.hpp
  * @brief Residue-name -> nucleotide typing, loaded from modified_nucleotides.json.
  *
- * Follows x3dna's TypeRegistry::load_nucleotides: one authoritative
- * table (standard + DNA + ~400 modified codes) mapping a residue name to its
+ * One table (standard + DNA + ~400 modified codes) mapping a residue name to its
  * one-letter code, parent base, purine flag, and modified flag. Drives standard
  * base-template selection for the reference frame (Atomic_<X>.pdb uppercase for
  * standard, Atomic.<x>.pdb lowercase for modified).

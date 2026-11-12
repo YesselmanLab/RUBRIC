@@ -4,8 +4,8 @@
  *
  * Production path: resolve the input (a 4-char PDB id fetched from RCSB, or a
  * local .cif/.pdb(.gz)), run the find + classify + score pipeline, and emit the
- * JSON report. The hidden `dump-*` subcommands used by the differential tests
- * live in differential_commands.cpp; resource-path resolution lives in cli_support.cpp.
+ * JSON report. The hidden `dump-*` debugging subcommands live in
+ * differential_commands.cpp; resource-path resolution lives in cli_support.cpp.
  */
 #include <algorithm>
 #include <array>
@@ -41,7 +41,10 @@
 #include "differential/differential_commands.hpp"
 
 namespace {
-constexpr const char* kVersion = "0.1.0";
+#ifndef RUBRIC_VERSION
+#define RUBRIC_VERSION "unknown"
+#endif
+constexpr const char* kVersion = RUBRIC_VERSION;  // from project(VERSION) in CMakeLists.txt
 
 // Maps raw parameter keys to human-readable report group names.
 const std::unordered_map<std::string, std::string> kReportGroup = {
@@ -630,7 +633,8 @@ int find_json(const std::string& path, bool score, bool details, bool emit_class
                     {"conformer", r.conformer},
                     {"suiteness", round_to(r.suiteness, 3)},
                     {"suite_bin", r.suite_bin.empty() ? json(nullptr) : json(r.suite_bin)},
-                    {"is_outlier", r.is_outlier}});
+                    {"is_outlier", r.is_outlier},
+                    {"scored", r.scored}});
             }
             out["backbone_torsions"] = std::move(bt);
         }
@@ -712,12 +716,15 @@ int find_json(const std::string& path, bool score, bool details, bool emit_class
 // ---- PDB-ID auto-fetch (input acquisition; upstream of the pipeline) ---------
 
 // Cache dir for downloaded structures: --cache-dir, else $RUBRIC_CACHE_DIR,
-// else ~/.cache/rubric, else <tmp>/rubric. Persistent + per-user.
+// else ~/.cache/rubric (%USERPROFILE%\.cache\rubric on Windows), else <tmp>/rubric.
+// Persistent + per-user.
 std::filesystem::path cache_dir(const std::string& override_dir) {
     if (!override_dir.empty()) return override_dir;
     if (const char* e = std::getenv("RUBRIC_CACHE_DIR")) return e;
     if (const char* h = std::getenv("HOME"))
         return std::filesystem::path(h) / ".cache" / "rubric";
+    if (const char* u = std::getenv("USERPROFILE"))
+        return std::filesystem::path(u) / ".cache" / "rubric";
     return std::filesystem::temp_directory_path() / "rubric";
 }
 
@@ -758,7 +765,12 @@ std::filesystem::path fetch_structure(const std::string& id_raw,
         const std::filesystem::path part = dest.string() + ".part";
         const std::string url = "https://files.rcsb.org/download/" + id + suf;
         std::fprintf(stderr, "Fetching %s -> %s\n", url.c_str(), dest.string().c_str());
+#if defined(_WIN32)
+        // cmd.exe does not treat single quotes as quoting; curl ships with Windows 10+.
+        const std::string cmd = "curl -fsSL -o \"" + part.string() + "\" \"" + url + "\"";
+#else
         const std::string cmd = "curl -fsSL -o '" + part.string() + "' '" + url + "'";
+#endif
         if (std::system(cmd.c_str()) == 0) {
             std::filesystem::rename(part, dest, ec);
             if (!ec) return dest;
@@ -783,7 +795,7 @@ std::filesystem::path resolve_input(const std::string& arg,
                              " (give a structure file path or a PDB id)");
 }
 
-// Hidden differential-test subcommands keyed by name. Each takes a single
+// Hidden debugging subcommands keyed by name. Each takes a single
 // <input.pdb> path; classify-suite (7 angles) is handled apart.
 using DumpFn = int (*)(const std::string&);
 const std::pair<const char*, DumpFn> kDumpCommands[] = {

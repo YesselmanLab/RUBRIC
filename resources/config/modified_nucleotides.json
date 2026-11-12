@@ -1,12 +1,5 @@
 {
-  "description": "Registry of nucleotide properties for X3DNA",
-  "version": "3.1",
-  "date": "2025-12-21",
-  "notes": [
-    "This file replaces the legacy baselist.dat file from X3DNA v2.4.",
-    "The baselist.dat file is no longer used by modern code.",
-    "All nucleotide type mappings (3-letter code to 1-letter code) are now in this file."
-  ],
+  "description": "Registry of nucleotide residue names: parent base and nucleotide type for each three-letter code.",
   "modified_nucleotides": {
     "standard_nucleotides": {
       "A": {

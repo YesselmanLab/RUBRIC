@@ -1,0 +1,4 @@
+# Keep data files byte-identical on every platform (no CRLF conversion on Windows
+# checkouts), so the resource cache hashes and the test reference match everywhere.
+resources/** -text
+tests/data/** -text

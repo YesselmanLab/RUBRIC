@@ -1,7 +1,6 @@
 /**
  * @file superposition.cpp
- * @brief Least-squares rigid superposition, following x3dna's
- *        geometry::LeastSquaresFitter.
+ * @brief Least-squares rigid superposition (as in 3DNA).
  *
  * Method: covariance matrix -> 4x4 quaternion key matrix (Horn) -> largest
  * eigenvector via symmetric Jacobi -> rotation matrix -> translation -> RMS.
@@ -70,8 +69,8 @@ void rotate4(Mat4& a, int i, int j, int k, int l, double s, double tau) {
     a[k][l] = h + s * (g - h * tau);
 }
 
-// Largest-eigenvalue eigenvector of a 4x4 symmetric matrix (Jacobi), matching
-// x3dna's iteration schedule; eigenvalues sorted ascending, last column returned.
+// Largest-eigenvalue eigenvector of a 4x4 symmetric matrix (Jacobi, with 3DNA's
+// iteration schedule); eigenvalues sorted ascending, last column returned.
 Vec4 largest_eigenvector(const Mat4& nin) {
     constexpr double kEps = 1.0e-7;
     constexpr int kMaxIter = 100;

@@ -8,7 +8,6 @@
 #
 # The optional [tier] selects which pair-score tier populates the worklist:
 #   priority (default) score<80, secondary 80<=score<100, all (non-Preferred).
-#   ('review' and 'acceptable' still work as aliases.)
 # Sugar-pucker mismatches (cyan ribose) are drawn whatever the tier.
 #
 #   ./rubric-view 1GID

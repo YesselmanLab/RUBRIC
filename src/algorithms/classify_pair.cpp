@@ -19,12 +19,12 @@ using core::BaseTyping;
 using core::Residue;
 using hbond::HBond;
 
-// Uniform ambiguity rule (2026-11-11): every two-class candidate ("X|Y"), whatever its
-// edges, is resolved by template fit alone. If the RMSDs to the templates of the two
-// classes differ by more than kAmbiguityMargin, the better-fitting class is assigned;
-// otherwise the pair stays ambiguous. 0.5 A was chosen from the template-call accuracy
-// against the other six annotators (prototypes/template_resolution/REPORT.md): W/H calls
-// were right 96% of the time above 0.5 A, 79% at 0.4-0.5 A and 71% at 0.3-0.4 A.
+// Ambiguity rule: every two-class candidate ("X|Y"), whatever its edges, is resolved by
+// template fit alone. If the RMSDs to the templates of the two classes differ by more
+// than kAmbiguityMargin, the better-fitting class is assigned; otherwise the pair stays
+// ambiguous. 0.5 A was chosen from how often the template call agreed with the other six
+// annotators: W/H calls agreed 96% of the time above 0.5 A, 79% at 0.4-0.5 A and 71% at
+// 0.3-0.4 A.
 constexpr double kAmbiguityMargin = 0.5;
 
 std::optional<std::string> resolve_ambiguity(const std::array<std::string, 2>& classes,

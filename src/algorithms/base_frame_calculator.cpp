@@ -24,15 +24,15 @@ namespace {
 
 using core::AtomType;
 
-// Ring atoms in x3dna RA_LIST order. Pyrimidine templates carry only the first
+// Ring atoms in 3DNA order. Pyrimidine templates carry only the first
 // six; the remaining purine-only atoms are simply absent there.
 constexpr std::array<AtomType, 9> kRingTypes = {
     AtomType::C4, AtomType::N3, AtomType::C2, AtomType::N1, AtomType::C6,
     AtomType::C5, AtomType::N7, AtomType::C8, AtomType::N9,
 };
 
-// Shared standard ring geometry (x3dna xyz_ring), used ONLY for the nucleotide
-// type-check gate (not the per-base frame fit). Same RA_LIST order as kRingTypes.
+// Shared standard ring geometry (from 3DNA), used ONLY for the nucleotide
+// type-check gate (not the per-base frame fit). Same order as kRingTypes.
 constexpr std::array<std::array<double, 3>, 9> kStandardRing = {{
     {{-1.265, 3.177, 0.000}},  // C4
     {{-2.342, 2.364, 0.001}},  // N3
@@ -45,10 +45,10 @@ constexpr std::array<std::array<double, 3>, 9> kStandardRing = {{
     {{-1.289, 4.551, 0.000}},  // N9
 }};
 
-// x3dna validation_constants::NT_RMSD_CUTOFF.
+// Ring-atom RMSD cutoff for accepting a residue as a nucleotide (3DNA's value).
 constexpr double kNtRmsdCutoff = 0.2618;
 
-// x3dna check_alt_loc_filter: a frame is built only from primary-conformer atoms.
+// A frame is built only from primary-conformer atoms.
 bool frame_altloc(const core::Atom* a) {
     if (a == nullptr) return false;
     return a->alt_loc == ' ' || a->alt_loc == 'A' || a->alt_loc == '1';
@@ -60,7 +60,7 @@ const core::Atom* ring_atom(const core::Residue& r, AtomType t) {
     return frame_altloc(a) ? a : nullptr;
 }
 
-// Buffers / non-nucleotide molecules x3dna excludes outright.
+// Buffers and other non-nucleotide molecules, excluded outright (as in 3DNA).
 bool is_excluded_molecule(const std::string& res_name) {
     static const std::array<const char*, 11> kExcluded = {
         "MES", "HEPES", "TRIS", "EDO", "GOL", "SO4",
@@ -114,7 +114,7 @@ std::optional<double> try_pyrimidine_rms(const core::Residue& r) {
     return fit.rms;
 }
 
-// The x3dna gate: excluded molecules, then the ring-atom RMSD
+// The nucleotide gate: excluded molecules, then the ring-atom RMSD
 // type-check with the purine-atom pyrimidine fallback.
 bool passes_type_check(const core::Residue& r) {
     if (is_excluded_molecule(r.base_type())) return false;

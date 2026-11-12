@@ -1,5 +1,4 @@
 {
-  "generated_at": "2026-11-11",
   "method": {
     "z_prime": "Z'(x) = (x − M̂) / scale_upper if x ≥ M̂, else / scale_lower. scale_upper = (D̂9 − M̂) / Φ⁻¹(0.9); scale_lower = (M̂ − D̂1) / |Φ⁻¹(0.1)|. Per Černý et al. 2026 (NAR gkaf1335).",
     "weighting": "Per-PDB downweighting: each observation weight = 1 / (same-PDB count in cell). n_effective ≤ number of distinct PDBs in the cell.",

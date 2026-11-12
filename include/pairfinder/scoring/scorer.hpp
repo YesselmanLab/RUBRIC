@@ -149,6 +149,7 @@ struct BackboneTorsion {
     double suiteness = 0.0;
     std::string suite_bin;  ///< empty -> null on emit
     bool is_outlier = true;
+    bool scored = false;    ///< row enters the backbone score (RNA suite, not L-RNA)
 };
 
 /// Per-axis structure scores. `pairs_score` and `residues_score` are reported
@@ -204,7 +205,7 @@ public:
 
     /// Whole-structure score: pair scores + residue suiteness.
     /// collect_backbone=true also fills StructureScore::backbone_torsions with a
-    /// full per-residue torsion row (for --details torsions_all reproduction).
+    /// full per-residue torsion row (the --details backbone_torsions table).
     StructureScore score_structure(const std::vector<classification::ScoredCandidate>& selected,
                                    const core::Structure& structure, hbond::HBondFinder& finder,
                                    const hbond::HBondChemistry& chem,

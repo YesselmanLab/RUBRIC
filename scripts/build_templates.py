@@ -1,30 +1,38 @@
-# build_templates.py -- builds resources/basepair-idealized (RUBRIC's class templates).
-#
-# Saved 2026-11-11 exactly as run on 2026-11-03 to produce the installed template set
-# (recovered from the session log: original script plus its one recorded patch that adds the
-# majority hydrogen bonds and writes symmetric classes in both residue orders). Logic unchanged.
-#
-# How it was run:  cd PARSE-RNA-Analysis && python <this file>
-# Inputs it expects (paths are hard-coded below and must be adjusted to rerun):
-#   S/bgsu/<class>.json         BGSU/NAKB base-pair catalog listings,
-#                               https://nakb.org/ndbmodule/bp-catalog/static/data/<class>.json
-#   S/impact/res_old/           a copy of the engine resources/ directory (output is written to
-#                               S/impact/res_full/basepair-idealized, then copied into resources/)
-#   PARSE-RNA-Analysis data/     annotations of the six other programs, curated reference set,
-#                               structures
-#
-# Reproducibility note (verified 2026-11-11): rerunning reproduces 146 of the 178 template files
-# byte for byte. The other 32 are class-sequence combinations with more than 300 pairs, where a
-# random sample of 300 is drawn from a list whose order depends on Python's set iteration order
-# (hash seed), so the medoid can change. 31 of them move by <= 0.25 A RMSD; cWW/UU moves by 1.3 A.
-# Setting PYTHONHASHSEED or sorting the pair keys before sampling would make the build deterministic.
+"""Build resources/basepair-idealized, the base-pair templates RUBRIC uses.
 
-"""Build the complete consensus template set (5 tiers) into a fresh resource copy."""
-import sys, json, collections, shutil, urllib.request
+For every LW class and sequence, the template is the medoid of curated-reference pairs to
+which at least four of six other programs (DSSR, FR3D, RNAView, barnaba, RNApolis and BPNet)
+assign that class, taking the strongest agreement available (six, five, then four of six).
+Twelve class-sequence combinations without such pairs use an exemplar from the BGSU/NAKB
+base-pair catalog. Each template file records its tier, the number of pairs and the hydrogen
+bonds present in most of them.
+
+Inputs
+  --analysis-root   a RUBRIC-analysis checkout with data/ fetched (the other programs'
+                    annotations, the curated reference set and data/structures/)
+  --resources       the engine's resources/ directory, copied to --out with
+                    basepair-idealized/ rebuilt
+  --catalog-dir     folder for the BGSU/NAKB catalog listings (<class>.json from
+                    https://nakb.org/ndbmodule/bp-catalog/static/data/); exemplar PDB files
+                    are downloaded into it
+
+Combinations with more than 300 pairs use a random sample of 300 drawn from a list whose
+order follows Python's set ordering, so a rerun can pick a different medoid for those
+combinations (146 to 148 of the 178 template files were reproduced exactly in reruns).
+
+Usage:  python scripts/build_templates.py --analysis-root ../RUBRIC-analysis \\
+            --resources resources --catalog-dir bgsu --out resources_new
+"""
+import argparse, sys, json, collections, shutil, urllib.request
 from pathlib import Path
 import numpy as np, gemmi
-S = Path('/private/tmp/claude-531458859/-Users-kdewan2-Desktop-Projects-find-pair-score-rna/a6f8054d-8094-45be-b248-f3b5238b0f2e/scratchpad')
-ROOT = Path('/Users/kdewan2/Desktop/Projects/find-pair-score-rna/PARSE-RNA-Analysis')
+_ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+_ap.add_argument("--analysis-root", type=Path, required=True)
+_ap.add_argument("--resources", type=Path, required=True)
+_ap.add_argument("--catalog-dir", type=Path, required=True)
+_ap.add_argument("--out", type=Path, required=True)
+_args = _ap.parse_args()
+ROOT = _args.analysis_root.resolve()
 sys.path.insert(0, str(ROOT / 'scripts/validation'))
 from figure2_comparison import Comparison
 OTHERS = ['dssr', 'fr3d', 'rnaview', 'barnaba', 'rnapolis', 'bpnet']
@@ -143,7 +151,8 @@ def majority_hbonds(shape_list, seq):
 HBONDS = {cb: majority_hbonds(shapes[cb], cb[1]) for cb in templates}
 
 # catalog exemplars
-cat_dir = S / 'bgsu'
+cat_dir = _args.catalog_dir
+cat_dir.mkdir(parents=True, exist_ok=True)
 def catalog_xyz(lw, seq):
     items = json.load(open(cat_dir / f'{lw}.json'))['items']
     for k, v in items.items():
@@ -181,9 +190,9 @@ for cb in CATALOG:
     got = catalog_xyz(*cb)
     if got: templates[cb] = (got[0], 4, got[1], 1, 0.0)
 
-out = S / 'impact' / 'res_full'
+out = _args.out
 if out.exists(): shutil.rmtree(out)
-shutil.copytree(S / 'impact' / 'res_old', out)
+shutil.copytree(_args.resources, out)
 ideal = out / 'basepair-idealized'
 for d in ideal.iterdir():
     if d.is_dir(): shutil.rmtree(d)

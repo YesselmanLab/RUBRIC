@@ -13,7 +13,54 @@ the structure. A complete human ribosome is analyzed in under a second.
 
 ---
 
-## 1. Requirements
+## 1. Install
+
+### With pip (recommended)
+
+```bash
+pip install rubric-rna
+```
+
+Ready-made packages are available for macOS 11 or newer (Intel and Apple
+Silicon), Linux (x86_64 and ARM) and Windows 10 or newer (64-bit). Python 3.8 or
+newer is the only requirement; no compiler, CMake or git is needed. Installing
+inside a virtual environment, or with `pipx install rubric-rna`, keeps RUBRIC
+apart from other Python packages.
+
+This installs two commands, `rubric` and the optional PyMOL viewer
+`rubric-view`. Check the installation with
+
+```bash
+rubric --version
+```
+
+Upgrade with `pip install --upgrade rubric-rna` and remove with
+`pip uninstall rubric-rna`.
+
+### Latest version from GitHub
+
+```bash
+pip install git+https://github.com/YesselmanLab/RUBRIC.git
+```
+
+This compiles RUBRIC on your computer, so it needs a C++20 compiler and git (see
+the requirements in section 2). pip downloads CMake by itself.
+
+### Windows
+
+curl, which RUBRIC uses to download PDB entries, is part of Windows 10 and 11.
+`rubric-view` needs PyMOL and the bash shell from
+[Git for Windows](https://gitforwindows.org); the `rubric` command needs
+neither.
+
+---
+
+## 2. Build from source (for development)
+
+Building from source is only needed to change the code. To use RUBRIC, install
+it with pip (section 1).
+
+### Requirements
 
 You need a C++ toolchain, CMake, git, and an internet connection for the first
 build. No databases or other tools to install.
@@ -30,9 +77,7 @@ All other dependencies are bundled in the repo (`nlohmann/json`, the reference
 scoring data) or fetched automatically by CMake (GEMMI). There is nothing to
 `apt install` / `brew install` beyond a compiler + CMake.
 
----
-
-## 2. Build
+### Build
 
 ```bash
 # 1. clone
@@ -51,7 +96,7 @@ GEMMI; later builds are fast. When it finishes, the executable is at
 `build/rubric`, and the reference scoring data is staged next to it
 automatically — the tool finds it with no extra setup.
 
-### Install (recommended — run `rubric` from anywhere)
+### Install the build (run `rubric` from anywhere)
 
 So you don't have to type `./build/rubric` each time:
 
@@ -212,7 +257,7 @@ rubric-view 1GID secondary    # optional tier: priority (default) | secondary | 
 The optional **tier** selects which pairs populate the worklist, by whole-pair
 score: `priority` (priority review, score < 80 — the genuinely-poor pairs, the default),
 `secondary` (secondary review, 80 ≤ score < 100 — the minor-issue middle, a polishing pass), or
-`all` (both); the older words `review` and `acceptable` still work. The structure opens as a whole-view health map — gray, with the
+`all` (both). The structure opens as a whole-view health map — gray, with the
 flagged pairs lit up — and the scored JSON is also written to
 `1GID_pairs.json` in the current directory.
 
@@ -249,7 +294,7 @@ A typical loop: `rubric_score` (priority review) → `rubric_next` through the f
 pairs → `rubric_ideal` to see the target → fix geometry / re-refine → re-run
 `rubric_score`; when the priority-review worklist is clear, `rubric_score obj, secondary`
 to polish the middle. Keyboard navigation and the full color scheme are covered in
-[`integrations/pymol/README.md`](integrations/pymol/README.md).
+[`integrations/pymol/README.md`](https://github.com/YesselmanLab/RUBRIC/blob/main/integrations/pymol/README.md).
 
 ### No plugin? Write a standalone script
 
@@ -258,7 +303,7 @@ structure and shows the same picture (flagged pairs colored by score, cyan
 pucker-mismatch riboses) with named selections for each tier and one per
 priority-review pair. Open it with `pymol 1GID.pml` on any machine with PyMOL;
 neither the plugin nor the binary is needed to view it. Details in
-[`integrations/pymol/README.md`](integrations/pymol/README.md#without-the-plugin-a-standalone-script-rubric---pml).
+[`integrations/pymol/README.md`](https://github.com/YesselmanLab/RUBRIC/blob/main/integrations/pymol/README.md#without-the-plugin-a-standalone-script-rubric---pml).
 
 PyMOL is only needed for this viewer — the core `rubric` tool does not require it.
 
@@ -287,6 +332,10 @@ apps/main.cpp         the CLI
 resources/            bundled reference data + templates (ship with the binary)
 integrations/pymol/   optional PyMOL viewer (rubric-view, rubric_pymol.py)
 CMakeLists.txt        build (fetches GEMMI, vendors nlohmann/json)
+pyproject.toml        Python package settings (pip install rubric-rna)
+python/rubric_rna/    Python wrapper that runs the bundled rubric program
+tests/                package check against a reference result for 1GID
+.github/workflows/    builds and publishes the Python packages
 ```
 
 ---
@@ -299,3 +348,18 @@ CMakeLists.txt        build (fetches GEMMI, vendors nlohmann/json)
 | First build fails fetching GEMMI | check internet / proxy; re-run `cmake -S . -B build` |
 | `download failed` / `HTTP 404` at runtime | the PDB ID isn't on RCSB, or no network — pass a local `.cif`/`.pdb`, or check `curl` is installed |
 | Want a clean rebuild | `rm -rf build` and repeat the Build steps |
+| `rubric: command not found` after `pip install` | Python's scripts folder is not on your PATH. Install inside a virtual environment or with `pipx`, or run `python -m rubric_rna 1GID` |
+| `pip install` compiles RUBRIC instead of downloading it | no ready-made package exists for your platform or Python, so pip builds from source; install a C++20 compiler and git (section 2) |
+| `rubric-view needs bash` on Windows | install [Git for Windows](https://gitforwindows.org), which provides bash |
+
+---
+
+## 9. License
+
+RUBRIC is released under the MIT License (see
+[`LICENSE`](https://github.com/YesselmanLab/RUBRIC/blob/main/LICENSE)). It bundles
+the 3DNA standard base templates, the Richardson suite conformers, nlohmann/json
+and coordinates from the Protein Data Bank, and builds with GEMMI; each keeps its
+own license, listed in
+[`NOTICE`](https://github.com/YesselmanLab/RUBRIC/blob/main/NOTICE). Using the bundled 3DNA templates
+requires citing 3DNA (Lu & Olson, *Nucleic Acids Res.* 2003 or *Nat. Protoc.* 2008).

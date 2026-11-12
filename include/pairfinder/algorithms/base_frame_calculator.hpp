@@ -2,7 +2,7 @@
  * @file base_frame_calculator.hpp
  * @brief Compute each residue's base reference frame.
  *
- * Following x3dna: least-squares fit of the
+ * As in 3DNA: least-squares fit of the
  * per-base standard template ring atoms (Atomic_<X>.pdb) onto the residue's
  * observed ring atoms. Each base (A,G,C,U,T,I) has its own standard ring
  * geometry, so templates are loaded per base.
@@ -27,8 +27,8 @@ namespace pairfinder::algorithms {
 
 /// Loads and caches the standard base templates (Atomic_<X>.pdb / Atomic.<x>.pdb)
 /// and exposes their ring-atom coordinates (in the standard reference frame).
-/// The per-residue template is selected by the NucleotideRegistry, matching
-/// x3dna: uppercase template for standard bases, lowercase for modified.
+/// The per-residue template is selected by the NucleotideRegistry, as in 3DNA:
+/// uppercase template for standard bases, lowercase for modified.
 class BaseTemplateLibrary {
 public:
     BaseTemplateLibrary(std::filesystem::path templates_dir,

@@ -10,8 +10,7 @@
  *   3. cwd-relative: resources, ../resources, ../../resources
  *   4. compile-time source path PAIRFINDER_SOURCE_RESOURCES (dev fallback)
  *
- * This makes the tool self-contained: it carries its own data. Follows x3dna's
- * config::ResourceLocator.
+ * This makes the tool self-contained: it carries its own data.
  */
 #ifndef PAIRFINDER_CORE_RESOURCE_LOCATOR_HPP
 #define PAIRFINDER_CORE_RESOURCE_LOCATOR_HPP

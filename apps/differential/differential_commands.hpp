@@ -1,9 +1,9 @@
 /**
  * @file differential_commands.hpp
- * @brief Hidden `dump-*` subcommands used by the differential tests.
+ * @brief Hidden `dump-*` subcommands for debugging and analysis.
  *
- * Each emits a sorted TSV of one pipeline stage's output so it can be compared
- * byte-for-byte between builds. They are not
+ * Each emits a sorted TSV of one pipeline stage's output so it can be inspected
+ * or compared byte-for-byte between builds. They are not
  * part of the user-facing CLI; they live apart from main.cpp to keep the entry
  * point focused on the production find/classify/score path.
  */

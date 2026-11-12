@@ -11,6 +11,14 @@
 #include <mach-o/dyld.h>
 #elif defined(__linux__)
 #include <system_error>
+#elif defined(_WIN32)
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#include <windows.h>
 #endif
 
 namespace pairfinder::resources {
@@ -32,6 +40,17 @@ std::filesystem::path executable_path() {
     std::error_code ec;
     auto p = std::filesystem::read_symlink("/proc/self/exe", ec);
     return ec ? std::filesystem::path{} : p;
+#elif defined(_WIN32)
+    std::wstring buf(MAX_PATH, L'\0');
+    for (;;) {
+        const DWORD n = GetModuleFileNameW(nullptr, buf.data(), static_cast<DWORD>(buf.size()));
+        if (n == 0) return {};
+        if (n < buf.size()) {
+            buf.resize(n);
+            return std::filesystem::path(buf);
+        }
+        buf.resize(buf.size() * 2);  // path was truncated; retry with a larger buffer
+    }
 #else
     return {};
 #endif

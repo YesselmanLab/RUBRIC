@@ -2,7 +2,6 @@
  * @file atom_type.hpp
  * @brief Strongly-typed atom names for O(1) typed lookups.
  *
- * Mirrors the x3dna pattern (typed AtomType enum instead of string compares).
  * Covers the RNA/DNA base, sugar and phosphate atoms used by the pair finder.
  * Prime atoms (O2', C1', ...) map to *_PRIME spellings.
  */

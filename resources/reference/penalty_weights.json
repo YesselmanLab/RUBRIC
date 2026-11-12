@@ -1,6 +1,5 @@
 {
   "schema_version": "4.0-per-parameter-shannon",
-  "generated_at": "2026-11-11",
   "weight_scheme": "shannon-log-odds-per-parameter",
   "method": {
     "_documentation": [
@@ -25,8 +24,8 @@
   },
   "good_reference_set": {
     "n_pairs": 371960,
-    "feature_dir": "/Users/kdewan2/Desktop/Projects/find-pair-score-rna/PARSE-RNA-Analysis/data/reference/high_quality_features",
-    "distributions": "/Users/kdewan2/Desktop/Projects/find-pair-score-rna/PARSE-RNA-Analysis/data/reference/scoring_tables/parameter_distributions.json",
+    "feature_dir": "data/reference/high_quality_features",
+    "distributions": "data/reference/scoring_tables/parameter_distributions.json",
     "mean_severity": {
       "stagger": 0.018348,
       "clash": 0.001878,
@@ -42,7 +41,7 @@
   },
   "poor_reference_set": {
     "n_pairs": 512247,
-    "feature_dir": "/Users/kdewan2/Desktop/Projects/find-pair-score-rna/PARSE-RNA-Analysis/data/reference/low_quality_features",
+    "feature_dir": "data/reference/low_quality_features",
     "mean_severity": {
       "stagger": 0.052962,
       "clash": 0.004474,
