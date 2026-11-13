@@ -237,7 +237,7 @@ void write_pml(const json& out, const std::string& structure_path, const std::st
     o << "# RUBRIC " << kVersion << " - PyMOL view of " << out.value("pdb_id", std::string()) << "\n"
       << "# structure: " << abs_path << "\n"
       << "# base-pair score " << num_or(out.value("pairs_score", json()), "%.2f")
-      << "  |  backbone suiteness " << num_or(out.value("backbone_suiteness", json()), "%.3f")
+      << "  |  backbone suiteness " << num_or(out.value("backbone_suiteness", json()), "%.2f")
       << "  |  pairs: " << ts.value("Preferred", 0) << " preferred, "
       << ts.value("Secondary review", 0) << " secondary review, "
       << ts.value("Priority review", 0) << " priority review\n"
@@ -571,7 +571,7 @@ int find_json(const std::string& path, bool score, bool details, bool emit_class
         if (ss.residue_scores.empty())
             out["backbone_suiteness"] = nullptr;
         else
-            out["backbone_suiteness"] = round_to(ss.residues_score / 100.0, 3);
+            out["backbone_suiteness"] = round_to(ss.residues_score / 100.0, 2);
         // Pair triage tier counts (Preferred/Secondary review/Priority review).
         // Always all three keys, so consumers never have to test for absence.
         const auto ts = ss.tier_summary();
@@ -609,7 +609,7 @@ int find_json(const std::string& path, bool score, bool details, bool emit_class
             }
             backbone_residues.push_back(json{
                 {"res_id", rs.res_id},
-                {"suiteness", round_to(rs.suiteness, 3)},
+                {"suiteness", round_to(rs.suiteness, 2)},
                 {"tier", rec.tier},
                 {"target_conformer", rec.target_conformer},
                 {"deviations", std::move(devs)}});
@@ -631,7 +631,7 @@ int find_json(const std::string& path, bool score, bool details, bool emit_class
                     {"alpha", ang(r.alpha)}, {"beta", ang(r.beta)}, {"gamma", ang(r.gamma)},
                     {"delta", ang(r.delta)}, {"epsilon", ang(r.epsilon)}, {"zeta", ang(r.zeta)},
                     {"conformer", r.conformer},
-                    {"suiteness", round_to(r.suiteness, 3)},
+                    {"suiteness", round_to(r.suiteness, 2)},
                     {"suite_bin", r.suite_bin.empty() ? json(nullptr) : json(r.suite_bin)},
                     {"is_outlier", r.is_outlier},
                     {"scored", r.scored}});
@@ -680,7 +680,7 @@ int find_json(const std::string& path, bool score, bool details, bool emit_class
                                    : json(round_to(ss.pairs_score, 2))},
                 {"backbone_suiteness", ss.residue_scores.empty()
                                            ? json(nullptr)
-                                           : json(round_to(ss.residues_score / 100.0, 3))},
+                                           : json(round_to(ss.residues_score / 100.0, 2))},
                 {"tier_summary", tier_summary},
                 {"issue_summary", summary},
                 {"n_scored_pairs", static_cast<int>(ss.pair_scores.size())},

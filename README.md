@@ -181,7 +181,7 @@ A JSON object per structure:
   "candidates_valid": 200,       // passed geometric validation
   "n_pairs": 31,                 // final selected base pairs
   "pairs_score": 98.46,          // base-pair geometry quality (0–100)
-  "backbone_suiteness": 0.696,   // mean Richardson suiteness (0–1, wwPDB convention)
+  "backbone_suiteness": 0.7,     // mean Richardson suiteness (0–1, two decimals as in wwPDB reports)
   "pairs": [
     {
       "res_id1": "A-G-1", "res_id2": "A-C-72",
@@ -219,7 +219,7 @@ decomposition of *which* suite torsions are off and *where they should go*:
 ```jsonc
 {
   "res_id": "B-U-259",
-  "suiteness": 0.443,
+  "suiteness": 0.44,
   "tier": "fixable",                 // fixable | review | flag_only
   "target_conformer": "1a",          // Richardson rotamer to aim for
   "deviations": [                    // only the torsions that "fire" (ProSco < 5)

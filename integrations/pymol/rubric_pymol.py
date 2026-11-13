@@ -1119,13 +1119,13 @@ def rubric_overview(_self=None):
     # Whole-RNA score line (console + HUD).
     def _f(x):
         return f"{x:.1f}" if isinstance(x, (int, float)) else "?"
-    def _f3(x):        # backbone_suiteness is a 0-1 fraction (wwPDB convention)
-        return f"{x:.3f}" if isinstance(x, (int, float)) else "?"
+    def _f2(x):        # backbone_suiteness: 0-1, two decimals as in wwPDB reports
+        return f"{x:.2f}" if isinstance(x, (int, float)) else "?"
     ss = _STRUCT_SCORE or {}
     tc = ss.get("tiers") or {}
     tlabel = ss.get("tier_label", "priority")
     score_line = (f"{_SCORED_OBJ}: RUBRIC pairs {_f(ss.get('pairs'))}/100, "
-                  f"backbone suiteness {_f3(ss.get('residues'))}  "
+                  f"backbone suiteness {_f2(ss.get('residues'))}  "
                   f"(structure: {tc.get('Preferred', 0)} Preferred · "
                   f"{tc.get('Secondary review', 0)} secondary review · {tc.get('Priority review', 0)} priority review)"
                   f"  — {len(_QUEUE)} flagged [{tlabel} tier]")
