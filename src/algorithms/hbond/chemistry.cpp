@@ -102,9 +102,7 @@ std::optional<int> HBondChemistry::acceptor_capacity(const std::string& base,
     return it->second;
 }
 
-// ---------------------------------------------------------------------------
 //  Slot prediction
-// ---------------------------------------------------------------------------
 
 std::vector<HbSlot> HBondChemistry::predict_h_slots(const std::string& base,
                                                     const std::string& atom,
@@ -196,9 +194,7 @@ std::vector<HbSlot> HBondChemistry::predict_lp_slots(const std::string& base,
     return slots;
 }
 
-// ---------------------------------------------------------------------------
 //  Table construction
-// ---------------------------------------------------------------------------
 
 namespace {
 
@@ -208,7 +204,7 @@ struct Cap  { const char* base; const char* atom; int cap; };
 }  // namespace
 
 HBondChemistry::HBondChemistry(const std::filesystem::path& ligand_db_path, bool use_cache) {
-    // --- Base connectivity ---
+    // Base connectivity
     static const Conn kConn[] = {
         {"A","N6",{"C6"}}, {"A","N1",{"C2","C6"}}, {"A","N3",{"C2","C4"}},
         {"A","N7",{"C5","C8"}}, {"A","C2",{"N1","N3"}}, {"A","C8",{"N7","N9"}},
@@ -265,7 +261,7 @@ HBondChemistry::HBondChemistry(const std::filesystem::path& ligand_db_path, bool
     if (use_cache && load_cache(ligand_db_path.parent_path() / "hbond_chemistry_cache.json"))
         return;
 
-    // --- Donor capacity ---
+    // Donor capacity
     static const Cap kDonor[] = {
         {"A","N6",2},{"C","N4",2},{"G","N2",2},
         {"G","N1",1},{"U","N3",1},{"T","N3",1},
@@ -281,7 +277,7 @@ HBondChemistry::HBondChemistry(const std::filesystem::path& ligand_db_path, bool
     };
     for (const auto& c : kDonor) donor_cap_[key(c.base, c.atom)] = c.cap;
 
-    // --- Acceptor capacity ---
+    // Acceptor capacity
     static const Cap kAcceptor[] = {
         {"G","O6",2},{"U","O2",2},{"U","O4",2},{"C","O2",2},{"T","O2",2},{"T","O4",2},
         {"A","N1",1},{"A","N3",1},{"A","N7",1},{"G","N3",1},{"G","N7",1},{"C","N3",1},
@@ -305,7 +301,7 @@ HBondChemistry::HBondChemistry(const std::filesystem::path& ligand_db_path, bool
     };
     for (const auto& c : kAcceptor) acceptor_cap_[key(c.base, c.atom)] = c.cap;
 
-    // --- Extend from ligand_hbond_db.json (only keys not already present) ---
+    // Extend from ligand_hbond_db.json (only keys not already present)
     std::ifstream in(ligand_db_path);
     if (!in.is_open()) return;
     nlohmann::json db;

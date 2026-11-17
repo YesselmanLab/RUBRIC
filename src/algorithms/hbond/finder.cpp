@@ -63,9 +63,7 @@ bool is_consecutive_backbone_bond(const HBondCandidate& c, const ResMap& residue
 
 }  // namespace
 
-// ---------------------------------------------------------------------------
 //  ResidueSlotCache
-// ---------------------------------------------------------------------------
 
 ResidueSlotCache::ResidueSlotCache(std::string res_id, std::string base_type,
                                    AtomMap atoms, const HBondChemistry& chem)
@@ -92,9 +90,7 @@ const std::vector<HbSlot>& ResidueSlotCache::get_lp_slots(const std::string& ato
     return ins->second;
 }
 
-// ---------------------------------------------------------------------------
 //  HBondFinder
-// ---------------------------------------------------------------------------
 
 HBondFinder::HBondFinder(const HBondChemistry& chemistry, double max_distance,
                          double min_alignment, double short_distance_threshold)

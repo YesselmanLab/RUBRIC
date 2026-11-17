@@ -156,7 +156,7 @@ std::vector<ScoredCandidate> score_candidates(
         out.push_back(std::move(sc));
     }
 
-    // --- Carbonyl-O2 correction (2-pass) ---
+    // Carbonyl-O2 correction (2-pass)
     std::unordered_set<std::string> committed;
     for (const auto& sc : out) {
         if (!sc.validation.is_valid || !sc.has_strong_base_hbond) continue;

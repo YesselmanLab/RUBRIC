@@ -51,9 +51,7 @@ import string
 import subprocess
 import tempfile
 
-# ---------------------------------------------------------------------------
 # Pure logic (importable / testable without PyMOL)
-# ---------------------------------------------------------------------------
 
 #: issues that are not ProSco/Z'-scored -> excluded from coloring (summary only)
 SUMMARY_ONLY = {"incorrect_hbond_count"}
@@ -140,14 +138,12 @@ def severity_to_rgb(sev):
     return [1.0, 1.0 - s, 0.0]
 
 
-# ---------------------------------------------------------------------------
 # Pair-score tiers — whole-pair triage that GATES the worklist. Distinct from
 # the per-parameter Cerny tiers (Preferred/Allowed/Of Concern): the pair score
 # decides *which pairs a refiner reviews* and *how they are colored*; the |Z'|
 # severity ranks pairs within a tier and names the worst parameter. Preferred =
 # score 100, Secondary review = [80,100), Priority review = <80 (the threshold derived from the
 # good/poor likelihood ratio; mirrors the binary's emitted `tier`).
-# ---------------------------------------------------------------------------
 
 REVIEW_MAX = 80.0          # priority review: score < 80
 _ACCEPTABLE_G = (0.867, 0.45)   # secondary review: green channel near 100 -> near 80
@@ -166,13 +162,11 @@ def score_to_rgb(score):
     return [1.0, g0 + t * (g1 - g0), 0.0]
 
 
-# ---------------------------------------------------------------------------
 # Sugar-pucker mismatch — a per-residue flag, separate from the pair score. The
 # binary reports a sugar under `pucker_outliers` when its ring (the delta
 # torsion) and its 3' phosphate position (P-perp, the phosphate's distance from
 # the extended glycosidic bond) imply different puckers. Drawn as a cyan ribose
 # ring; it is a flag, not a tier.
-# ---------------------------------------------------------------------------
 
 PUCKER_RGB = [0.0, 0.75, 0.85]
 _RIBOSE_RING = "name C1'+C2'+C3'+C4'+O4'"
@@ -457,9 +451,7 @@ def format_summary(data, flagged, hbcount, obj, tier_label="priority"):
     return "\n".join(lines)
 
 
-# ---------------------------------------------------------------------------
 # PyMOL integration
-# ---------------------------------------------------------------------------
 
 _BINARY = os.environ.get("RUBRIC_BINARY", "rubric")
 _OVERLAY = "rubric_overlay"
@@ -788,9 +780,7 @@ def _pucker_of(res_id):
     return None
 
 
-# ---------------------------------------------------------------------------
 # Worklist: walk the flagged pairs one at a time (rubric_next / prev / goto)
-# ---------------------------------------------------------------------------
 
 def build_queue(flagged):
     """Order flagged pairs chain-grouped, worst-first within each chain.

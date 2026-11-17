@@ -23,7 +23,7 @@ using core::ReferenceFrame;
 using geometry::Vector3d;
 using hbond::HBond;
 
-// ---- tuning constants ---------------------------------
+// Tuning constants
 constexpr double kPi = 3.14159265358979323846;
 constexpr double kN7GuardMargin = 0.2;
 constexpr double kVotingContactDistance = 4.0;
@@ -44,7 +44,7 @@ const std::unordered_set<std::string> kDnaBaseCodes = {"DA", "DT", "DC", "DG", "
 
 int face_priority(char f) { return f == 'W' ? 0 : (f == 'H' ? 1 : 2); }
 
-// ---- per-base tables (resolved to single-letter key A/G/C/U/T/I) -----------
+// Per-base tables (resolved to single-letter key A/G/C/U/T/I)
 
 std::string upper(std::string s) {
     for (char& c : s) c = static_cast<char>(std::toupper(static_cast<unsigned char>(c)));
@@ -122,7 +122,7 @@ const std::array<const char*, 6> kPyrRingTie = {"N1", "C2", "N3", "C4", "C5", "C
 const std::array<const char*, 9> kPurineRingCenter = {"C4", "N3", "C2", "N1", "C6", "C5", "N7", "C8", "N9"};
 const std::array<const char*, 6> kPyrRingCenter = {"C2", "N1", "C6", "C5", "C4", "N3"};
 
-// ---- small geometry / lookup helpers ---------------------------------------
+// Small geometry / lookup helpers
 
 const Vector3d* atom_coords(const Residue& r, const std::string& name) {
     const core::Atom* a = r.get_atom(name);
@@ -152,7 +152,7 @@ double dotget(const std::unordered_map<char, double>& d, char f, double def) {
     return it == d.end() ? def : it->second;
 }
 
-// ---- H-bond predicate helpers ----------------------------------------------
+// H-bond predicate helpers
 
 bool n7_in_hbonds(const std::string& res_id, const std::vector<HBond>& hbonds) {
     for (const auto& hb : hbonds) {
@@ -245,7 +245,7 @@ bool is_rna_pyrimidine(const std::string& base, const BaseTyping& typing) {
     return !typing.is_purine(base);
 }
 
-// ---- Layer 1: centroid face detection --------------------------------------
+// Layer 1: centroid face detection
 
 struct DetectResult {
     char face = 'W';
@@ -547,7 +547,7 @@ char apply_pyr_WS_tiebreaker(const Residue& res, const Residue& partner, char cu
     return current_face;
 }
 
-// ---- orientation -----------------------------------------------------------
+// Orientation
 
 std::optional<Vector3d> ring_center(const Residue& res, const BaseTyping& typing) {
     std::vector<Vector3d> coords;
@@ -597,7 +597,7 @@ LwResult canonicalize_lw(char orientation, char face1, char face2) {
     return {o + face2 + face1, true};
 }
 
-// ---- classification by geometry --------------------------------------------
+// Classification by geometry
 
 struct GeoResult {
     std::string lw_class;

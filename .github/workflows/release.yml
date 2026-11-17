@@ -1,9 +1,10 @@
 name: Build and publish
 
 # Builds the rubric-rna wheels (Linux x86_64 and aarch64, macOS Intel and Apple
-# Silicon, Windows x64) and the source distribution on every push and pull request, and checks
-# each wheel against tests/data/1GID.expected.json. Pushing a version tag such as
-# v0.1.0 also publishes the files to PyPI, after approval in the pypi environment.
+# Silicon, Windows x64) and the source distribution on every push and pull request,
+# installs them on every supported Python version and checks each installation against
+# tests/data/1GID.expected.json. Pushing a version tag such as v1.0 also publishes the
+# files to PyPI, after approval in the pypi environment.
 
 on:
   push:
@@ -41,10 +42,69 @@ jobs:
           name: sdist
           path: dist/*.tar.gz
 
+  tests:
+    name: Tests (ctest)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+      - run: cmake --build build -j 4
+      - run: ctest --test-dir build --output-on-failure
+
+  install:
+    name: Install on Python ${{ matrix.python }} (${{ matrix.os }})
+    needs: wheels
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, ubuntu-24.04-arm, macos-15-intel, macos-latest, windows-latest]
+        python: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13", "3.14", "3.15"]
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-python@v7.1.0
+        with:
+          python-version: ${{ matrix.python }}
+          allow-prereleases: true
+      - uses: actions/download-artifact@v8.0.2
+        with:
+          pattern: wheels-*
+          path: wheelhouse
+          merge-multiple: true
+      - run: python -m pip install --no-index --find-links wheelhouse rubric-rna
+      - run: rubric --version
+      - run: python tests/check_package.py
+
+  install-sdist:
+    name: Build from source on Python ${{ matrix.python }} (${{ matrix.os }})
+    needs: sdist
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: ubuntu-latest, python: "3.8" }
+          - { os: ubuntu-latest, python: "3.15" }
+          - { os: macos-latest, python: "3.15" }
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-python@v7.1.0
+        with:
+          python-version: ${{ matrix.python }}
+          allow-prereleases: true
+      - uses: actions/download-artifact@v8.0.2
+        with:
+          name: sdist
+          path: dist
+      - shell: bash
+        run: python -m pip install dist/*.tar.gz
+      - run: rubric --version
+      - run: python tests/check_package.py
+
   publish-pypi:
     name: Publish to PyPI
     if: startsWith(github.ref, 'refs/tags/v')
-    needs: [wheels, sdist]
+    needs: [wheels, sdist, tests, install, install-sdist]
     runs-on: ubuntu-latest
     environment: pypi
     permissions:

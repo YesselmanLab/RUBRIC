@@ -1,0 +1,52 @@
+# Build and test with: rattler-build build --recipe conda/recipe.yaml
+context:
+  version: "1.0"
+  gemmi_version: "0.6.5"
+
+package:
+  name: rubric-rna
+  version: ${{ version }}
+
+source:
+  - path: ..
+  - url: https://github.com/project-gemmi/gemmi/archive/refs/tags/v${{ gemmi_version }}.tar.gz
+    sha256: 9159506a16e0d22bbeeefc4d34137099318307db1b2bebf06fb2ae501571b19c
+    target_directory: gemmi
+
+build:
+  number: 0
+  skip:
+    - win
+  script:
+    - cmake -S . -B build -G Ninja ${CMAKE_ARGS} -DCMAKE_BUILD_TYPE=Release -DRUBRIC_BUILD_TESTS=OFF -DFETCHCONTENT_SOURCE_DIR_GEMMI=${SRC_DIR}/gemmi -DFETCHCONTENT_FULLY_DISCONNECTED=ON -DBUILD_GEMMI_PROGRAM=OFF -DINSTALL_DEV_FILES=OFF -DINTERNAL_ZLIB=ON
+    - cmake --build build --parallel ${CPU_COUNT}
+    - cmake --install build --prefix ${PREFIX}
+
+requirements:
+  build:
+    - ${{ compiler('cxx') }}
+    - cmake >=3.28
+    - ninja
+
+tests:
+  - files:
+      source:
+        - tests/check_package.py
+        - tests/data/1GID.cif.gz
+        - tests/data/1GID.expected.json
+    requirements:
+      run:
+        - python
+    script:
+      - rubric --version
+      - python tests/check_package.py
+
+about:
+  homepage: https://github.com/YesselmanLab/RUBRIC
+  repository: https://github.com/YesselmanLab/RUBRIC
+  license: MIT
+  license_file:
+    - LICENSE
+    - NOTICE
+    - gemmi/LICENSE.txt
+  summary: Base-pair annotation and local quality assessment of RNA 3D structures

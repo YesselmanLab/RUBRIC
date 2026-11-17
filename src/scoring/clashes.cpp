@@ -360,9 +360,7 @@ std::optional<ClashContact> pair_backbone_clash(const core::Residue& res1,
     return contact;
 }
 
-// ---------------------------------------------------------------------------
 // Whole-structure detection: uniform grid, O(N) rather than O(N^2).
-// ---------------------------------------------------------------------------
 
 namespace {
 

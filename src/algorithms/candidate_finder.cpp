@@ -56,7 +56,7 @@ bool same_chain_adjacent(const std::string& a, const std::string& b) {
     return c1 == c2 && std::abs(n1 - n2) == 1;
 }
 
-// --- ring-centroid stacking signature -------------------------------------
+// Ring-centroid stacking signature
 // A candidate is "ring-stacked" when the vector between the two base RING
 // centroids is offset more ALONG the mean base normal (vertical) than in the
 // base plane (lateral) - i.e. one base sits over the other. Unlike the
@@ -168,7 +168,7 @@ std::vector<PairCandidate> find_candidates(
         nodes.push_back(n);
     }
 
-    // --- spatial grid (cell = max_distance) ----------------------------------
+    // Spatial grid (cell = max_distance)
     // Replaces the O(n^2) all-pairs scan: bin node origins into cells of side
     // max_distance, so all neighbors within max_distance lie in the 27 cells
     // around a node. For each i we gather j>i in those cells, sort ascending,

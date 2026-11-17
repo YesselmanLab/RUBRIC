@@ -46,8 +46,8 @@ namespace {
 using json = nlohmann::json;
 using geometry::Vector3d;
 
-// ---- Sugar-pucker checks (Richardson/Kapral): the base-phosphate perpendicular
-//      (Pperp) and the two report-only categories built on it. ----
+// Sugar-pucker checks (Richardson/Kapral): the base-phosphate perpendicular
+// (Pperp) and the two report-only categories built on it.
 constexpr double kPperpCutoff = 2.9;   // A: >= C3'-endo, < C2'-endo
 const std::unordered_set<std::string> kHelicalWcBp = {"G-C", "C-G", "A-U", "U-A"};
 
@@ -88,11 +88,10 @@ const std::unordered_set<std::string> kSelfReciprocal = {
     "cWW", "tWW", "cHH", "tHH", "cSS", "tSS"};
 const std::unordered_set<std::string> kSignFlip = {"shear", "stagger", "buckle"};
 
-// H-bond distance policy. Watson-Crick cells judge
-// every base-base bond; all other cells judge only the strongest (primary) bond.
-const std::unordered_set<std::string> kWcDistanceCells = {"C-G/cWW", "A-U/cWW"};
+// H-bond distance policy: every base-base bond of a pair is judged, provided the pair
+// has at least one strong bond.
 constexpr double kMinPhysicalDistance = 2.2;  // below this: not a real H-bond
-constexpr double kMaxStrongDistance   = 3.5;  // strong (primary) bond cutoff
+constexpr double kMaxStrongDistance   = 3.5;  // strong bond cutoff
 
 // 10 individual parameters.
 const std::array<const char*, 10> kIssueKeys = {
@@ -115,29 +114,16 @@ double maybe_flip(double v, const std::string& source, const std::string& param,
     return v;
 }
 
-// True if (canonical bp_type, lw_class) is a Watson-Crick distance cell.
-bool is_wc_distance_cell(const std::string& bp, const std::string& lw) {
-    const auto [canon_bp, swapped] = canonicalize_bp(bp, lw);
-    (void)swapped;
-    return kWcDistanceCells.count(canon_bp + "/" + lw) > 0;
-}
-
-// The base-base distance(s)
-// whose severity should be taken (max downstream). WC cells return every
-// physical bond; other cells return only the single strongest bond within
-// [kMinPhysicalDistance, kMaxStrongDistance], or empty when none qualifies.
-std::vector<double> distances_to_score(const std::vector<double>& distances,
-                                       const std::string& bp, const std::string& lw) {
+// The base-base distances whose severity is taken (max downstream): every bond of at
+// least kMinPhysicalDistance, or none when no bond is within kMaxStrongDistance.
+std::vector<double> distances_to_score(const std::vector<double>& distances) {
     std::vector<double> phys;
     for (const double d : distances)
         if (d >= kMinPhysicalDistance) phys.push_back(d);
-    if (phys.empty()) return {};
-    if (is_wc_distance_cell(bp, lw)) return phys;
-    std::vector<double> strong;
-    for (const double d : phys)
-        if (d <= kMaxStrongDistance) strong.push_back(d);
-    if (strong.empty()) return {};
-    return {*std::min_element(strong.begin(), strong.end())};
+    const bool has_strong = std::any_of(phys.begin(), phys.end(),
+                                        [](double d) { return d <= kMaxStrongDistance; });
+    if (!has_strong) return {};
+    return phys;
 }
 
 /// severity = min(1, |Z'|/5) * clamp((5 - ProSco)/5, 0, 1)
@@ -183,7 +169,6 @@ struct HBF {
     std::optional<double> donor_angle, acceptor_angle;
 };
 
-// ---------------------------------------------------------------------------
 //  Scoring tables in native form
 //
 // The scorer reads three things from its JSON tables: ProSco bins
@@ -195,7 +180,6 @@ struct HBF {
 // unchanged. They are loaded from scoring_tables_cache.bin (written by `rubric
 // dump-caches`) when its stored content hash matches the JSON files, and built
 // from the JSON otherwise, so a stale cache can only make a run slower.
-// ---------------------------------------------------------------------------
 
 struct ProscoCell {
     double lo = 0.0, hi = 0.0;
@@ -504,7 +488,7 @@ struct Scorer::Impl {
         return static_cast<double>(canonical - actual) / canonical;
     }
 
-    // --- backbone recommendation (per-conformer ProSco) ---
+    // Backbone recommendation (per-conformer ProSco)
 
     /// ProSco of a suite torsion against its empirical per-conformer cell, with
     /// circular unwrap onto the branch used at build time (unwrap_center).
@@ -729,7 +713,7 @@ PairScore Scorer::score_pair(const classification::ScoredCandidate& pair, const 
 
     std::unordered_map<std::string, SevDetail> issues;
 
-    // ---- 6 pair geometry parameters, each individually ----
+    // 6 pair geometry parameters, each individually
     const std::array<std::pair<const char*, double>, 6> pair_params = {{
         {"shear",     params.shear},
         {"stretch",   params.stretch},
@@ -743,21 +727,20 @@ PairScore Scorer::score_pair(const classification::ScoredCandidate& pair, const 
         if (d.severity > 0.0) issues[param] = d;
     }
 
-    // ---- H-bond distance: WC cells judge all base-base bonds; other cells
-    //      judge only the strong (primary) bond.
-    //      Keep the ProSco/Z' of the worst (max-severity) scored bond. ----
+    // H-bond distance: every base-base bond is judged.
+    // Keep the ProSco/Z' of the worst (max-severity) bond.
     std::vector<double> bond_distances;
     bond_distances.reserve(hbonds.size());
     for (const auto& hb : hbonds) bond_distances.push_back(hb.distance);
     SevDetail dist;
-    for (const double d : distances_to_score(bond_distances, bp, lw)) {
+    for (const double d : distances_to_score(bond_distances)) {
         const auto sd = cerny_sev(d, "hbonds", "distance");
         if (sd.severity > dist.severity) dist = sd;
     }
     if (dist.severity > 0.0) issues["distance"] = dist;
 
-    // ---- H-bond angles: max over donor + acceptor angles across all bonds;
-    //      keep the ProSco/Z' of the worst (argmax) angle. ----
+    // H-bond angles: max over donor + acceptor angles across all bonds;
+    // keep the ProSco/Z' of the worst (argmax) angle.
     SevDetail ang;
     for (const auto& hb : hbonds) {
         const auto sd_d = cerny_sev(hb.donor_angle,    "hbonds", "donor_angle");
@@ -767,13 +750,13 @@ PairScore Scorer::score_pair(const classification::ScoredCandidate& pair, const 
     }
     if (ang.severity > 0.0) issues["hbond_angles"] = ang;
 
-    // ---- H-bond count: graded (canonical - actual) / canonical (no ProSco/Z') ----
+    // H-bond count: graded (canonical - actual) / canonical (no ProSco/Z')
     {
         const double s = impl_->hbond_count_severity(bp, lw, num_base);
         if (s > 0.0) issues["incorrect_hbond_count"] = SevDetail{s, std::nullopt, std::nullopt};
     }
 
-    // ---- Steric clash: graded on heavy-atom overlap (no ProSco/Z') ----
+    // Steric clash: graded on heavy-atom overlap (no ProSco/Z')
     // Gate on kClashThreshold: the ungated overlap charges score for ordinary
     // vdW proximity. worst_overlap() returns the contact pair_clash() gates on,
     // so this is equivalent and computes it once. Raw value kept on PairScore.

@@ -1,4 +1,4 @@
-# ---- Build output (includes the fetched gemmi clone + all artifacts) --------
+# Build output (includes the fetched gemmi clone + all artifacts)
 /build/
 build*/
 cmake-build-*/
@@ -8,12 +8,12 @@ cmake-build-*/
 *.so
 *.dSYM/
 
-# ---- Python package builds (python -m build, cibuildwheel) ------------------
+# Python package builds (python -m build, cibuildwheel)
 /dist/
 /wheelhouse/
 *.egg-info/
 
-# ---- CLI output written during use ------------------------------------------
+# CLI output written during use
 # Any root-level JSON is `rubric --out` output (e.g. "1GID.json", "<id>_pairs.json").
 # Anchored to root: does NOT touch resources/**/*.json (bundled).
 /*.json
@@ -22,14 +22,14 @@ cmake-build-*/
 *.pse
 *.cif
 
-# ---- OS / editor junk -------------------------------------------------------
+# OS / editor junk
 .DS_Store
 *.swp
 *~
 .idea/
 .vscode/
 
-# ---- Caches (clangd index, Python bytecode, generic tool caches) ------------
+# Caches (clangd index, Python bytecode, generic tool caches)
 .cache/
 **/.cache/
 __pycache__/

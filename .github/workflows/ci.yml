@@ -1,5 +1,10 @@
 name: CI
 
+# On every push and pull request: build and run the test suite (ctest) on older and
+# current versions of Linux, macOS and Windows, run it again under the address and
+# undefined-behaviour sanitizers, report test coverage, and build and test the conda
+# package. The tests run offline (tests/README.md).
+
 on:
   push:
     branches: [main]
@@ -7,44 +12,95 @@ on:
     branches: [main]
 
 jobs:
-  build:
-    name: ${{ matrix.os }}
+  test:
+    name: Tests (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
-
+        os: [ubuntu-22.04, ubuntu-latest, ubuntu-26.04, ubuntu-24.04-arm, macos-15,
+             macos-15-intel, macos-latest, windows-2022, windows-latest]
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Install CMake >= 3.28
-        run: pip install cmake --upgrade
-
-      - name: Cache GEMMI (FetchContent)
-        uses: actions/cache@v4
-        with:
-          path: build/_deps
-          # GEMMI's subbuild bakes the absolute build path into its CMakeCache,
-          # so the cache is tied to the repo's checkout path. Bump the version
-          # token below (v2, v3, ...) whenever the repo is renamed/moved to drop
-          # the stale cache; otherwise CMake aborts with a path-mismatch error.
-          key: gemmi-v3-${{ matrix.os }}-${{ hashFiles('CMakeLists.txt') }}
+      - uses: actions/checkout@v7.0.1
 
       - name: Configure
-        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+        # Compiler warnings are errors with the current GCC and Clang; older compilers
+        # warn differently, and MSVC reports them at /W4.
+        run: >
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+          -DPAIRFINDER_WARNINGS_AS_ERRORS=${{ (matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest') && 'ON' || 'OFF' }}
 
       - name: Build
-        run: cmake --build build -j
+        run: cmake --build build -j 4 --config Release
 
-      - name: Fetch and run on real RNA (1GID)
+      - name: Test
+        run: ctest --test-dir build -C Release --output-on-failure
+
+  sanitizers:
+    name: Tests under AddressSanitizer + UBSan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+
+      - name: Configure
+        run: >
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+          -DCMAKE_CXX_FLAGS="-fsanitize=address,undefined -fno-omit-frame-pointer -fno-sanitize-recover=undefined"
+          -DCMAKE_EXE_LINKER_FLAGS="-fsanitize=address,undefined"
+
+      - name: Build
+        run: cmake --build build -j 4
+
+      - name: Test
+        # rubric ends with a fast exit that skips freeing its memory on purpose, so
+        # leak reports would be noise; memory errors and undefined behaviour still fail.
+        env:
+          ASAN_OPTIONS: detect_leaks=0
+          UBSAN_OPTIONS: print_stacktrace=1
+        run: ctest --test-dir build --output-on-failure
+
+  coverage:
+    name: Test coverage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+
+      - name: Configure
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DRUBRIC_COVERAGE=ON
+
+      - name: Build
+        run: cmake --build build -j 4
+
+      - name: Test
+        run: ctest --test-dir build --output-on-failure
+
+      - name: Coverage summary
         run: |
-          ./build/rubric 1GID > 1GID.json
-          python3 -c "
-          import json, sys
-          d = json.load(open('1GID.json'))
-          n = d['n_pairs']
-          print(f'1GID: {n} pairs selected, pairs_score={d[\"pairs_score\"]}, backbone_suiteness={d[\"backbone_suiteness\"]}')
-          assert n > 0, 'expected pairs but got 0'
-          print('OK')
-          "
+          pip install gcovr
+          {
+            echo '## Test coverage of the engine (src/, apps/, include/)'
+            echo '```'
+            gcovr --root . --filter 'src/' --filter 'apps/' --filter 'include/' \
+                  --exclude-throw-branches --print-summary --txt - build
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  conda:
+    name: Conda package (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, ubuntu-24.04-arm, macos-15-intel, macos-latest]
+    steps:
+      - uses: actions/checkout@v7.0.1
+
+      - uses: conda-incubator/setup-miniconda@v4.1.0
+        with:
+          miniforge-version: latest
+
+      - name: Build and test
+        shell: bash -el {0}
+        run: |
+          conda install -y -c conda-forge rattler-build
+          rattler-build build --recipe conda/recipe.yaml --output-dir conda-out

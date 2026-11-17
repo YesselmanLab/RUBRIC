@@ -11,6 +11,11 @@ riboses with an incorrect pucker. All results are written to one
 machine-readable JSON file, and a PyMOL plug-in shows the flagged features on
 the structure. A complete human ribosome is analyzed in under a second.
 
+The data and code behind the analyses in the RUBRIC paper are at
+https://github.com/YesselmanLabPublications/2026_Rubric_paper, and
+[`VALIDATION.md`](https://github.com/YesselmanLab/RUBRIC/blob/main/VALIDATION.md)
+summarizes the results.
+
 ---
 
 ## 1. Install
@@ -23,7 +28,8 @@ pip install rubric-rna
 
 Ready-made packages are available for macOS 11 or newer (Intel and Apple
 Silicon), Linux (x86_64 and ARM) and Windows 10 or newer (64-bit). Python 3.8 or
-newer is the only requirement; no compiler, CMake or git is needed. Installing
+newer is the only requirement (tested on Python 3.8 to 3.15); no compiler, CMake or
+git is needed. Installing
 inside a virtual environment, or with `pipx install rubric-rna`, keeps RUBRIC
 apart from other Python packages.
 
@@ -45,6 +51,19 @@ pip install git+https://github.com/YesselmanLab/RUBRIC.git
 
 This compiles RUBRIC on your computer, so it needs a C++20 compiler and git (see
 the requirements in section 2). pip downloads CMake by itself.
+
+### With conda (macOS and Linux)
+
+The conda recipe in `conda/` builds the same `rubric` and `rubric-view` commands
+with [rattler-build](https://rattler.build), with no Python dependency:
+
+```bash
+git clone https://github.com/YesselmanLab/RUBRIC.git
+cd RUBRIC
+conda install -c conda-forge rattler-build
+rattler-build build --recipe conda/recipe.yaml
+conda install -c ./output rubric-rna
+```
 
 ### Windows
 
@@ -94,7 +113,7 @@ cmake --build build -j
 The first configure/build takes a few minutes because it fetches and compiles
 GEMMI; later builds are fast. When it finishes, the executable is at
 `build/rubric`, and the reference scoring data is staged next to it
-automatically — the tool finds it with no extra setup.
+automatically - the tool finds it with no extra setup.
 
 ### Install the build (run `rubric` from anywhere)
 
@@ -131,15 +150,15 @@ The basic form is `rubric <input> [options]`, where `<input>` is either a
 # by PDB ID (downloaded + cached under ~/.cache/rubric)
 rubric 1EHZ
 
-# save to a file — bare --out uses the PDB id → ./1EHZ.json
+# save to a file - bare --out uses the PDB id → ./1EHZ.json
 rubric 1EHZ --out
 
-# from a local file (no download) — just the name if it's in the current
+# from a local file (no download) - just the name if it's in the current
 # folder, or its path if it's elsewhere
 rubric mymodel.cif --out              # file in the current directory
 rubric path/to/mymodel.cif --out      # file in another directory
 
-# a full ribosome — still sub-second
+# a full ribosome - still sub-second
 rubric 7K00 --out
 ```
 
@@ -148,13 +167,13 @@ rubric 7K00 --out
 | you run | JSON goes to |
 |---|---|
 | no `--out` | **stdout** (redirect with `> file.json` if you like) |
-| `--out` (no name) | **`<PDB_id>.json` in the current directory** — e.g. `rubric 1GID --out` → `./1GID.json` |
+| `--out` (no name) | **`<PDB_id>.json` in the current directory** - e.g. `rubric 1GID --out` → `./1GID.json` |
 | `--out name.json` (bare name) | **`./name.json`** (current directory) |
 | `--out path/to/name.json` (has a directory) | exactly that path (created if needed) |
 
-The output goes exactly where you point it — no folder is imposed.
+The output goes exactly where you point it - no folder is imposed.
 
-Downloaded structures are cached in **`~/.cache/rubric/`** — nothing is
+Downloaded structures are cached in **`~/.cache/rubric/`** - nothing is
 written into your working directory unless you ask for it.
 
 ### Options
@@ -180,8 +199,8 @@ A JSON object per structure:
   "candidates_total": 1234,      // pairs considered
   "candidates_valid": 200,       // passed geometric validation
   "n_pairs": 31,                 // final selected base pairs
-  "pairs_score": 98.46,          // base-pair geometry quality (0–100)
-  "backbone_suiteness": 0.7,     // mean Richardson suiteness (0–1, two decimals as in wwPDB reports)
+  "pairs_score": 98.46,          // base-pair geometry quality (0-100)
+  "backbone_suiteness": 0.7,     // mean Richardson suiteness (0-1, two decimals as in wwPDB reports)
   "pairs": [
     {
       "res_id1": "A-G-1", "res_id2": "A-C-72",
@@ -191,27 +210,35 @@ A JSON object per structure:
       "geometry":   { "dorg": 2.40, "d_v": 0.11, "plane_angle": 24.08, "dNN": 8.42 },
       "rigid_body": { "shear": 2.22, "stretch": 0.89, "stagger": -0.11, "buckle": -12.78, "propeller": 20.40, "opening": 0.33 },
       "num_hbonds": 2,
-      "score": 95.12              // per-pair quality (0–100)
+      "score": 95.12              // per-pair quality (0-100)
     }
     // ...
   ]
 }
 ```
 
-- **`pairs_score` and `backbone_suiteness` are reported separately** — they measure
+- **`pairs_score` and `backbone_suiteness` are reported separately** - they measure
   different quality axes, so they are not blended into a single "overall" number
   (which would over-claim whole-structure quality; clashscore, bond geometry, etc.
   are not considered here). Note the scales differ by design: `pairs_score` is a
-  0–100 geometry score, while `backbone_suiteness` is mean Richardson suiteness as a
-  **0–1** fraction (the wwPDB RNA-suiteness measure), reported in its native unit.
-- Per-pair `score` and `pairs_score` are 0–100 (higher = better); `backbone_suiteness`
-  is 0–1 (higher = better).
-- A `classification.lw_class` containing `|` (e.g. `cWH|cWW`) with
-  `is_ambiguous: true` means the edge assignment is genuinely undetermined.
+  0-100 geometry score, while `backbone_suiteness` is mean Richardson suiteness as a
+  **0-1** fraction (the wwPDB RNA-suiteness measure), reported in its native unit.
+- Per-pair `score` and `pairs_score` are 0-100 (higher = better); `backbone_suiteness`
+  is 0-1 (higher = better).
+- Each scored pair has a `tier`: `Preferred` (score 100), `Secondary review`
+  (80 ≤ score < 100) or `Priority review` (score < 80). `tier_summary` counts the pairs
+  in each tier.
+- `issues` lists the parameters that lowered a pair's score, and `issue_details` gives
+  the ProSco, Z′, severity and Černý tier (`Preferred` / `Allowed` / `Of Concern`) of each.
+- An ambiguous pair has `is_ambiguous: true` and a label naming the two classes it lies
+  between, e.g. `ambiguous (cWW|cWH)`. Ambiguous pairs are not scored (`score` and
+  `tier` are null).
+- `clashes` lists the RNA-RNA steric clashes of the whole structure (the two atoms,
+  their distance and overlap) and `n_clashes` counts them.
 
 ### Backbone recommendations (`backbone_residues`)
 
-When scoring is on, the output also carries a **`backbone_residues`** array — one
+When scoring is on, the output also carries a **`backbone_residues`** array - one
 entry per residue whose backbone is flagged (residues that score fine are
 omitted). The suiteness *score* is unchanged; this is a refinement-facing
 decomposition of *which* suite torsions are off and *where they should go*:
@@ -228,18 +255,18 @@ decomposition of *which* suite torsions are off and *where they should go*:
 }
 ```
 
-- **`tier`** — `fixable`: low suiteness with ≥1 anomalous torsion → rotate the
+- **`tier`** - `fixable`: low suiteness with ≥1 anomalous torsion → rotate the
   listed `deviations` toward `target_conformer`. `review`: low suiteness but no
   single anomalous torsion (jointly distorted → a full-rebuild candidate;
   `deviations` empty). `flag_only`: an outlier that fits no rotamer (the nearest
   conformer is only a hint).
-- **`deviations`** — each suite torsion that is genuinely rare for its conformer
+- **`deviations`** - each suite torsion that is genuinely rare for its conformer
   (`prosco` < 5, lower = more anomalous), most-anomalous first, given as
   `value → target` (the rotation to apply) with the signed `gap` (degrees).
 - A flagged torsion is a **statistical anomaly worth reviewing against the map**,
-  not a guaranteed error — rare conformations do occur in good structures. The
+  not a guaranteed error - rare conformations do occur in good structures. The
   `prosco` value is the confidence signal (deep, e.g. < 1, is more likely a real
-  error than a borderline 3–5).
+  error than a borderline 3-5).
 
 ---
 
@@ -255,10 +282,10 @@ rubric-view 1GID secondary    # optional tier: priority (default) | secondary | 
 ```
 
 The optional **tier** selects which pairs populate the worklist, by whole-pair
-score: `priority` (priority review, score < 80 — the genuinely-poor pairs, the default),
-`secondary` (secondary review, 80 ≤ score < 100 — the minor-issue middle, a polishing pass), or
-`all` (both). The structure opens as a whole-view health map — gray, with the
-flagged pairs lit up — and the scored JSON is also written to
+score: `priority` (priority review, score < 80 - the genuinely-poor pairs, the default),
+`secondary` (secondary review, 80 ≤ score < 100 - the minor-issue middle, a polishing pass), or
+`all` (both). The structure opens as a whole-view health map - gray, with the
+flagged pairs lit up - and the scored JSON is also written to
 `1GID_pairs.json` in the current directory.
 
 **Coloring:** pairs are colored by their pair
@@ -278,13 +305,13 @@ command line). Arguments in `[...]` are optional.
 | `rubric_score [obj], [tier]` | score the structure + highlight the flagged pairs (colored by pair score) and the pucker-mismatch sugars (cyan); `tier` = `priority` (default) / `secondary` / `all` |
 | `rubric_list [n]` | print the ranked worklist of the worst pairs (default 25) |
 | `rubric_next` / `rubric_prev` | step through the worklist one pair at a time |
-| `rubric_goto <rank \| residue>` | jump to worklist entry `12`, **or** inspect any residue by `A-169` / `A169` / `A-G-169` (even a clean pair not in the worklist) — prints its score and what's out of range |
+| `rubric_goto <rank \| residue>` | jump to worklist entry `12`, **or** inspect any residue by `A-169` / `A169` / `A-G-169` (even a clean pair not in the worklist) - prints its score and what's out of range |
 | `rubric_info [selection]` | inspect a clicked/selected residue → jump the worklist to its pair |
 | `rubric_overview` | zoom back out to the whole-structure overview |
 | `rubric_ideal [on\|off]` | overlay the **idealized** target geometry of the current pair (green ghost) so you can see how to fix it; sticky toggle, default off |
 | `rubric_pucker [list \| on \| off \| n \| residue]` | list the sugar-pucker mismatches, show/hide the cyan layer, or a close-up of one (`rubric_pucker 1`, `rubric_pucker A-199`) with its P-perp measurement |
 | `rubric_dump [path]` | write the scored pairs (incl. any coordinate edits) to `<obj>_pairs.json` in the current directory, or a path you give |
-| `rubric_load <path>` | rebuild the worklist from a `rubric_dump` JSON — **no binary, no re-scoring** (for sharing a scored session) |
+| `rubric_load <path>` | rebuild the worklist from a `rubric_dump` JSON - **no binary, no re-scoring** (for sharing a scored session) |
 | `rubric_keys [on\|off]` | bind/unbind arrow-key navigation |
 | `rubric_clear` | remove every overlay and reset |
 | `rubric_set_binary <path>` | point the plugin at a specific `rubric` binary |
@@ -301,11 +328,12 @@ to polish the middle. Keyboard navigation and the full color scheme are covered 
 `rubric 1GID --pml` writes `1GID.pml`, a plain PyMOL script that loads the
 structure and shows the same picture (flagged pairs colored by score, cyan
 pucker-mismatch riboses) with named selections for each tier and one per
-priority-review pair. Open it with `pymol 1GID.pml` on any machine with PyMOL;
-neither the plugin nor the binary is needed to view it. Details in
+priority-review pair. Open it with `pymol 1GID.pml`; neither the plugin nor the
+binary is needed to view it. The script loads the structure from the path RUBRIC
+read, so to share it, send the structure file with it. Details in
 [`integrations/pymol/README.md`](https://github.com/YesselmanLab/RUBRIC/blob/main/integrations/pymol/README.md#without-the-plugin-a-standalone-script-rubric---pml).
 
-PyMOL is only needed for this viewer — the core `rubric` tool does not require it.
+PyMOL is only needed for this viewer - the core `rubric` tool does not require it.
 
 ---
 
@@ -313,7 +341,7 @@ PyMOL is only needed for this viewer — the core `rubric` tool does not require
 
 - **Internet:** needed once (first build, to fetch GEMMI) and at runtime only
   when you give a bare PDB ID (it downloads via `curl` and caches the file).
-  Local-file runs need no network — use `--no-download` to enforce that.
+  Local-file runs need no network - use `--no-download` to enforce that.
 - **Cache:** downloaded structures live in `~/.cache/rubric` (override with
   `--cache-dir` or `$RUBRIC_CACHE_DIR`). Safe to delete anytime.
 - **Reference data** (`resources/`) ships with the repo and is staged next to the
@@ -334,8 +362,11 @@ integrations/pymol/   optional PyMOL viewer (rubric-view, rubric_pymol.py)
 CMakeLists.txt        build (fetches GEMMI, vendors nlohmann/json)
 pyproject.toml        Python package settings (pip install rubric-rna)
 python/rubric_rna/    Python wrapper that runs the bundled rubric program
-tests/                package check against a reference result for 1GID
-.github/workflows/    builds and publishes the Python packages
+conda/                conda recipe (rattler-build)
+tests/                unit, command-line and regression tests (see tests/README.md)
+.github/workflows/    runs the tests, builds and publishes the Python packages
+VALIDATION.md         the evidence that RUBRIC's results are right, and its limitations
+CONTRIBUTING.md       how to propose a change
 ```
 
 ---
@@ -346,7 +377,7 @@ tests/                package check against a reference result for 1GID
 |---|---|
 | `CMake 3.28 or higher is required` | upgrade CMake (`cmake --version` to check) |
 | First build fails fetching GEMMI | check internet / proxy; re-run `cmake -S . -B build` |
-| `download failed` / `HTTP 404` at runtime | the PDB ID isn't on RCSB, or no network — pass a local `.cif`/`.pdb`, or check `curl` is installed |
+| `download failed` / `HTTP 404` at runtime | the PDB ID isn't on RCSB, or no network - pass a local `.cif`/`.pdb`, or check `curl` is installed |
 | Want a clean rebuild | `rm -rf build` and repeat the Build steps |
 | `rubric: command not found` after `pip install` | Python's scripts folder is not on your PATH. Install inside a virtual environment or with `pipx`, or run `python -m rubric_rna 1GID` |
 | `pip install` compiles RUBRIC instead of downloading it | no ready-made package exists for your platform or Python, so pip builds from source; install a C++20 compiler and git (section 2) |

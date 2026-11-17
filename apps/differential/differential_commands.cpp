@@ -114,7 +114,7 @@ int dump_scores(const std::string& path) {
     return 0;
 }
 
-// Debug: classify a 7-angle suite and print its suiteness.
+// Classify a 7-angle suite and print its suiteness.
 int classify_suite(const std::vector<std::string>& angles) {
     std::array<double, 7> s{};
     for (int i = 0; i < 7; ++i) s[i] = std::stod(angles[i]);
@@ -123,7 +123,7 @@ int classify_suite(const std::vector<std::string>& angles) {
     return 0;
 }
 
-// Debug: emit "<res_id>\t<alpha>.<zeta>" (suite torsions) for diffing.
+// Emit "<res_id>\t<alpha>.<zeta>" (suite torsions) for diffing.
 int dump_torsions(const std::string& path) {
     using namespace pairfinder;
     auto structure = io::parse_pdb(path);

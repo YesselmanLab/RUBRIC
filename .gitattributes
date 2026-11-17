@@ -2,3 +2,4 @@
 # checkouts), so the resource cache hashes and the test reference match everywhere.
 resources/** -text
 tests/data/** -text
+tests/fragments/** -text

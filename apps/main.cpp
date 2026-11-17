@@ -60,7 +60,7 @@ const std::unordered_map<std::string, std::string> kReportGroup = {
     {"clash",                 "Steric Clash"},
 };
 
-// ---- full `find` pipeline -> JSON ----
+// Full `find` pipeline -> JSON
 using json = nlohmann::json;
 
 double round_to(double v, int n) {
@@ -111,7 +111,7 @@ json frame_json(const pairfinder::core::ReferenceFrame& f) {
                 {"z_axis", vec3_json(f.z_axis())}};
 }
 
-// ---- --pml: a standalone PyMOL script reproducing the plug-in's display ------
+// --pml: a standalone PyMOL script reproducing the plug-in's display
 // Mirrors integrations/pymol/rubric_pymol.py (score_to_rgb, _build_overlay,
 // _build_pucker) so the script and the plug-in draw the same picture without
 // needing the plug-in or the binary at view time.
@@ -459,7 +459,6 @@ int find_json(const std::string& path, bool score, bool details, bool emit_class
             if (!sc.template_rmsd) p["template_rmsd"] = nullptr;
             else if (std::isinf(*sc.template_rmsd)) p["template_rmsd"] = "Infinity";
             else p["template_rmsd"] = round_to(*sc.template_rmsd, 4);
-            p["quality_score"] = round_to(sc.quality_score, 4);
 
             // Per-pair H-bond geometry: re-run the finder between the paired
             // residues and emit every bond (distance + donor/acceptor angle +
@@ -710,10 +709,14 @@ int find_json(const std::string& path, bool score, bool details, bool emit_class
     // OS reclaim the memory anyway costs ~4% of a large structure's run.
     std::cout.flush();
     std::fflush(nullptr);
+#ifdef RUBRIC_COVERAGE
+    std::exit(0);  // coverage builds: a normal exit lets the profiling runtime write its data
+#else
     std::_Exit(0);
+#endif
 }
 
-// ---- PDB-ID auto-fetch (input acquisition; upstream of the pipeline) ---------
+// PDB-ID auto-fetch (input acquisition; upstream of the pipeline)
 
 // Cache dir for downloaded structures: --cache-dir, else $RUBRIC_CACHE_DIR,
 // else ~/.cache/rubric (%USERPROFILE%\.cache\rubric on Windows), else <tmp>/rubric.

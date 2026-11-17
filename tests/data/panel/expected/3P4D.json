@@ -1,0 +1,81 @@
+{
+ "n_pairs": 8,
+ "pairs": [
+  [
+   "A-C-102",
+   "B-GF2-207",
+   "cWW",
+   false,
+   null,
+   null
+  ],
+  [
+   "A-C-104",
+   "B-GF2-205",
+   "cWW",
+   false,
+   null,
+   null
+  ],
+  [
+   "A-CFZ-101",
+   "B-G-208",
+   "cWW",
+   false,
+   null,
+   null
+  ],
+  [
+   "A-CFZ-103",
+   "B-G-206",
+   "cWW",
+   false,
+   null,
+   null
+  ],
+  [
+   "A-G-106",
+   "B-CFZ-203",
+   "cWW",
+   false,
+   null,
+   null
+  ],
+  [
+   "A-G-108",
+   "B-CFZ-201",
+   "cWW",
+   false,
+   null,
+   null
+  ],
+  [
+   "A-GF2-105",
+   "B-C-204",
+   "cWW",
+   false,
+   null,
+   null
+  ],
+  [
+   "A-GF2-107",
+   "B-C-202",
+   "cWW",
+   false,
+   null,
+   null
+  ]
+ ],
+ "pairs_score": null,
+ "pucker_outliers": [],
+ "pucker_unclassified": [],
+ "recommendations": [],
+ "skipped_pairs": 8,
+ "suiteness": null,
+ "suites": [],
+ "tiers": [
+  0,
+  0,
+  0
+ ]
+}

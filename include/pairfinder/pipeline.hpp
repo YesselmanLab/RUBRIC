@@ -82,7 +82,7 @@ public:
     /// Construct the empirical scorer from the configured reference data.
     scoring::Scorer make_scorer() const;
 
-    // --- resource accessors (for debug paths with a custom stage order) -------
+    // Resource accessors (for debug paths with a custom stage order)
     const PipelineConfig& config() const { return config_; }
     const algorithms::BaseTemplateLibrary& templates() const { return lib_; }
     const core::BaseTyping& typing() const { return typing_; }

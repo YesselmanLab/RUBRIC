@@ -1,0 +1,304 @@
+{
+ "n_pairs": 20,
+ "pairs": [
+  [
+   "A-A-90",
+   "B-G-120",
+   "tHS",
+   false,
+   98.55,
+   "Secondary review"
+  ],
+  [
+   "A-C-103",
+   "B-G-113",
+   "cWW",
+   false,
+   90.88,
+   "Secondary review"
+  ],
+  [
+   "A-C-104",
+   "B-G-114",
+   "cWW",
+   false,
+   69.02,
+   "Priority review"
+  ],
+  [
+   "A-C-30",
+   "B-C-170",
+   "cWW",
+   false,
+   97.05,
+   "Secondary review"
+  ],
+  [
+   "A-G-101",
+   "B-C-111",
+   "cWW",
+   false,
+   89.95,
+   "Secondary review"
+  ],
+  [
+   "A-G-102",
+   "B-C-112",
+   "cWW",
+   false,
+   91.96,
+   "Secondary review"
+  ],
+  [
+   "A-G-22",
+   "B-C-12",
+   "cWW",
+   false,
+   88.21,
+   "Secondary review"
+  ],
+  [
+   "A-G-23",
+   "B-C-13",
+   "cWW",
+   false,
+   96.64,
+   "Secondary review"
+  ],
+  [
+   "A-G-25",
+   "B-C-15",
+   "cWW",
+   false,
+   95.81,
+   "Secondary review"
+  ],
+  [
+   "A-G-50",
+   "B-U-161",
+   "tSS",
+   false,
+   99.24,
+   "Secondary review"
+  ],
+  [
+   "A-U-21",
+   "B-A-11",
+   "cWW",
+   false,
+   86.98,
+   "Secondary review"
+  ],
+  [
+   "A-U-24",
+   "B-A-14",
+   "cWW",
+   false,
+   98.05,
+   "Secondary review"
+  ],
+  [
+   "A-U-70",
+   "A-G-80",
+   "cWH",
+   false,
+   76.23,
+   "Priority review"
+  ],
+  [
+   "B-A-130",
+   "A-G-80",
+   "tHS",
+   false,
+   100.0,
+   "Preferred"
+  ],
+  [
+   "B-A-140",
+   "A-U-70",
+   "cWS",
+   false,
+   91.57,
+   "Secondary review"
+  ],
+  [
+   "B-A-151",
+   "B-U-161",
+   "cWW",
+   false,
+   61.27,
+   "Priority review"
+  ],
+  [
+   "B-A-34L",
+   "B-G-31L",
+   "tHS",
+   false,
+   87.52,
+   "Secondary review"
+  ],
+  [
+   "B-C-152",
+   "B-G-162",
+   "cWW",
+   false,
+   100.0,
+   "Preferred"
+  ],
+  [
+   "B-C-154",
+   "B-G-164",
+   "cWW",
+   false,
+   100.0,
+   "Preferred"
+  ],
+  [
+   "B-U-153",
+   "B-A-163",
+   "cWW",
+   false,
+   84.97,
+   "Secondary review"
+  ]
+ ],
+ "pairs_score": 90.19,
+ "pucker_outliers": [],
+ "pucker_unclassified": [],
+ "recommendations": [
+  [
+   "A-C-103",
+   "review",
+   "1a"
+  ],
+  [
+   "A-C-104",
+   "fixable",
+   "1a"
+  ],
+  [
+   "A-G-102",
+   "fixable",
+   "1c"
+  ],
+  [
+   "B-A-14",
+   "fixable",
+   "7a"
+  ],
+  [
+   "B-A-33L",
+   "fixable",
+   "1a"
+  ],
+  [
+   "B-A-34L",
+   "fixable",
+   "1a"
+  ],
+  [
+   "B-C-12",
+   "fixable",
+   "1a"
+  ],
+  [
+   "B-C-13",
+   "flag_only",
+   "1a"
+  ],
+  [
+   "B-C-15",
+   "flag_only",
+   "1a"
+  ],
+  [
+   "B-C-152",
+   "review",
+   "1L"
+  ],
+  [
+   "B-U-153",
+   "flag_only",
+   "1L"
+  ],
+  [
+   "B-U-32L",
+   "flag_only",
+   "1g"
+  ]
+ ],
+ "skipped_pairs": 0,
+ "suiteness": 0.229,
+ "suites": [
+  [
+   "A-C-103",
+   "1a",
+   0.422
+  ],
+  [
+   "A-C-104",
+   "1a",
+   0.148
+  ],
+  [
+   "A-G-102",
+   "1c",
+   0.343
+  ],
+  [
+   "B-A-14",
+   "7a",
+   0.073
+  ],
+  [
+   "B-A-33L",
+   "1a",
+   0.247
+  ],
+  [
+   "B-A-34L",
+   "1a",
+   0.486
+  ],
+  [
+   "B-C-12",
+   "1a",
+   0.034
+  ],
+  [
+   "B-C-13",
+   "!!",
+   0.0
+  ],
+  [
+   "B-C-15",
+   "!!",
+   0.0
+  ],
+  [
+   "B-C-152",
+   "1L",
+   0.456
+  ],
+  [
+   "B-C-154",
+   "1a",
+   0.771
+  ],
+  [
+   "B-U-153",
+   "!!",
+   0.0
+  ],
+  [
+   "B-U-32L",
+   "!!",
+   0.0
+  ]
+ ],
+ "tiers": [
+  3,
+  14,
+  3
+ ]
+}

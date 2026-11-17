@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.28)  # FetchContent EXCLUDE_FROM_ALL/SYSTEM
 project(pairfinder
-    VERSION 0.1.0
+    VERSION 1.0
     DESCRIPTION "RUBRIC: RNA base-pair, ribose and backbone integrity check"
     LANGUAGES CXX)
 
-# ---- Standard / options -----------------------------------------------------
+# Standard / options
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -14,8 +14,19 @@ endif()
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 option(PAIRFINDER_WARNINGS_AS_ERRORS "Treat warnings as errors" OFF)
+option(RUBRIC_COVERAGE "Build with test-coverage instrumentation (GCC or Clang)" OFF)
+if(RUBRIC_COVERAGE)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+        add_compile_options(-fprofile-instr-generate -fcoverage-mapping)
+        add_link_options(-fprofile-instr-generate)
+    else()
+        add_compile_options(--coverage)
+        add_link_options(--coverage)
+    endif()
+    add_compile_definitions(RUBRIC_COVERAGE)
+endif()
 
-# ---- Core library -----------------------------------------------------------
+# Core library
 add_library(pairfinder_core
     src/core/atom_type.cpp
     src/core/residue.cpp
@@ -63,7 +74,7 @@ if(NOT SKBUILD)
         PAIRFINDER_SOURCE_RESOURCES="${CMAKE_CURRENT_SOURCE_DIR}/resources")
 endif()
 
-# ---- GEMMI (PDB/CIF/mmCIF parsing) ------------------------------------------
+# GEMMI (PDB/CIF/mmCIF parsing)
 # Self-contained: fetch + build GEMMI v0.6.5 IN-TREE (own libgemmi_cpp under our
 # build/) by cloning from upstream git.
 include(FetchContent)
@@ -119,7 +130,7 @@ else()
         $<$<BOOL:${PAIRFINDER_WARNINGS_AS_ERRORS}>:-Werror>)
 endif()
 
-# ---- CLI app ----------------------------------------------------------------
+# CLI app
 add_executable(rubric
     apps/main.cpp
     apps/support/cli_support.cpp
@@ -144,7 +155,14 @@ add_custom_command(TARGET rubric POST_BUILD
         "${CMAKE_CURRENT_SOURCE_DIR}/resources" "$<TARGET_FILE_DIR:rubric>/resources"
     COMMENT "Regenerating resource caches + staging bundled resources next to rubric")
 
-# ---- Install ----------------------------------------------------------------
+# Tests (ctest)
+option(RUBRIC_BUILD_TESTS "Build the RUBRIC test suite (run with ctest)" ON)
+if(RUBRIC_BUILD_TESTS AND PROJECT_IS_TOP_LEVEL AND NOT SKBUILD)
+    enable_testing()
+    add_subdirectory(tests)
+endif()
+
+# Install
 if(SKBUILD)
     # Python package (pip install rubric-rna): everything lives inside the
     # rubric_rna package directory, laid out so the locator's <exe>/../resources

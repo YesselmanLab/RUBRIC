@@ -2,7 +2,7 @@
  * @file rigid_body.hpp
  * @brief Tsukuba / 3DNA rigid-body base-pair parameters (CLI output block).
  *
- * NOTE: this is a DIFFERENT decomposition from the scorer's
+ * This is a different decomposition from the scorer's
  * `scoring::compute_pair_parameters` - that one
  * uses the hinge/half-angle convention; this one flips frame2 by diag(1,-1,-1),
  * halves the relative rotation, and expresses everything in the mid-frame

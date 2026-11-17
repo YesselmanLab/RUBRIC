@@ -41,7 +41,7 @@ std::vector<std::string> split_pipe(const std::string& lw) {
     return out;
 }
 
-// ---- stacking-signature filter ----
+// Stacking-signature filter
 bool is_stacking_signature(const Cand& c) {
     static const std::unordered_map<std::string, std::pair<double, double>> thr = {
         {"cWW", {7.5, 1.5}}, {"cWH", {7.5, 1.5}}, {"cHH", {7.5, 1.5}}, {"tWW", {7.5, 1.5}},
@@ -51,7 +51,7 @@ bool is_stacking_signature(const Cand& c) {
     return c.validation.dNN < it->second.first && c.validation.d_v > it->second.second;
 }
 
-// ---- slot helpers ----
+// Slot helpers
 bool same_chain_adjacent(const std::string& a, const std::string& b) {
     auto split = [](const std::string& r, std::string& chain, long& num) {
         const auto p2 = r.rfind('-');
@@ -131,7 +131,7 @@ std::vector<std::pair<Slot, Slot>> possible_face_slots(const std::string& lw,
     return out;
 }
 
-// ---- helix detection ----
+// Helix detection
 struct Segment {
     std::vector<int> pair_indices;  // into helix_cands
     double total_score = 0.0;
@@ -198,7 +198,7 @@ std::vector<Segment> detect_segments(const std::vector<Cand*>& cands, const RNAC
     return segs;
 }
 
-// ---- phase 1: cWW helix pairs ----
+// Phase 1: cWW helix pairs
 constexpr double kMinHelixQuality = 0.45;
 constexpr double kMinIsolatedQuality = 0.45;
 
@@ -308,7 +308,7 @@ std::vector<Cand*> cww_helix_phase(const std::vector<Cand*>& cww, const RNAChain
     return selected;
 }
 
-// ---- shared-residue tie-break: H-bond strength first, then planarity ----
+// Shared-residue tie-break: H-bond strength first, then planarity
 // When several candidates contest one residue, prefer the strongest interaction
 // (most base-base H-bonds), breaking ties by coplanarity (plane_angle, then d_v).
 // Coplanarity alone over-weights flatness vs bond strength; H-bonds-first wins.
@@ -359,7 +359,7 @@ std::optional<std::vector<int>> resolve_shared_residue_conflict(
     return std::vector<int>{best};
 }
 
-// ---- phase 2: global optimal selection ----
+// Phase 2: global optimal selection
 constexpr int kMaxBacktrack = 30;
 
 bool class_valid(const Cand& c, const std::string& lw) {
