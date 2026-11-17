@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.28)  # FetchContent EXCLUDE_FROM_ALL/SYSTEM
 project(pairfinder
-    VERSION 1.0.0
+    VERSION 1.0
     DESCRIPTION "RUBRIC: RNA base-pair, ribose and backbone integrity check"
     LANGUAGES CXX)
 

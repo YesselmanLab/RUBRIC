@@ -43,11 +43,11 @@ See `tests/README.md` for what the tests cover and how to add one.
 
 ## Releases
 
-1. Set the new version in `CMakeLists.txt` (`project(... VERSION 1.1.0)`) and in
+1. Set the new version in `CMakeLists.txt` (`project(... VERSION 1.1)`) and in
    `conda/recipe.yaml`.
 2. Commit and push to `main`; wait for the CI to pass.
 3. On GitHub, publish a release (Releases, Draft a new release) with a new tag such
-   as `v1.1.0`. With the Zenodo integration enabled, the release is also archived on
+   as `v1.1`. With the Zenodo integration enabled, the release is also archived on
    Zenodo with its own DOI.
 4. The tag starts the release workflow. It builds the packages, installs them on every
    supported Python version, runs the test suite, then waits for approval in the

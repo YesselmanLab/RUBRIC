@@ -3,7 +3,7 @@
 This summarizes the evidence that RUBRIC behaves as intended on real structures, and
 its known limitations. The numbers come from the RUBRIC paper; the data and analysis
 code that produce them are in https://github.com/YesselmanLabPublications/2026_Rubric_paper
-(engine version `rubric-rna==1.0.0`).
+(engine version `rubric-rna==1.0`).
 
 ## Agreement with established annotation programs
 

@@ -1,6 +1,6 @@
 # Build and test with: rattler-build build --recipe conda/recipe.yaml
 context:
-  version: "1.0.0"
+  version: "1.0"
   gemmi_version: "0.6.5"
 
 package:
