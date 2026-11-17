@@ -1,37 +1,29 @@
 # RUBRIC (Rapid Unified Base-pair, Ribose and backbone Integrity Check)
 
-RUBRIC is an open-source program for the annotation and local quality assessment
-of RNA 3D structures. RUBRIC classifies base pairs in the Leontis-Westhof scheme
-and flags pairs whose geometry lies between two classes as ambiguous. Each
-unambiguous pair is scored from 0 to 100 against pairs of the same type and
-class in high-quality structures, and the parameters that lowered the score are
-reported. RUBRIC also assigns each backbone suite to one of the 54 conformers,
-suggests target torsions for suites that fit poorly or match none, and flags
-riboses with an incorrect pucker. All results are written to one
-machine-readable JSON file, and a PyMOL plug-in shows the flagged features on
-the structure. A complete human ribosome is analyzed in under a second.
+RUBRIC annotates RNA 3D structures and assesses their local quality. It classifies
+base pairs in the Leontis-Westhof scheme, flags ambiguous pairs, scores each pair
+from 0 to 100 against high-quality structures, and flags problem backbone suites
+and riboses. Results are written to JSON, and a PyMOL plug-in shows them on the
+structure. A complete human ribosome takes under a second.
 
 The data and code behind the analyses in the RUBRIC paper are at
-https://github.com/YesselmanLabPublications/2026_Rubric_paper, and
-[`VALIDATION.md`](https://github.com/YesselmanLab/RUBRIC/blob/main/VALIDATION.md)
-summarizes the results.
+https://github.com/YesselmanLabPublications/2026_Rubric_paper.
 
 ---
 
 ## 1. Install
+
+| | Needed |
+|---|---|
+| Computer | macOS 11+, Linux x86_64 or ARM, Windows 10+ 64-bit |
+| Python | 3.8 or newer |
+| PyMOL | only for `rubric-view` |
 
 ### With pip (recommended)
 
 ```bash
 pip install rubric-rna
 ```
-
-Ready-made packages are available for macOS 11 or newer (Intel and Apple
-Silicon), Linux (x86_64 and ARM) and Windows 10 or newer (64-bit). Python 3.8 or
-newer is the only requirement (tested on Python 3.8 to 3.15); no compiler, CMake or
-git is needed. Installing
-inside a virtual environment, or with `pipx install rubric-rna`, keeps RUBRIC
-apart from other Python packages.
 
 This installs two commands, `rubric` and the optional PyMOL viewer
 `rubric-view`. Check the installation with
@@ -86,7 +78,7 @@ build. No databases or other tools to install.
 
 | Requirement | Notes |
 |---|---|
-| **C++20 compiler** | Apple Clang ≥ 14, Clang ≥ 13, or GCC ≥ 10 |
+| **C++20 compiler** | GCC 11 or newer, Clang (Xcode 16 or newer on macOS), or Visual Studio 2022 |
 | **CMake ≥ 3.28** | check with `cmake --version` |
 | **git** | used to fetch a dependency during the first build |
 | **curl** | used at runtime to download PDB entries from RCSB (preinstalled on macOS and most Linux) |
@@ -231,8 +223,6 @@ rubric-view 1GID secondary    # optional tier: priority (default) | secondary | 
 | `rubric_load <path>` | rebuild the worklist from a `rubric_dump` JSON - **no binary, no re-scoring** (for sharing a scored session) |
 | `rubric_keys [on\|off]` | bind/unbind arrow-key navigation |
 | `rubric_clear` | remove every overlay and reset |
-| `rubric_set_binary <path>` | point the plugin at a specific `rubric` binary |
-| `rubric_set_ideals <path>` | set the idealized-template dir |
 
 Colors, keyboard navigation and the `--pml` script are described in
 [`integrations/pymol/README.md`](https://github.com/YesselmanLab/RUBRIC/blob/main/integrations/pymol/README.md).
@@ -243,7 +233,7 @@ Colors, keyboard navigation and the `--pml` script are described in
 
 | Problem | Fix |
 |---|---|
-| `rubric: command not found` after `pip install` | Python's scripts folder is not on your PATH. Install inside a virtual environment or with `pipx`, or run `python -m rubric_rna 1GID` |
+| `rubric: command not found` after `pip install` | Python's scripts folder is not on your PATH. Install inside a virtual environment, or run `python -m rubric_rna 1GID` |
 | `pip install` compiles RUBRIC instead of downloading it | no ready-made package exists for your system, so pip builds from source; install a C++20 compiler and git (section 2) |
 | `download failed` / `HTTP 404` | the PDB ID is not on RCSB, or there is no network; give a local `.cif` / `.pdb` file instead |
 | `rubric-view needs bash` on Windows | install [Git for Windows](https://gitforwindows.org), which provides bash |
@@ -252,6 +242,4 @@ Colors, keyboard navigation and the `--pml` script are described in
 
 ## 7. License
 
-MIT (see [`LICENSE`](https://github.com/YesselmanLab/RUBRIC/blob/main/LICENSE)).
-RUBRIC bundles the 3DNA base templates, so work that uses RUBRIC should also cite 3DNA
-(see [`NOTICE`](https://github.com/YesselmanLab/RUBRIC/blob/main/NOTICE)).
+RUBRIC is released under the [MIT License](https://github.com/YesselmanLab/RUBRIC/blob/main/LICENSE).
