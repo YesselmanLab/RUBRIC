@@ -3,7 +3,7 @@ name: Build and publish
 # Builds the rubric-rna wheels (Linux x86_64 and aarch64, macOS Intel and Apple
 # Silicon, Windows x64) and the source distribution on every push and pull request,
 # installs them on every supported Python version and checks each installation against
-# tests/data/1GID.expected.json. Pushing a version tag such as v1.0 also publishes the
+# tests/data/1GID.expected.json. Pushing a version tag such as v1.0.0 also publishes the
 # files to PyPI, after approval in the pypi environment.
 
 on:
