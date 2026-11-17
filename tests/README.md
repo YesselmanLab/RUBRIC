@@ -70,7 +70,7 @@ git diff tests/data/panel/expected     # review every change before committing
 cmake -S . -B build-cov -DCMAKE_BUILD_TYPE=Debug -DRUBRIC_COVERAGE=ON     # line coverage
 cmake -S . -B build-asan -DCMAKE_BUILD_TYPE=Debug \
   -DCMAKE_CXX_FLAGS="-fsanitize=address,undefined -fno-omit-frame-pointer" \
-  -DCMAKE_EXE_LINKER_FLAGS="-fsanitize=address,undefined"                 # memory errors, undefined behaviour
+  -DCMAKE_EXE_LINKER_FLAGS="-fsanitize=address,undefined"                 # memory errors, undefined behavior
 ```
 
 The CI runs both on every push and shows the coverage summary on the run page; the

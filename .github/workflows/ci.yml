@@ -2,7 +2,7 @@ name: CI
 
 # On every push and pull request: build and run the test suite (ctest) on older and
 # current versions of Linux, macOS and Windows, run it again under the address and
-# undefined-behaviour sanitizers, report test coverage, and build and test the conda
+# undefined-behavior sanitizers, report test coverage, and build and test the conda
 # package. The tests run offline (tests/README.md).
 
 on:
@@ -53,7 +53,7 @@ jobs:
 
       - name: Test
         # rubric ends with a fast exit that skips freeing its memory on purpose, so
-        # leak reports would be noise; memory errors and undefined behaviour still fail.
+        # leak reports would be noise; memory errors and undefined behavior still fail.
         env:
           ASAN_OPTIONS: detect_leaks=0
           UBSAN_OPTIONS: print_stacktrace=1
