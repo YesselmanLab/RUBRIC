@@ -205,6 +205,7 @@ the pairs that need attention:
 rubric-view 1GID              # a PDB id
 rubric-view file.cif          # or a local file
 rubric-view 1GID secondary    # optional tier: priority (default) | secondary | all
+rubric-view 1GID backbone     # open in the backbone view
 ```
 
 ### Commands inside PyMOL
@@ -219,6 +220,7 @@ rubric-view 1GID secondary    # optional tier: priority (default) | secondary | 
 | `rubric_overview` | zoom back out to the whole-structure overview |
 | `rubric_ideal [on\|off]` | overlay the **idealized** target geometry of the current pair (green ghost) so you can see how to fix it; sticky toggle, default off |
 | `rubric_pucker [list \| on \| off \| n \| residue]` | list the sugar-pucker mismatches, show/hide the cyan layer, or a close-up of one (`rubric_pucker 1`, `rubric_pucker A-199`) with its P-perp measurement |
+| `rubric_backbone [tier \| n \| residue \| off]` | backbone view: flagged suites colored by tier (yellow `fixable`, orange `review`, red `flag_only`), a close-up of one with its torsions (`rubric_backbone 1`, `rubric_backbone A-199`), or `off` to return to the base pairs |
 | `rubric_dump [path]` | write the scored pairs (incl. any coordinate edits) to `<obj>_pairs.json` in the current directory, or a path you give |
 | `rubric_load <path>` | rebuild the worklist from a `rubric_dump` JSON - **no binary, no re-scoring** (for sharing a scored session) |
 | `rubric_keys [on\|off]` | bind/unbind arrow-key navigation |

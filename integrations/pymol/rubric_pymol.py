@@ -4,6 +4,7 @@ Load in PyMOL:    run /path/to/rubric_pymol.py
 Then:             rubric_score               # score current object; worklist = priority review
                   rubric_score 6DN1, secondary  # the minor-issue middle (polish pass)
                   rubric_score 6DN1, all     # every non-Preferred pair
+                  rubric_backbone            # backbone view: flagged suites by tier
                   rubric_clear               # remove the highlights
 
 What it does each run:
@@ -204,6 +205,71 @@ def pperp_foot(c1, n_glyco, p3):
     foot = [c + t * x for c, x in zip(c1, u)]
     dist = sum((p - f) ** 2 for p, f in zip(p3, foot)) ** 0.5
     return foot, dist
+
+
+# Backbone suites: the binary's `backbone_residues`, one entry per flagged suite,
+# with a tier (fixable / review / flag_only), a target conformer and the torsions
+# that are rare for it.
+
+BACKBONE_TIERS = ("fixable", "review", "flag_only")
+BACKBONE_LABEL = {"fixable": "Fixable", "review": "Review", "flag_only": "Flag only"}
+BACKBONE_RGB = {"fixable": [1.0, 0.85, 0.0], "review": [1.0, 0.5, 0.0],
+                "flag_only": [1.0, 0.0, 0.0]}
+BACKBONE_ADVICE = {
+    "fixable": "the listed torsions are out of range: move them toward their targets",
+    "review": "low suiteness with no single torsion out of range: rebuild the suite",
+    "flag_only": "fits no conformer: the target conformer is only the nearest one, a hint",
+}
+#: Richardson suite torsions; the *_prev ones belong to the preceding nucleotide
+TORSION_SYMBOL = {"delta_prev": "δ-1", "epsilon_prev": "ε-1", "zeta_prev": "ζ-1",
+                  "alpha": "α", "beta": "β", "gamma": "γ", "delta": "δ"}
+_BACKBONE_KEY = ("backbone colors: yellow = fixable · orange = review · "
+                 "red = flag only · cyan ribose = pucker mismatch")
+_BACKBONE_ATOMS = "name P+OP1+OP2+O1P+O2P+O5'+C5'+C4'+C3'+O3'"
+
+
+def backbone_tier_word(name):
+    """'all', 'fixable', 'review' or 'flag_only' for a typed tier, or None."""
+    w = str(name or "all").strip().lower().replace("-", "_").replace(" ", "_")
+    w = {"flagonly": "flag_only", "flag": "flag_only", "unassigned": "flag_only"}.get(w, w)
+    return w if w == "all" or w in BACKBONE_TIERS else None
+
+
+def backbone_suites(data, tier="all"):
+    """Flagged suites of one tier (or all): Fixable first, then Review, then Flag
+    only, lowest suiteness first within each."""
+    keep = BACKBONE_TIERS if tier == "all" else (tier,)
+    order = {t: i for i, t in enumerate(BACKBONE_TIERS)}
+    rows = [b for b in data.get("backbone_residues") or [] if b.get("tier") in keep]
+    return sorted(rows, key=lambda b: (order[b["tier"]],
+                                       b["suiteness"] if isinstance(b.get("suiteness"), (int, float)) else 1.0))
+
+
+def torsion_text(d):
+    """'ε-1 248° → 232°' for one deviation."""
+    return (f"{TORSION_SYMBOL.get(d.get('angle'), d.get('angle'))} "
+            f"{d.get('value', 0):.0f}° → {d.get('target', 0):.0f}°")
+
+
+def backbone_label(b):
+    """'B-U-259  Fixable  suiteness 0.44  → 1a  ε-1 248° → 232°'."""
+    s = b.get("suiteness")
+    s = f"{s:.2f}" if isinstance(s, (int, float)) else "?"
+    devs = ", ".join(torsion_text(d) for d in b.get("deviations") or [])
+    return (f"{b.get('res_id')}  {BACKBONE_LABEL.get(b.get('tier'), b.get('tier'))}  "
+            f"suiteness {s}  → {b.get('target_conformer') or '?'}"
+            + (f"  {devs}" if devs else ""))
+
+
+def residues_selection(res_ids):
+    """One PyMOL selection for many res_ids, grouped by chain ('resi 1+2+3')."""
+    by_chain = {}
+    for rid in res_ids:
+        chain, _name, seq = parse_res_id(rid)
+        by_chain.setdefault(chain, []).append(("\\" + seq) if seq.startswith("-") else seq)
+    parts = [(f"(chain {c} and resi {'+'.join(s)})" if c else f"(resi {'+'.join(s)})")
+             for c, s in by_chain.items()]
+    return " or ".join(parts) if parts else "none"
 
 
 def pair_tier(score):
@@ -447,6 +513,12 @@ def format_summary(data, flagged, hbcount, obj, tier_label="priority"):
                      f"rubric_pucker <n> for a close-up):")
         for i, p in enumerate(puckers[:25], 1):
             lines.append(f"  {i:>3}  {pucker_label(p)}")
+    suites = backbone_suites(data)
+    if suites:
+        counts = " · ".join(f"{sum(b['tier'] == t for b in suites)} {BACKBONE_LABEL[t].lower()}"
+                            for t in BACKBONE_TIERS)
+        lines.append(f"backbone: {len(suites)} flagged suite(s) ({counts}); "
+                     f"rubric_backbone for the backbone view")
     lines.append(COLOR_KEY)
     return "\n".join(lines)
 
@@ -468,6 +540,9 @@ _PK_GLY = "rubric_pk_gly"      # extended glycosidic line, C1' -> foot (light da
 _PK_PPERP = "rubric_pk_pperp"  # P-perp itself, 3' P -> foot (dark dashes)
 _PK_LABEL = "rubric_pk_label"  # 'P-perp 2.31 Å', beside the dark dashes
 _PK_OBJECTS = (_PK_FOCUS, _PK_FOOT, _PK_GLY, _PK_PPERP, _PK_LABEL)
+_BB_FOCUS = "rubric_bb_focus"  # rubric_backbone close-up: the suite's two nucleotides
+_BB_LABELS = "rubric_bb_labels"  # 'ε-1 248° → 232°' beside each torsion to move
+_BB_OBJECTS = (_BB_FOCUS, _BB_LABELS)
 _TMP_OBJ = "_rubric_tmp"
 
 #: worklist state set by rubric_score, walked by rubric_next / rubric_prev / rubric_goto
@@ -478,6 +553,7 @@ _STRUCT_SCORE = None # whole-structure scores from the last rubric_score
 _SCORED_DATA = None  # full scored JSON from the last rubric_score (for rubric_dump)
 _SHOW_IDEAL = False  # sticky toggle: overlay the idealized pair on each focus
 _SHOW_PUCKER = True  # sticky toggle: draw the pucker-mismatch layer (rubric_pucker on/off)
+_BB_TIER = None      # tier shown by rubric_backbone; None = the base-pair view
 _LAST_FOCUS = None   # last pair-view rendered (so rubric_ideal can act on it)
 _CONTEXT_RADIUS = 8.0
 
@@ -584,6 +660,8 @@ def _score_object(cmd, obj):
             p["res_id2"] = _backmap_chain(p["res_id2"], inv)
         for p in pucker_outliers(data):
             p["res_id"] = _backmap_chain(p["res_id"], inv)
+        for b in data.get("backbone_residues") or []:
+            b["res_id"] = _backmap_chain(b["res_id"], inv)
     data["pdb_id"] = obj   # the object's real name, not the scratch temp file
     return data
 
@@ -598,15 +676,15 @@ def rubric_set_binary(path):
 def rubric_clear(_self=None):
     """Remove every RUBRIC overlay/selection; the original object is untouched."""
     from pymol import cmd
-    global _QUEUE, _POS, _SCORED_OBJ
+    global _QUEUE, _POS, _SCORED_OBJ, _BB_TIER
     if _SCORED_OBJ is not None:
         cmd.set("cartoon_transparency", 0.0, _SCORED_OBJ)
         cmd.show("cartoon", f"({_SCORED_OBJ}) and ({_BASE_ATOMS_SEL})")  # restore ladder
         _set_hud(cmd, "")
     for o in (_OVERLAY, _PROBLEMS, _FOCUS, _CONTEXT, _HB, _IDEAL, _IDEAL_HB,
-              _PUCKER, *_PK_OBJECTS):
+              _PUCKER, *_PK_OBJECTS, *_BB_OBJECTS):
         cmd.delete(o)
-    _QUEUE, _POS, _SCORED_OBJ = [], -1, None
+    _QUEUE, _POS, _SCORED_OBJ, _BB_TIER = [], -1, None, None
     print("RUBRIC: cleared")
 
 
@@ -656,12 +734,13 @@ def rubric_score(obj=None, tier="priority", min_severity=0.0, zoom=0,
     print(format_summary(data, flagged, hbcount, obj, tier_label))
 
     # Reset any previous worklist focus, then build a fresh queue for this run.
-    global _QUEUE, _POS, _SCORED_OBJ, _STRUCT_SCORE, _SCORED_DATA
+    global _QUEUE, _POS, _SCORED_OBJ, _STRUCT_SCORE, _SCORED_DATA, _BB_TIER
     cmd.delete(_FOCUS)
     cmd.delete(_CONTEXT)
     cmd.delete(_HB)
-    for o in _PK_OBJECTS:
+    for o in (*_PK_OBJECTS, *_BB_OBJECTS):
         cmd.delete(o)
+    _BB_TIER = None
     cmd.set("cartoon_transparency", 0.0, obj)
     _QUEUE = build_queue(flagged)
     _POS = -1
@@ -855,8 +934,9 @@ def _render_focus(cmd, f, dim=1, pos=None, total=None):
     cmd.delete(_FOCUS)
     cmd.delete(_CONTEXT)
     cmd.delete(_HB)
-    for o in _PK_OBJECTS:
+    for o in (*_PK_OBJECTS, *_BB_OBJECTS):
         cmd.delete(o)
+    _leave_backbone(cmd)
 
     # De-emphasise the global view so the current pair reads clearly. The pucker
     # layer is hidden too; a flagged sugar in this pair is recoloured on the focus.
@@ -1096,8 +1176,9 @@ def rubric_overview(_self=None):
         print("RUBRIC: nothing scored - run rubric_score first")
         return
     global _POS
-    for o in (_FOCUS, _CONTEXT, _HB, _IDEAL, _IDEAL_HB, *_PK_OBJECTS):   # per-pair objects
+    for o in (_FOCUS, _CONTEXT, _HB, _IDEAL, _IDEAL_HB, *_PK_OBJECTS, *_BB_OBJECTS):
         cmd.delete(o)
+    _leave_backbone(cmd)
     cmd.set("cartoon_transparency", 0.0, _SCORED_OBJ)   # undim the structure
     cmd.show("cartoon", f"({_SCORED_OBJ}) and ({_BASE_ATOMS_SEL})")  # restore base ladder
     cmd.enable(_OVERLAY)                        # re-show all flagged pairs
@@ -1291,9 +1372,10 @@ def rubric_load(path, tier="priority", _self=None):
               f"(open its .pse/structure first).")
 
     tier_label = tier_word(tier)
-    global _QUEUE, _POS, _SCORED_OBJ, _STRUCT_SCORE, _SCORED_DATA
+    global _QUEUE, _POS, _SCORED_OBJ, _STRUCT_SCORE, _SCORED_DATA, _BB_TIER
     _SCORED_DATA = data
     _SCORED_OBJ = obj
+    _BB_TIER = None
     _QUEUE = build_queue(flagged_pairs(data, tiers=tiers_for(tier_label)))
     _POS = -1
     _STRUCT_SCORE = {
@@ -1430,7 +1512,7 @@ def _render_pucker(cmd, p):
     p3 = f"({obj}) and name P and not ({res}) and (({res} and name O3') around 2.0)"
     glyco = f"{res} and name N9" if cmd.count_atoms(f"{res} and name N9") else f"{res} and name N1"
 
-    for o in (_FOCUS, _CONTEXT, _HB, *_PK_OBJECTS):
+    for o in (_FOCUS, _CONTEXT, _HB, *_PK_OBJECTS, *_BB_OBJECTS):
         cmd.delete(o)
     _clear_ideal(cmd)
     cmd.disable(_OVERLAY)
@@ -1490,6 +1572,166 @@ def _render_pucker(cmd, p):
     cmd.turn("x", 30)
     cmd.zoom(f"{_PK_FOCUS} or {_PK_FOOT}", 3)
     _set_hud(cmd, f"RUBRIC pucker  {pucker_label(p)}   (rubric_overview to zoom out)")
+
+
+def rubric_backbone(which="", _self=None):
+    """Backbone view: base-pair highlights hidden, flagged suites colored by tier.
+
+        rubric_backbone              every flagged suite (or the tier already shown)
+        rubric_backbone fixable      one tier: fixable | review | flag_only | all
+        rubric_backbone 3            close-up of the 3rd suite in the list
+        rubric_backbone A-199        close-up of the suite of chain A residue 199
+        rubric_backbone off          back to the base-pair view (as rubric_overview)
+
+    Colors: yellow = fixable, orange = review, red = flag only; pucker-mismatch
+    riboses stay cyan. Only colors change; coordinates are never modified.
+    """
+    from pymol import cmd
+    if _SCORED_DATA is None or _SCORED_OBJ is None:
+        print("RUBRIC: nothing scored - run rubric_score first")
+        return
+    token = str(which).strip()
+    word = token.lower()
+    if word in ("off", "hide"):
+        rubric_overview()
+        return
+    if word in ("on", "show"):
+        word = ""
+    if not token.isdigit():
+        tier = (_BB_TIER or "all") if word == "" else backbone_tier_word(word)
+        if tier is not None:
+            _show_backbone(cmd, tier)
+            return
+
+    suite = None
+    if token.isdigit():
+        suites = backbone_suites(_SCORED_DATA, _BB_TIER or "all")
+        idx = int(token) - 1
+        if not 0 <= idx < len(suites):
+            print(f"RUBRIC: out of range 1..{len(suites)}" if suites
+                  else f"RUBRIC: {_SCORED_OBJ}: no flagged suites")
+            return
+        suite = suites[idx]
+    else:
+        res = _parse_residue_token(token)
+        if res is None:
+            print(f"RUBRIC: '{token}' is not a tier (fixable, review, flag_only, all), "
+                  f"a list number or a residue (e.g. A-199)")
+            return
+        for b in backbone_suites(_SCORED_DATA):
+            c, _n, s = parse_res_id(b["res_id"])
+            if (c, s) == res:
+                suite = b
+                break
+        if suite is None:
+            print(f"RUBRIC: {res[0]}/{res[1]} has no flagged suite")
+            return
+    _render_backbone(cmd, suite)
+
+
+def _leave_backbone(cmd):
+    """Undo the backbone view's tier colors (the base-pair view is gray)."""
+    global _BB_TIER
+    if _BB_TIER is not None:
+        cmd.color("gray70", _SCORED_OBJ)
+        _BB_TIER = None
+
+
+def _show_backbone(cmd, tier):
+    """Whole-structure backbone view for one tier (see rubric_backbone)."""
+    global _BB_TIER
+    obj = _SCORED_OBJ
+    suites = backbone_suites(_SCORED_DATA, tier)
+    for o in (_FOCUS, _CONTEXT, _HB, *_PK_OBJECTS, *_BB_OBJECTS):
+        cmd.delete(o)
+    _clear_ideal(cmd)
+    cmd.disable(_OVERLAY)
+    cmd.set("cartoon_transparency", 0.0, obj)
+    cmd.show("cartoon", f"({obj}) and ({_BASE_ATOMS_SEL})")
+    cmd.color("gray70", obj)
+    for t in BACKBONE_TIERS:
+        ids = [b["res_id"] for b in suites if b["tier"] == t]
+        if ids:
+            cmd.set_color(f"rubric_bb_{t}", BACKBONE_RGB[t])
+            cmd.color(f"rubric_bb_{t}",
+                      f"({obj}) and ({residues_selection(ids)}) and {_BACKBONE_ATOMS}")
+    if _SHOW_PUCKER:
+        cmd.enable(_PUCKER)
+    _BB_TIER = tier
+    cmd.zoom(obj)
+
+    name = "all tiers" if tier == "all" else BACKBONE_LABEL[tier]
+    print(f"RUBRIC backbone: {obj}: {len(suites)} flagged suite(s) [{name}] "
+          f"(rubric_backbone <n> for a close-up):")
+    for i, b in enumerate(suites, 1):
+        print(f"  {i:>4}  {backbone_label(b)}")
+    print(_BACKBONE_KEY)
+    _set_hud(cmd, f"RUBRIC backbone [{name}]  {len(suites)} flagged suite(s)   "
+                  f"(rubric_backbone <n> = close-up · rubric_backbone off = base pairs)")
+
+
+def _render_backbone(cmd, b):
+    """Close-up of one flagged suite, each torsion to move labeled current → target."""
+    obj = _SCORED_OBJ
+    rsel = residue_selection(b["res_id"])
+    res = f"({obj}) and {rsel}"
+    prev = f"byres (({obj}) and name O3' and not ({res}) and (({res} and name P) around 2.0))"
+    for o in (_FOCUS, _CONTEXT, _HB, *_PK_OBJECTS, *_BB_OBJECTS):
+        cmd.delete(o)
+    _clear_ideal(cmd)
+    cmd.disable(_OVERLAY)
+    cmd.disable(_PUCKER)
+    cmd.set("cartoon_transparency", 0.85, obj)
+
+    # The two nucleotides of the suite in gray; the suite's backbone atoms
+    # (C4' to O3' of the preceding nucleotide, P to O3' of this one) in the tier color.
+    cmd.create(_BB_FOCUS, f"({res}) or ({prev})")
+    cmd.hide("everything", _BB_FOCUS)
+    cmd.show("sticks", _BB_FOCUS)
+    cmd.set("stick_radius", 0.25, _BB_FOCUS)
+    cmd.color("gray60", _BB_FOCUS)
+    col = f"rubric_bb_{b.get('tier')}"
+    cmd.set_color(col, BACKBONE_RGB.get(b.get("tier"), [1.0, 0.0, 0.0]))
+    cmd.color(col, f"{_BB_FOCUS} and not {rsel} and name C5'+C4'+C3'+O3'")
+    cmd.color(col, f"{_BB_FOCUS} and {rsel} and {_BACKBONE_ATOMS}")
+
+    # Each torsion is labeled at its central bond, pushed out from the suite.
+    bonds = {"delta_prev": (0, "C4'", 0, "C3'"), "epsilon_prev": (0, "C3'", 0, "O3'"),
+             "zeta_prev": (0, "O3'", 1, "P"), "alpha": (1, "P", 1, "O5'"),
+             "beta": (1, "O5'", 1, "C5'"), "gamma": (1, "C5'", 1, "C4'"),
+             "delta": (1, "C4'", 1, "C3'")}
+
+    def atom(this, name):
+        sel = f"{_BB_FOCUS} and {'' if this else 'not '}{rsel} and name {name}"
+        xyz = cmd.get_coords(sel)
+        return xyz[0].tolist() if xyz is not None and len(xyz) else None
+
+    xyz = cmd.get_coords(_BB_FOCUS)
+    centre = [sum(c) / len(xyz) for c in zip(*xyz.tolist())] if xyz is not None else None
+    for i, d in enumerate(b.get("deviations") or [], 1):
+        ends = bonds.get(d.get("angle"))
+        a = atom(ends[0], ends[1]) if ends else None
+        c = atom(ends[2], ends[3]) if ends else None
+        if a is None or c is None or centre is None:
+            continue
+        mid = [(x + y) / 2 for x, y in zip(a, c)]
+        away = [m - k for m, k in zip(mid, centre)]
+        n = sum(x * x for x in away) ** 0.5 or 1.0
+        pos = [m + 2.5 * x / n for m, x in zip(mid, away)]
+        cmd.pseudoatom(_BB_LABELS, name=f"L{i}", resi=str(i), pos=pos, label=torsion_text(d))
+    if _BB_LABELS in cmd.get_names("objects"):
+        cmd.hide("everything", _BB_LABELS)
+        cmd.show("labels", _BB_LABELS)
+        dark_bg = sum(cmd.get_color_tuple(cmd.get_setting_tuple("bg_rgb")[1][0])) < 1.5
+        cmd.set("label_color", col if dark_bg else "gray20", _BB_LABELS)
+        cmd.set("label_position", (0.0, 0.0, 4.0), _BB_LABELS)
+
+    print(f"RUBRIC backbone: {backbone_label(b)}")
+    print(f"  {BACKBONE_ADVICE.get(b.get('tier'), '')}")
+    cmd.orient(_BB_FOCUS)
+    cmd.zoom(_BB_FOCUS, 4)
+    _set_hud(cmd, f"RUBRIC backbone  {backbone_label(b)}   "
+                  f"(rubric_backbone = list · rubric_backbone off = base pairs)")
 
 
 def rubric_set_ideals(path, _self=None):
@@ -1587,9 +1829,10 @@ try:
     _cmd.extend("rubric_ideal", rubric_ideal)
     _cmd.extend("rubric_set_ideals", rubric_set_ideals)
     _cmd.extend("rubric_pucker", rubric_pucker)
+    _cmd.extend("rubric_backbone", rubric_backbone)
     print("RUBRIC plugin loaded: rubric_score / rubric_clear / rubric_set_binary / "
           "rubric_next / rubric_prev / rubric_overview / rubric_goto / rubric_list / "
           "rubric_dump / rubric_load / rubric_info / rubric_keys / rubric_ideal / "
-          "rubric_pucker")
+          "rubric_pucker / rubric_backbone")
 except ImportError:
     pass

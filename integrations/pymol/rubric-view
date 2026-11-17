@@ -9,9 +9,11 @@
 # The optional [tier] selects which pair-score tier populates the worklist:
 #   priority (default) score<80, secondary 80<=score<100, all (non-Preferred).
 # Sugar-pucker mismatches (cyan ribose) are drawn whatever the tier.
+# `backbone` opens the backbone view instead (flagged suites colored by tier).
 #
 #   ./rubric-view 1GID
 #   ./rubric-view 1GID secondary
+#   ./rubric-view 1GID backbone
 #   ./rubric-view /path/to/mymodel.pdb all
 #
 # Env overrides:
@@ -42,8 +44,13 @@ fi
 
 INPUT="${1:-}"
 TIER="${2:-priority}"   # worklist score-tier: priority (default) | secondary | all
+VIEW=""
+if [ "$TIER" = backbone ]; then
+    TIER=priority
+    VIEW=rubric_backbone
+fi
 if [ -z "$INPUT" ]; then
-    echo "usage: rubric-view <pdb-id | structure-file> [priority|secondary|all]" >&2
+    echo "usage: rubric-view <pdb-id | structure-file> [priority|secondary|all|backbone]" >&2
     exit 2
 fi
 if [ ! -x "$BIN" ]; then
@@ -81,6 +88,7 @@ set fetch_path, $CACHE
 $LOADCMD
 rubric_score $OBJ, $TIER, 0, 0
 rubric_dump
+$VIEW
 EOF
 
 if [ "${RUBRIC_VIEW_DRYRUN:-}" = "1" ]; then

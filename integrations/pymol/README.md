@@ -14,6 +14,7 @@ From the repo, after building `rubric`:
 ./integrations/pymol/rubric-view 1GID                 # a PDB id (fetched from RCSB)
 ./integrations/pymol/rubric-view /path/to/mymodel.pdb # or a local file
 ./integrations/pymol/rubric-view 1GID secondary       # optional tier: priority|secondary|all
+./integrations/pymol/rubric-view 1GID backbone        # open in the backbone view
 ```
 
 This opens PyMOL, loads the plugin, loads the structure, scores it, and
@@ -107,6 +108,7 @@ are never modified.
 | `rubric_info [selection]` | inspect a clicked/selected residue → jump the worklist to its pair |
 | `rubric_ideal [on\|off]` | overlay the **idealized** version of the current pair (green ghost = target geometry) so a refiner sees how to fix it; sticky toggle, default off |
 | `rubric_pucker [list \| on \| off \| n \| chain+number]` | sugar-pucker mismatches: list them (default), show/hide the cyan layer, or a close-up of one (`rubric_pucker 1`, `rubric_pucker A-199`) with its P-perp measurement |
+| `rubric_backbone [tier \| n \| chain+number \| off]` | backbone view (see [Backbone suites](#backbone-suites)): flagged suites colored by tier, a close-up of one, or `off` to return to the base pairs |
 | `rubric_keys [on\|off]` | bind/unbind the navigation keys |
 | `rubric_clear` | remove every overlay + reset |
 | `rubric_set_binary <path>` | set the rubric binary path |
@@ -225,6 +227,27 @@ a flagged sugar, its ribose is cyan on the focus sticks too and the log notes it
 
 The flag is report-only: it does not change any pair score or the worklist.
 
+## Backbone suites
+
+`rubric_backbone` hides the base-pair highlights and colors the backbone of each
+flagged suite by its tier: yellow = fixable (the listed torsions are out of range;
+move them toward their targets), orange = review (low suiteness with no single
+torsion out of range; rebuild the suite), red = flag only (fits no conformer; the
+nearest one is only a hint). It prints the suites Fixable first, lowest suiteness
+first within each tier.
+
+```
+rubric_backbone            # every flagged suite
+rubric_backbone fixable    # one tier: fixable | review | flag_only | all
+rubric_backbone 1          # close-up of the first suite in the list
+rubric_backbone A-199      # ... or by chain + residue number
+rubric_backbone off        # back to the base pairs (as rubric_overview)
+```
+
+The close-up shows the suite's two nucleotides with its backbone in the tier
+color and each torsion to move labeled current → target. Like the pucker flag, it
+is report-only.
+
 ## Share a scored session (colleague navigates with no binary)
 
 A `.pse` saves the *picture* but not the plugin or the worklist, so a colleague
@@ -284,6 +307,7 @@ Notes:
   re-refining the model, re-run `rubric ... --pml` to regenerate it.
 - The structure path in the script is absolute. If you send the `.pml` to a
   colleague, send the structure file too and edit the path in the `cmd.load` line.
-- Interactive features (`rubric_next`, `rubric_ideal`, the `rubric_pucker` close-up)
-  need the plugin; the script gives the static overview and named selections.
+- Interactive features (`rubric_next`, `rubric_ideal`, the `rubric_pucker` close-up,
+  `rubric_backbone`) need the plugin; the script gives the static overview and named
+  selections.
 - `--pml` needs scoring, so it cannot be combined with `--no-score`.
