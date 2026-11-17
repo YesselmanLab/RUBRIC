@@ -143,23 +143,13 @@ install, just prefix them with `./build/`.
 ## 3. Run
 
 The basic form is `rubric <input> [options]`, where `<input>` is either a
-4-character **PDB ID** (downloaded from RCSB and cached) or a path to a local
-`.cif` / `.pdb` (`.gz` accepted).
+4-character **PDB ID** (downloaded from RCSB) or a path to a local `.cif` / `.pdb`
+(`.gz` accepted).
 
 ```bash
-# by PDB ID (downloaded + cached under ~/.cache/rubric)
-rubric 1EHZ
-
-# save to a file - bare --out uses the PDB id → ./1EHZ.json
-rubric 1EHZ --out
-
-# from a local file (no download) - just the name if it's in the current
-# folder, or its path if it's elsewhere
-rubric mymodel.cif --out              # file in the current directory
-rubric path/to/mymodel.cif --out      # file in another directory
-
-# a full ribosome - still sub-second
-rubric 7K00 --out
+rubric 1EHZ                          # a PDB ID
+rubric 1EHZ --out                    # save the result to ./1EHZ.json
+rubric path/to/mymodel.cif --out     # a local file
 ```
 
 ### Where the output goes
@@ -170,11 +160,6 @@ rubric 7K00 --out
 | `--out` (no name) | **`<PDB_id>.json` in the current directory** - e.g. `rubric 1GID --out` → `./1GID.json` |
 | `--out name.json` (bare name) | **`./name.json`** (current directory) |
 | `--out path/to/name.json` (has a directory) | exactly that path (created if needed) |
-
-The output goes exactly where you point it - no folder is imposed.
-
-Downloaded structures are cached in **`~/.cache/rubric/`** - nothing is
-written into your working directory unless you ask for it.
 
 ### Options
 
@@ -217,63 +202,12 @@ A JSON object per structure:
 }
 ```
 
-- **`pairs_score` and `backbone_suiteness` are reported separately** - they measure
-  different quality axes, so they are not blended into a single "overall" number
-  (which would over-claim whole-structure quality; clashscore, bond geometry, etc.
-  are not considered here). Note the scales differ by design: `pairs_score` is a
-  0-100 geometry score, while `backbone_suiteness` is mean Richardson suiteness as a
-  **0-1** fraction (the wwPDB RNA-suiteness measure), reported in its native unit.
-- Per-pair `score` and `pairs_score` are 0-100 (higher = better); `backbone_suiteness`
-  is 0-1 (higher = better).
-- Each scored pair has a `tier`: `Preferred` (score 100), `Secondary review`
-  (80 ≤ score < 100) or `Priority review` (score < 80). `tier_summary` counts the pairs
-  in each tier.
-- `issues` lists the parameters that lowered a pair's score, and `issue_details` gives
-  the ProSco, Z′, severity and Černý tier (`Preferred` / `Allowed` / `Of Concern`) of each.
-- An ambiguous pair has `is_ambiguous: true` and a label naming the two classes it lies
-  between, e.g. `ambiguous (cWW|cWH)`. Ambiguous pairs are not scored (`score` and
-  `tier` are null).
-- `clashes` lists the RNA-RNA steric clashes of the whole structure (the two atoms,
-  their distance and overlap) and `n_clashes` counts them.
-
-### Backbone recommendations (`backbone_residues`)
-
-When scoring is on, the output also carries a **`backbone_residues`** array - one
-entry per residue whose backbone is flagged (residues that score fine are
-omitted). The suiteness *score* is unchanged; this is a refinement-facing
-decomposition of *which* suite torsions are off and *where they should go*:
-
-```jsonc
-{
-  "res_id": "B-U-259",
-  "suiteness": 0.44,
-  "tier": "fixable",                 // fixable | review | flag_only
-  "target_conformer": "1a",          // Richardson rotamer to aim for
-  "deviations": [                    // only the torsions that "fire" (ProSco < 5)
-    { "angle": "epsilon_prev", "value": 248.5, "target": 212.3, "gap": 36.3, "prosco": 1.41 }
-  ]
-}
-```
-
-- **`tier`** - `fixable`: low suiteness with ≥1 anomalous torsion → rotate the
-  listed `deviations` toward `target_conformer`. `review`: low suiteness but no
-  single anomalous torsion (jointly distorted → a full-rebuild candidate;
-  `deviations` empty). `flag_only`: an outlier that fits no rotamer (the nearest
-  conformer is only a hint).
-- **`deviations`** - each suite torsion that is genuinely rare for its conformer
-  (`prosco` < 5, lower = more anomalous), most-anomalous first, given as
-  `value → target` (the rotation to apply) with the signed `gap` (degrees).
-- A flagged torsion is a **statistical anomaly worth reviewing against the map**,
-  not a guaranteed error - rare conformations do occur in good structures. The
-  `prosco` value is the confidence signal (deep, e.g. < 1, is more likely a real
-  error than a borderline 3-5).
-
 ---
 
-## 5. Optional: PyMOL viewer
+## 5. PyMOL viewer
 
-If you have **PyMOL** installed, you can open a structure, score it, and
-highlight the pairs that need attention in one command:
+With PyMOL installed, `rubric-view` opens a structure, scores it and highlights
+the pairs that need attention:
 
 ```bash
 rubric-view 1GID              # a PDB id
@@ -281,24 +215,7 @@ rubric-view file.cif          # or a local file
 rubric-view 1GID secondary    # optional tier: priority (default) | secondary | all
 ```
 
-The optional **tier** selects which pairs populate the worklist, by whole-pair
-score: `priority` (priority review, score < 80 - the genuinely-poor pairs, the default),
-`secondary` (secondary review, 80 ≤ score < 100 - the minor-issue middle, a polishing pass), or
-`all` (both). The structure opens as a whole-view health map - gray, with the
-flagged pairs lit up - and the scored JSON is also written to
-`1GID_pairs.json` in the current directory.
-
-**Coloring:** pairs are colored by their pair
-score: **gray** = preferred (score 100, not flagged), **yellow → orange** =
-secondary review (80 ≤ score < 100), **red** = priority review (score < 80).
-Separately, a sugar whose pucker is inconsistent (δ vs P-perp) gets a **cyan**
-ribose ring, whatever its pair's tier, and `rubric_ideal` draws the ideal
-template of the current pair in **green**.
-
 ### Commands inside PyMOL
-
-Once the viewer is open, drive it with these commands (type them in the PyMOL
-command line). Arguments in `[...]` are optional.
 
 | command | what it does |
 |---|---|
@@ -317,80 +234,24 @@ command line). Arguments in `[...]` are optional.
 | `rubric_set_binary <path>` | point the plugin at a specific `rubric` binary |
 | `rubric_set_ideals <path>` | set the idealized-template dir |
 
-A typical loop: `rubric_score` (priority review) → `rubric_next` through the flagged
-pairs → `rubric_ideal` to see the target → fix geometry / re-refine → re-run
-`rubric_score`; when the priority-review worklist is clear, `rubric_score obj, secondary`
-to polish the middle. Keyboard navigation and the full color scheme are covered in
+Colors, keyboard navigation and the `--pml` script are described in
 [`integrations/pymol/README.md`](https://github.com/YesselmanLab/RUBRIC/blob/main/integrations/pymol/README.md).
 
-### No plugin? Write a standalone script
-
-`rubric 1GID --pml` writes `1GID.pml`, a plain PyMOL script that loads the
-structure and shows the same picture (flagged pairs colored by score, cyan
-pucker-mismatch riboses) with named selections for each tier and one per
-priority-review pair. Open it with `pymol 1GID.pml`; neither the plugin nor the
-binary is needed to view it. The script loads the structure from the path RUBRIC
-read, so to share it, send the structure file with it. Details in
-[`integrations/pymol/README.md`](https://github.com/YesselmanLab/RUBRIC/blob/main/integrations/pymol/README.md#without-the-plugin-a-standalone-script-rubric---pml).
-
-PyMOL is only needed for this viewer - the core `rubric` tool does not require it.
-
 ---
 
-## 6. Notes
+## 6. Troubleshooting
 
-- **Internet:** needed once (first build, to fetch GEMMI) and at runtime only
-  when you give a bare PDB ID (it downloads via `curl` and caches the file).
-  Local-file runs need no network - use `--no-download` to enforce that.
-- **Cache:** downloaded structures live in `~/.cache/rubric` (override with
-  `--cache-dir` or `$RUBRIC_CACHE_DIR`). Safe to delete anytime.
-- **Reference data** (`resources/`) ships with the repo and is staged next to the
-  binary at build time; the tool finds it automatically.
-- **Performance:** ~4,000 base pairs/second; a 70S ribosome (~2,100 pairs) scores
-  in ~0.5 s, the largest RNA structures (~16,000 nt) in ~1.5 s.
-
----
-
-## 7. Project layout
-
-```
-include/pairfinder/   public headers (geometry, core, io, algorithms, scoring)
-src/                  implementations
-apps/main.cpp         the CLI
-resources/            bundled reference data + templates (ship with the binary)
-integrations/pymol/   optional PyMOL viewer (rubric-view, rubric_pymol.py)
-CMakeLists.txt        build (fetches GEMMI, vendors nlohmann/json)
-pyproject.toml        Python package settings (pip install rubric-rna)
-python/rubric_rna/    Python wrapper that runs the bundled rubric program
-conda/                conda recipe (rattler-build)
-tests/                unit, command-line and regression tests (see tests/README.md)
-.github/workflows/    runs the tests, builds and publishes the Python packages
-VALIDATION.md         the evidence that RUBRIC's results are right, and its limitations
-CONTRIBUTING.md       how to propose a change
-```
-
----
-
-## 8. Troubleshooting
-
-| Symptom | Fix |
+| Problem | Fix |
 |---|---|
-| `CMake 3.28 or higher is required` | upgrade CMake (`cmake --version` to check) |
-| First build fails fetching GEMMI | check internet / proxy; re-run `cmake -S . -B build` |
-| `download failed` / `HTTP 404` at runtime | the PDB ID isn't on RCSB, or no network - pass a local `.cif`/`.pdb`, or check `curl` is installed |
-| Want a clean rebuild | `rm -rf build` and repeat the Build steps |
 | `rubric: command not found` after `pip install` | Python's scripts folder is not on your PATH. Install inside a virtual environment or with `pipx`, or run `python -m rubric_rna 1GID` |
-| `pip install` compiles RUBRIC instead of downloading it | no ready-made package exists for your platform or Python, so pip builds from source; install a C++20 compiler and git (section 2) |
+| `pip install` compiles RUBRIC instead of downloading it | no ready-made package exists for your system, so pip builds from source; install a C++20 compiler and git (section 2) |
+| `download failed` / `HTTP 404` | the PDB ID is not on RCSB, or there is no network; give a local `.cif` / `.pdb` file instead |
 | `rubric-view needs bash` on Windows | install [Git for Windows](https://gitforwindows.org), which provides bash |
 
 ---
 
-## 9. License
+## 7. License
 
-RUBRIC is released under the MIT License (see
-[`LICENSE`](https://github.com/YesselmanLab/RUBRIC/blob/main/LICENSE)). It bundles
-the 3DNA standard base templates, the Richardson suite conformers, nlohmann/json
-and coordinates from the Protein Data Bank, and builds with GEMMI; each keeps its
-own license, listed in
-[`NOTICE`](https://github.com/YesselmanLab/RUBRIC/blob/main/NOTICE). Using the bundled 3DNA templates
-requires citing 3DNA (Lu & Olson, *Nucleic Acids Res.* 2003 or *Nat. Protoc.* 2008).
+MIT (see [`LICENSE`](https://github.com/YesselmanLab/RUBRIC/blob/main/LICENSE)).
+RUBRIC bundles the 3DNA base templates, so work that uses RUBRIC should also cite 3DNA
+(see [`NOTICE`](https://github.com/YesselmanLab/RUBRIC/blob/main/NOTICE)).
