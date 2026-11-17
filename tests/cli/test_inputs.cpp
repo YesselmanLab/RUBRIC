@@ -31,7 +31,7 @@ std::string map_atoms(const std::string& pdb, const std::function<std::string(co
 
 /// Set residue number (columns 23-26) and insertion code (column 27) of an atom line.
 std::string set_number(const std::string& line, int num, char icode = ' ') {
-    char field[6];
+    char field[16];
     std::snprintf(field, sizeof field, "%4d%c", num, icode);
     return line.substr(0, 22) + field + line.substr(27);
 }
