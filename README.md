@@ -188,6 +188,10 @@ One entry of `pairs` (shortened):
 }
 ```
 
+Complete outputs for 1GID:
+[`1GID.json`](https://github.com/YesselmanLab/RUBRIC/blob/main/examples/1GID.json) (`rubric 1GID`) and
+[`1GID_details.json`](https://github.com/YesselmanLab/RUBRIC/blob/main/examples/1GID_details.json) (`rubric 1GID --details`).
+
 ---
 
 ## 5. PyMOL viewer
