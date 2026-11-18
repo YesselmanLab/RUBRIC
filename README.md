@@ -214,21 +214,43 @@ rubric-view 1GID backbone     # open in the backbone view
 
 ### Commands inside PyMOL
 
+A *suite* is the stretch of backbone between two nucleotides.
+
+**Score the structure**
+
 | command | what it does |
 |---|---|
-| `rubric_score [obj], [tier]` | score the structure + highlight the flagged pairs (colored by pair score) and the pucker-mismatch sugars (cyan); `tier` = `priority` (default) / `secondary` / `all` |
-| `rubric_list [n]` | print the ranked worklist of the worst pairs (default 25) |
-| `rubric_next` / `rubric_prev` | step through the worklist one pair at a time |
-| `rubric_goto <rank \| residue>` | jump to worklist entry `12`, **or** inspect any residue by `A-169` / `A169` / `A-G-169` (even a clean pair not in the worklist) - prints its score and what's out of range |
-| `rubric_info [selection]` | inspect a clicked/selected residue → jump the worklist to its pair |
-| `rubric_overview` | zoom back out to the whole-structure overview |
-| `rubric_ideal [on\|off]` | overlay the **idealized** target geometry of the current pair (green ghost) so you can see how to fix it; sticky toggle, default off |
-| `rubric_pucker [list \| on \| off \| n \| residue]` | list the sugar-pucker mismatches, show/hide the cyan layer, or a close-up of one (`rubric_pucker 1`, `rubric_pucker A-199`) with its P-perp measurement |
-| `rubric_backbone [tier \| n \| residue \| off]` | backbone view: flagged suites colored by tier (yellow `fixable`, orange `review`, red `flag_only`), a close-up of one with its torsions (`rubric_backbone 1`, `rubric_backbone A-199`), or `off` to return to the base pairs |
-| `rubric_dump [path]` | write the scored pairs (incl. any coordinate edits) to `<obj>_pairs.json` in the current directory, or a path you give |
-| `rubric_load <path>` | rebuild the worklist from a `rubric_dump` JSON - **no binary, no re-scoring** (for sharing a scored session) |
-| `rubric_keys [on\|off]` | bind/unbind arrow-key navigation |
-| `rubric_clear` | remove every overlay and reset |
+| `rubric_score` | Scores the open structure. It turns gray, base pairs scoring below 80 are drawn as red sticks, and riboses with an inconsistent pucker are cyan. |
+| `rubric_score 1GID, all` | Also draws the pairs scoring 80 to 99, in yellow to orange (`secondary` draws only those). |
+| `rubric_overview` | Zooms back out to the whole structure. |
+| `rubric_clear` | Removes all RUBRIC colors and objects. |
+
+**Go through the flagged base pairs**
+
+| command | what it does |
+|---|---|
+| `rubric_list` | Prints the flagged pairs, grouped by chain, worst first (25 by default; `rubric_list 50` for more). |
+| `rubric_next`, `rubric_prev` (or the → and ← keys) | Zooms in on the next or previous pair in that list and prints its score and the measurements that are off. |
+| `rubric_goto 12`, `rubric_goto A-169` | Jumps to pair 12 of the list, or to the pair of any residue, flagged or not. |
+| click a residue, then `rubric_info` (or Ctrl-I) | Jumps to the flagged pair that residue belongs to. |
+| `rubric_ideal` | Overlays the ideal shape of the current pair in green, to show how it should look. Stays on for the next pairs until `rubric_ideal off`. |
+
+**Riboses and backbone**
+
+| command | what it does |
+|---|---|
+| `rubric_pucker` | Lists the riboses with an inconsistent pucker (the cyan ones). `rubric_pucker 1` zooms in on the first, with the measurement behind the flag; `rubric_pucker off` hides the cyan. |
+| `rubric_backbone` | Switches to the backbone view: pair colors are hidden and flagged suites are colored (yellow: fixable, orange: review, red: fits no known conformation). Prints the list. |
+| `rubric_backbone 1`, `rubric_backbone A-199` | Zooms in on one suite and labels each torsion with its current and target value. |
+| `rubric_backbone off` | Returns to the base-pair view. |
+
+**Save and share**
+
+| command | what it does |
+|---|---|
+| `rubric_dump` | Saves the results to `<structure>_pairs.json`. |
+| `rubric_load file.json` | Opens saved results without running RUBRIC again, for example on another computer (open the structure first). |
+| `rubric_keys off` | Turns off the arrow-key shortcuts (`rubric_keys on` turns them back on). |
 
 Colors, keyboard navigation and the `--pml` script are described in
 [`integrations/pymol/README.md`](https://github.com/YesselmanLab/RUBRIC/blob/main/integrations/pymol/README.md).
