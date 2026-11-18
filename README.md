@@ -242,9 +242,10 @@ A *suite* is the stretch of backbone between two nucleotides.
 
 | command | what it does |
 |---|---|
-| `rubric_pucker` | Lists the riboses with an inconsistent pucker (the cyan ones). `rubric_pucker 1` zooms in on the first, with the measurement behind the flag; `rubric_pucker off` hides the cyan. |
-| `rubric_backbone` | Switches to the backbone view: pair colors are hidden and flagged suites are colored (yellow: fixable, orange: review, red: fits no known conformation). Prints the list. |
-| `rubric_backbone 1`, `rubric_backbone A-199` | Zooms in on one suite and labels each torsion with its current and target value. |
+| `rubric_pucker` | Lists the riboses with an inconsistent pucker (the cyan ones). |
+| `rubric_pucker 1`, `rubric_pucker A-199` | Zooms in on ribose 1 of that list, or on the ribose of chain A, residue 199, and draws the measurement behind the flag. `rubric_pucker off` hides the cyan. |
+| `rubric_backbone` | Switches to the backbone view: pair colors are hidden and flagged suites are colored (yellow: fixable, orange: review, red: fits no known conformation). Prints the list. `rubric_backbone fixable` (or `review`, `flag_only`) lists one group only. |
+| `rubric_backbone 1`, `rubric_backbone A-199` | Zooms in on suite 1 of that list, or on the suite of chain A, residue 199, and labels each torsion with its current and target value. |
 | `rubric_backbone off` | Returns to the base-pair view. |
 
 **Save and share**
@@ -255,8 +256,9 @@ A *suite* is the stretch of backbone between two nucleotides.
 | `rubric_load file.json` | Opens saved results without running RUBRIC again, for example on another computer (open the structure first). |
 | `rubric_keys off` | Turns off the arrow-key shortcuts (`rubric_keys on` turns them back on). |
 
-Colors, keyboard navigation and the `--pml` script are described in
-[`integrations/pymol/README.md`](https://github.com/YesselmanLab/RUBRIC/blob/main/integrations/pymol/README.md).
+The colors, what the ribose and backbone flags mean, loading the plug-in into a PyMOL
+session that is already open, sharing a scored session and the `--pml` script are
+described in [`integrations/pymol/README.md`](https://github.com/YesselmanLab/RUBRIC/blob/main/integrations/pymol/README.md).
 
 ---
 

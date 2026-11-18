@@ -1,343 +1,94 @@
 # RUBRIC → PyMOL
 
-Highlight problematic base pairs in PyMOL during refinement, using the
-`rubric` binary. Flagged pairs are shown as sticks colored by their **pair
-score**: red = priority review, yellow → orange = secondary review. Sugars whose pucker is inconsistent are drawn with a **cyan
-ribose**. Re-run after an edit and a fixed pair (or sugar) disappears. The
-original object is never modified.
+Details of the RUBRIC PyMOL plug-in. Installing RUBRIC, starting the viewer
+(`rubric-view`) and the list of commands are in the
+[main README](../../README.md#5-pymol-viewer).
 
-## Quick start (one command)
+## In a PyMOL session that is already open
 
-From the repo, after building `rubric`:
+`rubric-view` loads the plug-in for you. To load it into a session you already have
+open, print the location of the plug-in file:
 
 ```bash
-./integrations/pymol/rubric-view 1GID                 # a PDB id (fetched from RCSB)
-./integrations/pymol/rubric-view /path/to/mymodel.pdb # or a local file
-./integrations/pymol/rubric-view 1GID secondary       # optional tier: priority|secondary|all
-./integrations/pymol/rubric-view 1GID backbone        # open in the backbone view
+python -c "import rubric_rna, pathlib; print(pathlib.Path(rubric_rna.__file__).parent / 'share/rubric/rubric_pymol.py')"
 ```
 
-This opens PyMOL, loads the plugin, loads the structure, scores it, and
-highlights the issues - all in one go. (Override the PyMOL or rubric
-executable with `PYMOL=...` / `RUBRIC_BINARY=...`; `RUBRIC_VIEW_DRYRUN=1`
-prints the PyMOL commands without launching.)
+and run that file in PyMOL (`run /path/to/rubric_pymol.py`). In a source checkout
+the file is `integrations/pymol/rubric_pymol.py`. If PyMOL cannot find the `rubric`
+program, give its location with `rubric_set_binary` (the output of `which rubric`).
 
-To drive it interactively inside an already-open PyMOL session instead, use the
-commands below.
+## Colors
 
-## Setup
-
-1. Build `rubric` (see the top-level README).
-2. Tell the plugin where the binary is - either:
-   - export `RUBRIC_BINARY=/path/to/build/rubric` before launching PyMOL, or
-   - run `rubric_set_binary /path/to/build/rubric` inside PyMOL.
-3. In PyMOL: `run /path/to/integrations/pymol/rubric_pymol.py`
-
-## Use
-
-```
-rubric_score                 # score current object; worklist = priority review (score<80)
-rubric_score 6DN1            # score object named 6DN1 (priority review)
-rubric_score 6DN1, secondary # the minor-issue middle (80<=score<100), a polish pass
-rubric_score 6DN1, all       # every non-Preferred pair
-rubric_score 6DN1, all, 0.5  # ...and only issues with color severity >= 0.5 (less noise)
-rubric_clear                 # remove the overlay
-```
-
-Each `rubric_score` run:
-1. saves the object's **current** coordinates to a temp PDB,
-2. runs `rubric` on it (sub-second, even on a ribosome),
-3. builds a non-destructive overlay object `rubric_overlay` containing only the
-   flagged pairs (sticks, colored by pair score), plus a `rubric_problems`
-   selection you can `zoom rubric_problems` / iterate over,
-4. draws every sugar-pucker mismatch as a gray nucleotide with a cyan ribose
-   ring (object `rubric_pucker`; see [Sugar-pucker mismatches](#sugar-pucker-mismatches)),
-5. prints a summary to the PyMOL log, ranked by each pair's worst-parameter
-   |Z′| (ProSco-gated), followed by the pucker mismatches and a one-line color key.
-
-**Which pairs are flagged** is gated by the whole-pair **score tier** (`tier`
-arg): `priority` (score < 80, the default), `secondary` (80 ≤ score < 100), or
-`all` (both). The pair score decides *membership and color* - who a refiner
-reviews, and how urgently - while the ProSco/Z′ severity decides the *order within
-a tier* and names each pair's worst parameter. So the
-default `rubric_score` shows only the genuinely-poor pairs, and `rubric_score obj,
-secondary` (or `all`) widens the net for a thorough polishing pass. The printed
-header shows the structure's tier counts (e.g. `104 Preferred · 32 secondary review ·
-10 priority review`) so you know how big each pass is before you run it.
-
-A typical loop: `rubric_score` (priority review) → fix the flagged pairs → re-run; when the
-priority-review worklist is empty, `rubric_score obj, secondary` to polish the middle.
-
-## What gets colored
-
-The whole structure is colored **gray** (unflagged pairs recede), and the flagged
-pairs are drawn as colored sticks on top, **colored by the pair score** (the
-validated whole-pair quantity; a residue in several flagged pairs takes its lowest).
-`rubric_score` prints the key as one line:
-
-| color | meaning | drawn as |
-|---|---|---|
-| **gray** | *preferred* - pair score 100 | not highlighted |
-| **yellow → orange** | *secondary review* - 80 ≤ score < 100 (yellow near 100, orange near 80) | pair sticks |
-| **red** | *priority review* - score < 80 | pair sticks |
-| **cyan** | *pucker mismatch (δ vs P-perp)* - a flag on one sugar, not a tier | the ribose ring of a gray nucleotide |
-| **green** | *ideal template* - the target geometry for the current pair | thin ghost sticks + H-bonds (`rubric_ideal`) |
-
-Gray, yellow → orange and red are one scale, the pair score. Cyan is separate: a
-pucker mismatch can sit on a pair of any tier, or on an unpaired nucleotide.
-
-The worst parameter (e.g. `buckle 4.3σ`), its Z′ and its Černý tier still appear in
-the printed summary and in the per-pair readout. H-bond-count pairs are colored by
-their score like any other pair and sort to the bottom of the worklist.
-
-Pass `rubric_score target, priority, 0, 0, 0` (last arg `gray_background=0`) to keep
-the object's existing colors instead of graying. Only colors change - coordinates
-are never modified.
-
-## Commands
-
-A *suite* is the stretch of backbone between two nucleotides.
-
-**Score the structure**
-
-| command | what it does |
+| color | meaning |
 |---|---|
-| `rubric_score` | Scores the open structure. It turns gray, base pairs scoring below 80 are drawn as red sticks, and riboses with an inconsistent pucker are cyan. |
-| `rubric_score 1GID, secondary` | Draws the pairs scoring between 80 and 100 instead, from yellow (near 100) to orange (near 80). |
-| `rubric_score 1GID, all` | Draws both: the pairs below 80 in red, and the pairs between 80 and 100 in yellow to orange. |
-| `rubric_overview` | Zooms back out to the whole structure. |
-| `rubric_clear` | Removes all RUBRIC colors and objects. |
+| gray | the rest of the structure, including pairs that score 100 |
+| red | a base pair scoring below 80 (priority review) |
+| yellow to orange | a base pair scoring between 80 and 100 (secondary review): yellow near 100, orange near 80 |
+| cyan | a ribose whose pucker is inconsistent |
+| green | the ideal shape of the current pair (`rubric_ideal`) |
 
-"1GID" stands for the name of your structure in PyMOL. The pairs drawn are the ones `rubric_list` and `rubric_next` go through.
+In the backbone view, yellow, orange and red mark fixable, review and flag-only
+suites instead. Only colors change; coordinates are never modified.
 
-**Go through the flagged base pairs**
+## Ribose flags
 
-| command | what it does |
-|---|---|
-| `rubric_list` | Prints the flagged pairs, grouped by chain, worst first (25 by default; `rubric_list 50` for more). |
-| `rubric_next`, `rubric_prev` (or the → and ← keys) | Zooms in on the next or previous pair in that list and prints its score and the measurements that are off. |
-| `rubric_goto 12`, `rubric_goto A-169` | Jumps to pair 12 of the list, or to the pair of any residue, flagged or not. |
-| click a residue, then `rubric_info` (or Ctrl-I) | Jumps to the flagged pair that residue belongs to. |
-| `rubric_ideal` | Overlays the ideal shape of the current pair in green, to show how it should look. Stays on for the next pairs until `rubric_ideal off`. |
+RUBRIC reads the pucker of each ribose in two ways: from the ring itself (the δ
+torsion), and from where the 3′ phosphate sits (P-perp, the distance from the
+phosphorus to the line of the glycosidic bond). When the two disagree, the ribose
+is flagged and drawn cyan. The close-up (`rubric_pucker 1`) draws the glycosidic
+bond extended past C1′ (light dashes) and P-perp (dark dashes, labelled with its
+length). The flag does not change any pair score.
 
-**Riboses and backbone**
+## Backbone flags
 
-| command | what it does |
-|---|---|
-| `rubric_pucker` | Lists the riboses with an inconsistent pucker (the cyan ones). `rubric_pucker 1` zooms in on the first, with the measurement behind the flag; `rubric_pucker off` hides the cyan. |
-| `rubric_backbone` | Switches to the backbone view: pair colors are hidden and flagged suites are colored (yellow: fixable, orange: review, red: fits no known conformation). Prints the list. See [Backbone suites](#backbone-suites). |
-| `rubric_backbone 1`, `rubric_backbone A-199` | Zooms in on one suite and labels each torsion with its current and target value. |
-| `rubric_backbone off` | Returns to the base-pair view. |
+A suite is the stretch of backbone between two nucleotides. Each suite is assigned
+to its closest known conformation and given a suiteness from 0 (poor) to 1 (good).
+Flagged suites fall into three groups:
 
-**Save and share**
+- **fixable** (yellow): one or more torsions are out of range for the conformation.
+  The close-up lists them with the values to move them toward.
+- **review** (orange): the suiteness is low but no single torsion is out of range.
+  The suite needs rebuilding.
+- **flag only** (red): the suite fits no known conformation. The target shown is only
+  the nearest conformation.
 
-| command | what it does |
-|---|---|
-| `rubric_dump` | Saves the results to `<structure>_pairs.json`. |
-| `rubric_load file.json` | Opens saved results without running RUBRIC again, for example on another computer (open the structure first). |
-| `rubric_keys off` | Turns off the arrow-key shortcuts (`rubric_keys on` turns them back on). |
+The backbone flags do not change any pair score.
 
-**Settings**
+## Share a scored session
 
-| command | what it does |
-|---|---|
-| `rubric_set_binary <path>` | Uses a specific `rubric` program instead of the installed one. |
-| `rubric_set_ideals <path>` | Uses a different folder of ideal base-pair shapes for `rubric_ideal`. |
+To let someone go through your results without running RUBRIC, send them three files:
 
-## Guided navigation (keys, on-screen status, click-to-inspect)
+1. the PyMOL session (`save 1GID.pse` after scoring),
+2. the results (`rubric_dump` writes `1GID_pairs.json`),
+3. the plug-in file `rubric_pymol.py`.
 
-After `rubric_score`, the integration becomes a guided triage tool - you don't have to
-keep typing commands:
-
-- **Keyboard:** **→** = next pair, **←** = previous, **Ctrl-I** = inspect the atom you
-  last clicked. (Keys bind automatically; `rubric_keys off` unbinds them.)
-- **On-screen status:** a one-line HUD at the bottom of the viewport always shows where
-  you are - `RUBRIC 3/45  A226·U249 (chain A)  cWW AU  propeller 6.2σ [Of Concern]` - so
-  you never have to scroll the log.
-- **Click-to-inspect:** click any flagged stick in 3D, then `rubric_info` (or **Ctrl-I**).
-  The worklist jumps to that pair and prints its full breakdown + Phenix selection.
-  Click a non-flagged residue and it tells you it's Preferred/unscored.
-
-## Worklist (fix them one at a time)
-
-`rubric_score` lights up *every* flagged pair at once - a health map, good for seeing
-where the problem regions cluster, but overwhelming on a large structure. To actually
-work through them, use the worklist:
+They then run in PyMOL:
 
 ```
-rubric_score target      # build the queue + global map
-rubric_next              # frame the worst pair: bright sticks, faded 8 A context,
-                        #   H-bonds, a label, and its distortion printed to the log
-rubric_next              # ... the next one, and so on
-rubric_overview          # zoom back out to the whole structure (undim, all pairs shown)
-rubric_goto 1A-G-169     # jump straight to a specific pair
-```
-
-The queue is **chain-grouped, worst-first within each chain**, so stepping stays in
-one region instead of teleporting across the structure. On each stop the rest of the
-structure is dimmed (still visible for orientation), and the log prints the failing
-parameters (e.g. `shear Z'=+11.3, opening Z'=+10.3` - which tells you *how* it's
-distorted) plus a **Phenix-style selection string** for the pair.
-
-The queue is ranked by each pair's **single most-deviant parameter's |Z′|** (the
-ProSco-gated Černý severity, *uncapped* so a 6.6σ pair outranks a 5.1σ one) - not
-by the 0-100 quality score, which saturates near 100 for most pairs and so makes a
-poor rank key. Each entry shows **both**: the pair's score (e.g. `score 65/100`)
-*and* its worst parameter (e.g. `propeller 6.2σ`). `rubric_overview` additionally
-prints the whole-structure scores (base pairs and backbone suiteness).
-
-**Visual priority:** the worklist is a *visual* triage tool, so `hbond_angles` - 
-a bond-geometry (chemistry) strain that doesn't make a pair *look* distorted - is
-down-weighted (×0.3) in the rank and highlight color. A visibly twisted/splayed
-pair therefore outranks one whose only large deviation is H-bond angle, and the
-headline names the *visible* defect. The true σ is still reported, and H-bond
-*distance* keeps full weight (a long/short bond shows as a visibly splayed pair).
-This affects only the PyMOL triage order/color - never the 0-100 score or scorer.
-
-Typical loop: `rubric_next` to a problem → understand it → fix it in Phenix / edit the
-coordinates → reload and re-run `rubric_score` → the fixed pair drops off the queue.
-
-## Show the ideal pair (what it should look like)
-
-Knowing a pair is distorted is half the job; a refiner also needs to see the
-*target*. `rubric_ideal` overlays the **idealized** version of the current pair - 
-a perfectly planar, H-bond-optimized template for that Leontis-Westhof class and
-sequence - as a thin **green ghost** with its ideal H-bonds:
-
-```
+load 1GID.pse
+run rubric_pymol.py
+rubric_load 1GID_pairs.json
 rubric_next
-rubric_ideal            # green ghost of the ideal pair appears, fitted on the real one
-rubric_ideal on         # ... and stays on for every rubric_next / rubric_goto
-rubric_ideal off        # hide it again
 ```
 
-The ideal is **best-fit** onto the actual pair (least-squares over the shared base
-atoms of *both* bases), so each base shows how far it sits from where it should be.
-Flatten or untwist the real (colored) sticks toward the green ghost. Templates live
-in `resources/basepair-idealized/<class>/<seq>.pdb`; point elsewhere with
-`rubric_set_ideals <dir>` or the `RUBRIC_IDEALS_DIR` env var. It's a sticky toggle,
-**off by default** (so the view stays clean until you ask for the target). If no
-template exists for a pair's class+sequence, it says so and shows nothing.
+All commands except `rubric_score` then work. `rubric_ideal` also needs RUBRIC
+installed, because the ideal shapes come with it.
 
-## Sugar-pucker mismatches
+## Without the plug-in: `rubric --pml`
 
-The binary reports a sugar under `pucker_outliers` when two readings of its pucker
-disagree:
-
-- **δ** (the C5′-C4′-C3′-O3′ torsion) reads the pucker from the ring itself;
-- **P-perp**, the distance from the 3′ phosphorus to the line of the glycosidic
-  bond extended past C1′, reads it from where the phosphate sits (short P-perp =
-  C2′-endo, long = C3′-endo).
-
-Each flagged sugar is drawn whatever the pair tier:
-the whole nucleotide as gray sticks, with only its five ribose-ring atoms
-(C1′ C2′ C3′ C4′ O4′) in **cyan**. The summary lists them:
-
-```
-pucker mismatch (3 sugar(s), cyan; rubric_pucker <n> for a close-up):
-    1  A-U-199  delta 90.5° (C3'-endo) vs P-perp 2.31 Å (C2'-endo)
-```
-
-```
-rubric_pucker              # list the flagged sugars
-rubric_pucker 1            # close-up of the first one
-rubric_pucker A-199        # ... or by chain + residue number
-rubric_pucker off          # hide the cyan layer (sticky; `on` brings it back)
-rubric_overview            # back to the whole structure
-```
-
-The close-up shows the nucleotide and its 3′ phosphate, the
-glycosidic bond extended past C1′ (light dashes), and the perpendicular from the
-3′ P onto it (dark dashes, labelled `P-perp 2.31 Å`). The view faces the plane of
-that right angle, tilted 30° so the ring's pucker is visible. The plugin
-recomputes P-perp from the coordinates for the drawing and prints it; it matches
-the binary's value. When `rubric_next` / `rubric_goto` lands on a pair that contains
-a flagged sugar, its ribose is cyan on the focus sticks too and the log notes it.
-`rubric_dump` / `rubric_load` carry the flags, so a shared session shows them as well.
-
-The flag is report-only: it does not change any pair score or the worklist.
-
-## Backbone suites
-
-`rubric_backbone` hides the base-pair highlights and colors the backbone of each
-flagged suite by its tier: yellow = fixable (the listed torsions are out of range;
-move them toward their targets), orange = review (low suiteness with no single
-torsion out of range; rebuild the suite), red = flag only (fits no conformer; the
-nearest one is only a hint). It prints the suites Fixable first, lowest suiteness
-first within each tier.
-
-```
-rubric_backbone            # every flagged suite
-rubric_backbone fixable    # one tier: fixable | review | flag_only | all
-rubric_backbone 1          # close-up of the first suite in the list
-rubric_backbone A-199      # ... or by chain + residue number
-rubric_backbone off        # back to the base pairs (as rubric_overview)
-```
-
-The close-up shows the suite's two nucleotides with its backbone in the tier
-color and each torsion to move labeled current → target. Like the pucker flag, it
-is report-only.
-
-## Share a scored session (colleague navigates with no binary)
-
-A `.pse` saves the *picture* but not the plugin or the worklist, so a colleague
-can't navigate from it alone. To let someone step through a scored structure
-**without the `rubric` binary and without re-scoring**, send three files:
-
-1. `1y26.pse` - the session (`save 1y26.pse` after scoring)
-2. `1y26_pairs.json` - the worklist (`rubric_dump`)
-3. `rubric_pymol.py` - the plugin
-
-They then run, in PyMOL:
-
-```
-load 1y26.pse           # the structure + highlights
-run rubric_pymol.py      # registers the rubric_* commands
-rubric_load 1y26_pairs.json   # rebuilds the worklist from the JSON (no binary)
-rubric_next              # ... and they can step through exactly as you did
-```
-
-`rubric_load` reconstructs the queue from the dumped JSON, so `rubric_next` / `rubric_prev`
-/ `rubric_list` / `rubric_overview` / `rubric_dump` all work. Only `rubric_score` itself
-(scoring a *new* model) needs the binary. Tip: put those three lines in a `view.pml`
-so they only have to type `@view.pml`.
-
-## Without the plugin: a standalone script (`rubric --pml`)
-
-The `rubric` binary can also write the same view as a plain PyMOL script, so
-anyone with PyMOL can open it, with no plugin and no binary at view time:
+`rubric` can also write a plain PyMOL script that shows the same colors, so anyone
+with PyMOL can open it without the plug-in:
 
 ```bash
-rubric 1GID --pml                                  # writes ./1GID.pml (JSON still goes to stdout)
-rubric model.cif --pml views/model.pml --out model.json
-pymol 1GID.pml                                    # or, inside PyMOL: @1GID.pml
+rubric 1GID --pml          # writes 1GID.pml
+pymol 1GID.pml             # or, inside PyMOL: @1GID.pml
 ```
 
-A bare `--pml` writes `<PDB_id>.pml` in the current directory; any name or path
-you give is used exactly as-is (missing directories are created), as for `--out`.
-
-The script loads the structure file that was scored (its absolute path is in the
-header) and builds:
-
-| object / selection | what it is |
-|---|---|
-| `rubric_pairs` | a copy of the flagged pairs as sticks, colored by pair score: yellow → orange = secondary review, red = priority review (the same colors as `rubric_score`) |
-| `rubric_priority`, `rubric_secondary` | the flagged residues of each tier |
-| `rubric_worklist` → `rubric_pr_001`, `rubric_pr_002`, … | one selection per priority-review pair on the model, worst first (e.g. `zoom rubric_pr_001`) |
-| `rubric_pucker`, `rubric_pucker_outliers` | pucker-mismatch nucleotides (δ vs P-perp), gray sticks with a cyan ribose ring |
-
-The header also lists, as comments, the base-pair score, backbone suiteness and
-tier counts, then every flagged pair (score, tier, LW class, penalized
-parameters) worst first and every pucker outlier, so the file doubles as a
-readable worklist.
-
-Notes:
-
-- Like the plugin, the script never modifies coordinates. After editing or
-  re-refining the model, re-run `rubric ... --pml` to regenerate it.
-- The structure path in the script is absolute. If you send the `.pml` to a
-  colleague, send the structure file too and edit the path in the `cmd.load` line.
-- Interactive features (`rubric_next`, `rubric_ideal`, the `rubric_pucker` close-up,
-  `rubric_backbone`) need the plugin; the script gives the static overview and named
-  selections.
-- `--pml` needs scoring, so it cannot be combined with `--no-score`.
+The script colors the flagged pairs and riboses as above and creates named
+selections: `rubric_pairs` (all flagged pairs), `rubric_priority` and
+`rubric_secondary` (the residues of each group), `rubric_pr_001`, `rubric_pr_002`,
+... (one per pair scoring below 80, worst first) and `rubric_pucker` (the flagged
+riboses). Its header lists the scores and every flagged pair. It has no interactive
+commands and no backbone view. The structure path inside the script is absolute, so
+if you send the script to someone, send the structure file too and correct the path
+in its `cmd.load` line.
