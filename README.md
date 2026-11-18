@@ -68,6 +68,8 @@ curl, which RUBRIC uses to download PDB entries, is part of Windows 10 and 11.
 [Git for Windows](https://gitforwindows.org); the `rubric` command needs
 neither.
 
+Installed with pip or conda? Skip section 2 and go to [section 3](#3-run).
+
 ---
 
 ## 2. Build from source (for development)
@@ -86,11 +88,10 @@ build. No databases or other tools to install.
 | **CMake ≥ 3.28** | check with `cmake --version` |
 | **git** | used to fetch a dependency during the first build |
 | **curl** | used at runtime to download PDB entries from RCSB (preinstalled on macOS and most Linux) |
-| **Internet** | first build downloads & builds GEMMI (the structure parser); the tool also downloads PDB entries at runtime unless you pass a local file |
 
-All other dependencies are bundled in the repo (`nlohmann/json`, the reference
-scoring data) or fetched automatically by CMake (GEMMI). There is nothing to
-`apt install` / `brew install` beyond a compiler + CMake.
+All other dependencies are bundled in the repository (`nlohmann/json` and the
+reference scoring data) or downloaded by CMake during the first build (GEMMI, the
+structure parser), so nothing else needs to be installed.
 
 ### Build
 
@@ -148,15 +149,6 @@ rubric 1EHZ --out                    # save the result to ./1EHZ.json
 rubric path/to/mymodel.cif --out     # a local file
 ```
 
-### Where the output goes
-
-| you run | JSON goes to |
-|---|---|
-| no `--out` | **stdout** (redirect with `> file.json` if you like) |
-| `--out` (no name) | **`<PDB_id>.json` in the current directory** - e.g. `rubric 1GID --out` → `./1GID.json` |
-| `--out name.json` (bare name) | **`./name.json`** (current directory) |
-| `--out path/to/name.json` (has a directory) | exactly that path (created if needed) |
-
 ### Options
 
 | Option | Effect |
@@ -172,29 +164,27 @@ rubric path/to/mymodel.cif --out     # a local file
 
 ## 4. Output
 
-A JSON object per structure:
+RUBRIC writes one JSON object per structure:
 
-```jsonc
+| field | what it holds |
+|---|---|
+| `pairs`, `n_pairs` | the base pairs (example below) |
+| `pairs_score` | mean score of the scored pairs (0 to 100) |
+| `tier_summary` | number of pairs per tier: Preferred, Secondary review, Priority review |
+| `backbone_suiteness` | mean suiteness of the backbone (0 to 1) |
+| `backbone_residues` | the flagged suites, with their tier and the torsions to move |
+| `pucker_outliers` | the flagged riboses |
+| `clashes`, `n_clashes` | atom pairs that overlap |
+
+One entry of `pairs` (shortened):
+
+```json
 {
-  "pdb_id": "1EHZ",
-  "candidates_total": 1234,      // pairs considered
-  "candidates_valid": 200,       // passed geometric validation
-  "n_pairs": 31,                 // final selected base pairs
-  "pairs_score": 98.46,          // base-pair geometry quality (0-100)
-  "backbone_suiteness": 0.7,     // mean Richardson suiteness (0-1, two decimals as in wwPDB reports)
-  "pairs": [
-    {
-      "res_id1": "A-G-1", "res_id2": "A-C-72",
-      "sequence": "GC",
-      "pair_category": "base-base",
-      "classification": { "lw_class": "cWW", "is_ambiguous": false },
-      "geometry":   { "dorg": 2.40, "d_v": 0.11, "plane_angle": 24.08, "dNN": 8.42 },
-      "rigid_body": { "shear": 2.22, "stretch": 0.89, "stagger": -0.11, "buckle": -12.78, "propeller": 20.40, "opening": 0.33 },
-      "num_hbonds": 2,
-      "score": 95.12              // per-pair quality (0-100)
-    }
-    // ...
-  ]
+  "res_id1": "A-A-146", "res_id2": "A-U-157",
+  "classification": { "lw_class": "cWW", "is_ambiguous": false },
+  "score": 98.2,
+  "tier": "Secondary review",
+  "issues": ["distance"]
 }
 ```
 
@@ -208,7 +198,7 @@ the pairs that need attention:
 ```bash
 rubric-view 1GID              # a PDB id
 rubric-view file.cif          # or a local file
-rubric-view 1GID secondary    # optional tier: priority (default) | secondary | all
+rubric-view 1GID secondary    # which pairs to show: priority (default), secondary or all
 rubric-view 1GID backbone     # open in the backbone view
 ```
 
