@@ -1,5 +1,9 @@
 # RUBRIC (Rapid Unified Base-pair, Ribose and backbone Integrity Check)
 
+[![PyPI](https://img.shields.io/pypi/v/rubric-rna?label=pypi%20package)](https://pypi.org/project/rubric-rna/)
+[![CI](https://github.com/YesselmanLab/RUBRIC/actions/workflows/ci.yml/badge.svg)](https://github.com/YesselmanLab/RUBRIC/actions/workflows/ci.yml)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24324565.svg)](https://doi.org/10.5281/zenodo.24324565)
+
 RUBRIC annotates RNA 3D structures and assesses their local quality. It classifies
 base pairs in the Leontis-Westhof scheme, flags ambiguous pairs, scores each pair
 from 0 to 100 against high-quality structures, and flags problem backbone suites
