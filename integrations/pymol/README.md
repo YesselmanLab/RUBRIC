@@ -103,9 +103,12 @@ A *suite* is the stretch of backbone between two nucleotides.
 | command | what it does |
 |---|---|
 | `rubric_score` | Scores the open structure. It turns gray, base pairs scoring below 80 are drawn as red sticks, and riboses with an inconsistent pucker are cyan. |
-| `rubric_score 1GID, all` | Also draws the pairs scoring 80 to 99, in yellow to orange (`secondary` draws only those). |
+| `rubric_score 1GID, secondary` | Draws the pairs scoring between 80 and 100 instead, from yellow (near 100) to orange (near 80). |
+| `rubric_score 1GID, all` | Draws both: the pairs below 80 in red, and the pairs between 80 and 100 in yellow to orange. |
 | `rubric_overview` | Zooms back out to the whole structure. |
 | `rubric_clear` | Removes all RUBRIC colors and objects. |
+
+"1GID" stands for the name of your structure in PyMOL. The pairs drawn are the ones `rubric_list` and `rubric_next` go through.
 
 **Go through the flagged base pairs**
 
